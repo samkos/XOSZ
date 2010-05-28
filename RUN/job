@@ -1,0 +1,16 @@
+#!/bin/sh
+# @ job_name     = zephyr_PROCS_
+# @ group        = veille
+# @ job_type     = BLUEGENE
+# @ output       = job.out
+# @ error        = $(job_name).$(jobid).err
+# @ executable   = /bgl/BlueLight/ppcfloor/bglsys/bin/mpirun
+# @ arguments    = -np _PROCS_ -mode VN -cwd _CHEMIN_ -exe /gpfs2/home/kortas/ZEPHYR/ZEPHYR/SRC/zephyr 
+# @ initialdir   = _CHEMIN_
+# @ input        = /dev/null
+# @ class        = _QUEUE_
+# @ environment  = MMCS_SERVER_IP=192.33.208.20
+#### @ requirements = (Machine == "fen2")
+#### @ notification = complete
+#### @ notification = never
+# @ queue

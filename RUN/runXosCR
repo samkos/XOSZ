@@ -1,0 +1,21 @@
+echo run a $2 noeuds sur le jeu zephyr$1 ...
+
+cas=$1
+p=$2
+here=`pwd`
+
+chemin=/tmp/$cas/
+mkdir -p $chemin
+
+
+echo $p > $chemin/input
+sed 's|xxxxx/bip|./output|g;s/\!.*$//g' ../ADAT/zephyr$cas.dat >> $chemin/input
+
+cd $chemin
+
+cp $here/../SRC/zephyr .
+cp $here/../SRC/zplot_control .
+
+echo running in $chemin
+
+time  cr_run ./zephyr 

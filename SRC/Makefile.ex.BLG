@@ -1,0 +1,30 @@
+# 5765-D93 (C) COPYRIGHT IBM CORP 1993, 1999                
+# All Rights Reserved
+# Licensed Materials - Property of IBM
+#  
+# US Government Users Restricted Rights - Use, duplication or disclosure
+# restricted by GSA ADP Schedule Contract with IBM Corp.
+#
+# makefile for poetest.bcast, test of point to point bandwidth
+   
+TARGET = bcast
+OBJECTS = bcast.o 
+
+COMPILER  = blrts_xlf
+FFLAGS    =  -O4 -qarch=440d -qtune=440 -qsource -qlist
+BGL_SYS = /bgl/BlueLight/ppcfloor/bglsys
+MPI_INC = -I$(BGL_SYS)/include
+NOMPI_LIB = -L$(BGL_SYS)/lib -lmsglayer.rts -lrts.rts -ldevices.rts
+MPI_LIB = -L$(BGL_SYS)/lib -lmpich.rts -lmsglayer.rts -lrts.rts -ldevices.rts
+
+all: $(TARGET)
+
+$(TARGET) : $(OBJECTS)
+	$(COMPILER) -o $@ $(FFLAGS) $(OBJECTS) $(MPI_LIB)
+
+bcast.o : bcast.f
+	$(COMPILER) $(MPI_INC) $(FFLAGS) -c bcast.f
+
+clean: 
+	rm -f bcast.o bw
+# end

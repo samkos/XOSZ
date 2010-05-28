@@ -1,0 +1,33 @@
+'xxxxx/x'   ! fichier de sortie generique
+28          ! nexample
+0.5e00      ! start_0
+0.50499990  ! t_all
+0.00250     ! tau 
+0.002500    ! t_print 
+1           ! is_print        
+0           ! is_conv        >0: cv_global /5 : sauve fichier
+4           ! Schema Temporel d'integration
+0           ! 0--> 1     1--> current  2 -> richardson
+30          ! lm
+30          ! nm
+.5          ! nu       
+1           ! ncheck           1:VF2   2:DF2
+1           ! ncheck_precond
+1           ! ntype_solver  1..9: BiCGSTAB(l)
+1           ! ntype_precond 1..9: BiCGSTAB(l)
+215         ! npcg
+200         ! nprecond
+4           ! nrecvddm
+1.E-18      ! epsv
+1.E-8       ! epsva
+1.E-8       ! epsvc 
+1.E-18      ! epsvac
+
+! solution testees
+!         20     Solution Test Poisson    1
+!         22     Solution Test Poisson    2
+!         28     Bipole     traversant selon la diagonale
+!         29     Gaussienne traversant selon la diagonale
+
+
+

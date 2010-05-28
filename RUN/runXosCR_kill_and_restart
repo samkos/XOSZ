@@ -1,0 +1,47 @@
+echo run a $2 noeuds sur le jeu zephyr$1 ...
+
+cas=$1
+p=$2
+here=`pwd`
+
+chemin=/tmp/$cas/
+mkdir -p $chemin
+
+
+echo $p > $chemin/input
+sed 's|xxxxx/bip|./output|g;s/\!.*$//g' ../ADAT/zephyr$cas.dat >> $chemin/input
+
+cd $chemin
+
+cp $here/../SRC/zephyr .
+cp $here/../SRC/zplot_control .
+
+echo running in $chemin
+
+nohup cr_run ./zephyr > zephyr.out &
+
+export ID=` ps -edf | grep zephyr | awk '{ print $2; exit}'`
+
+
+echo ID=$ID
+tail zephyr.out
+
+sleep 10
+
+echo creating checkpoint
+tail zephyr.out
+cr_checkpoint $ID --kill
+ls -l context*
+
+sleep 1
+echo still running???
+ps -edf | grep zephyr | awk '{ print $2; exit}'
+
+
+sleep 2
+echo still running???
+ps -edf | grep zephyr | awk '{ print $2; exit}'
+
+
+cr_restart context.$ID
+

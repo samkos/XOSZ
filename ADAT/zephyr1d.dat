@@ -1,0 +1,160 @@
+'xxxxx/0'   ! fichier de sortie generique
+1          ! nexample
+0.0e00      ! start_0
+19.99990     ! t_all
+1.5000e-2 ! tau 
+0.5      ! t_print 
+0           ! is_print       
+0           ! is_conv        >0: cv_global /5 : sauve fichier
+-1           ! Schema Temporel d'integration
+1           ! 0--> 1     1--> current  2 -> richardson
+255  !lm
+1          ! nm
+.01       ! nu 
+3           ! ncheck           1:VF2  2:DF2 3:VF4 5:DF4 6:DF4e
+0           ! ncheck_precond
+1           ! ntype_solver  1..9:BiCGSTAB(l),  10:GMRES,     11:GMRESR,      12:GMRESR+norec,
+            !                 13:MG,           14:Orthodir,  15:Orthomin,    16:lisse
+0           ! ntype_precond 1..9: BiCGSTAB(l), 10:GMRES,     13:MG,          16:lisse
+215         ! npcg
+200         ! nprecond
+8           ! nrecvddm
+1.E-18       ! epsv
+1.E-10      ! epsva
+1.E-8       ! epsvc 
+1.E-18      ! epsvac
+20          ! ninterne
+4           ! ndirection
+2           ! ns_solver  1-> compress art  2-> couplee  3-> projection 4-> lagrangien augm
+.25          ! rho_ca/mupression     constante de compressibilite artificielle ou lag augm / mupression
+1.          ! rlag                  constante r du lagrangien augmente
+5           ! nbmax_ca   Nombre max d'iterations de CA  
+50          ! nbp_ca     impression divergence tous les nbp_ca pas
+2000        ! nbmg
+1.E-8       ! epsmg
+1.E-8       ! epsmga
+3           ! nb_prelis
+2           ! nb_post_lis
+1           ! nb_cycle
+1.0         ! sor_theta
+0           ! is_decale  0->non  1-> oui
+000        ! is_restart_save
+'xxxxx/0'   ! fichier de sauvegarde globale
+
+! solution testees
+!         21     Cavite entrainee
+!         22     Solution Test Poisson    
+!         23     ecoulement de Poiseuil
+!         24     ecoulement de Kovasznay
+!         25     Cavite entrainee regularisee
+!         26     Tourbillon bidimensionnel de Green-Taylor
+!         27     Tourbillon bidimensionnel periodique
+!         28     Bipole     traversant selon la diagonale
+!         29     Gaussienne traversant selon la diagonale
+
+
+
+nu    lm     dt       dx=2*pi/(lm+1) CFL=dt/nu/dx/dx=dt*(lm+1)^2/2/pi
+1     60    1e-3              0             0.3721
+1    128  
+
+0.5     64  1. e-3
+0.5    128  4.6e-4                            0.12450347046    
+0.5    256  1.5e-4
+0.5    512  3.6e-5
+
+
+0.1     64  1.e-3
+1e-1   256  > 2.5e-4
+
+0.01    64 1.e-3
+
+
+
+
+
+
+
+       1/DF4       0.01    255       2.8e-2
+       1/DF4       0.01    511       5.2      5.1e-3    0.3452
+
+
+       1/DF4       0.1     256       3.1e-3   2.8e-3
+		       
+
+		       
+                   0.1     512       4.8e-4   4.5e-4
+                   0.01                       5. e-3
+                   0.001                      5.e-2
+
+
+
+
+
+
+
+
+ordre temps/espace nu      lm         conv    div
+
+vit_adv=0.25
+
+       1/VF2       0.01    255        3.00e-2  3.10e-2  0.498  < cfl < 0.51   
+       1/VF2       0.01    511        7.50e-3  7.70e-3  0.4980 < cfl < 0.511   
+       1/VF2       0.01   1023        1.85e-3  1.90e-3  0.4913 < cfl < 0.504   
+				     	               
+       1/VF2       0.005   255        6.15e-2  6.25e-2  0.510  < cfl < 0.518
+       1/VF2       0.005   511        1.50e-2  1.55e-2  0.498  < cfl < 0.514
+       1/VF2       0.005  1023        3.75e-3  3.80e-3  0.498  < cfl < 0.504 
+				     	               
+				     	               
+				     	               
+       2/VF2       0.01    255        2.00e-2  2.10e-2  0.332  < cfl < 0.34   
+       2/VF2       0.01    511        5.00e-3  5.10e-3  0.332  < cfl < 0.338   
+       2/VF2       0.01   1023        1.25e-3  1.27e-3  0.332  < cfl < 0.337   
+				     	               
+       2/VF2       0.005   255        .00e-2   4.10e-2  0.332  < cfl < 0.340
+       2/VF2       0.005   511        1.00e-2  1.03e-2  0.332  < cfl < 0.342
+       2/VF2       0.005  1023        2.50e-3  2.55e-3  0.332  < cfl < 0.338 
+
+
+
+
+
+
+
+
+
+
+
+
+
+       1/VF4       0.01    255        2.49e-2  2.51e-2  0.4135 < cfl < 0.416
+       1/VF4       0.01    511        6.1e-3   6.15e-3  0.405  < cfl < 0.4083
+       1/VF4       0.01   1023        1.55e-3  1.56e-3  0.4116 < cfl < 0.41434
+				     	               
+       1/VF4       0.005   255         4.9e-2  5.0e-2   0.406  < cfl < 0.415
+       1/VF4       0.005  1023         3.1e-3  3.2e-3   0.4116 < cfl < 0.4249
+				     	               
+       2/VF4       0.01    255        1.65e-2  1.70e-2  0.273  < cfl < 0.282  
+       2/VF4       0.01    511        4.08e-3  4.12e-3  0.2709 < cfl < 0.274   
+       2/VF4       0.01   1023        1.02e-3  1.04e-3  0.2709 < cfl < 0.276   
+				     	               
+       2/VF4       0.005   255         3.30e-2 3.35e-2  0.2739 < cfl < 0.278
+       2/VF4       0.005   511         8.20e-3 8.40e-2  0.272  < cfl < 0.278
+       2/VF4       0.005  1023         2.05e-3 2.10e-3  0.272  < cfl < 0.278 
+
+
+
+       4/VF4       0.01    255     8.80e-3   8.90e-3    0.1460 < cfl < 0.1477
+       4/VF4       0.01    511     2.14e-3   2.18e-3    0.1420 < cfl < 0.1447
+       4/VF4       0.01   1023     ???????   5.44e-4    ?????? < cfl < 0.1444         oscille
+				   	               
+       4/VF4       0.005   255     1.75e-2   1.80e-2    0.145  < cfl < 0.149
+       4/VF4       0.005   511     4.3e-3    4.40e-3    0.142  < cfl < 0.1460
+       4/VF4       0.005  1023     1.09e-3   1.10e-3    0.1447 < cfl < 0.146084
+				   	               
+				   	               
+       4/VF4       0.001  1023     ???????   5.31e-3    ?????? < cfl < 0.1410  
+       4/VF4       0.001  2047     ???????   5.31e-3    ?????? < cfl < ??????????  oscille
+                                               
+awk '/t=/ { printf("\n %f ",$2)} /Linfini/ { print $6}'

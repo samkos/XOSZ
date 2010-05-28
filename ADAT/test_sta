@@ -1,0 +1,87 @@
+'xxxxx/0'   ! fichier de sortie generique
+1          ! nexample
+0.0e00      ! start_0
+0.10099990     ! t_all
+0.00115       ! tau 
+0.01       ! t_print 
+1           ! is_print       
+0           ! is_conv        >0: cv_global /5 : sauve fichier
+-4           ! Schema Temporel d'integration
+0           ! 0--> 1     1--> current  2 -> richardson
+60          ! lm
+5          ! nm
+1.         ! nu 
+5           ! ncheck           1:VF2  2:DF2 3:VF4 5:DF4 6:DF4e
+0           ! ncheck_precond
+1           ! ntype_solver  1..9:BiCGSTAB(l),  10:GMRES,     11:GMRESR,      12:GMRESR+norec,
+            !                 13:MG,           14:Orthodir,  15:Orthomin,    16:lisse
+0           ! ntype_precond 1..9: BiCGSTAB(l), 10:GMRES,     13:MG,          16:lisse
+215         ! npcg
+200         ! nprecond
+8           ! nrecvddm
+1.E-18       ! epsv
+1.E-10      ! epsva
+1.E-8       ! epsvc 
+1.E-18      ! epsvac
+20          ! ninterne
+4           ! ndirection
+2           ! ns_solver  1-> compress art  2-> couplee  3-> projection 4-> lagrangien augm
+30.          ! rho_ca/mupression     constante de compressibilite artificielle ou lag augm / mupression
+1.          ! rlag                  constante r du lagrangien augmente
+5           ! nbmax_ca   Nombre max d'iterations de CA  
+50          ! nbp_ca     impression divergence tous les nbp_ca pas
+2000        ! nbmg
+1.E-8       ! epsmg
+1.E-8       ! epsmga
+3           ! nb_prelis
+2           ! nb_post_lis
+1           ! nb_cycle
+1.0         ! sor_theta
+0           ! is_decale  0->non  1-> oui
+000        ! is_restart_save
+'xxxxx/0'   ! fichier de sauvegarde globale
+
+! solution testees
+!         21     Cavite entrainee
+!         22     Solution Test Poisson    
+!         23     ecoulement de Poiseuil
+!         24     ecoulement de Kovasznay
+!         25     Cavite entrainee regularisee
+!         26     Tourbillon bidimensionnel de Green-Taylor
+!         27     Tourbillon bidimensionnel periodique
+!         28     Bipole     traversant selon la diagonale
+!         29     Gaussienne traversant selon la diagonale
+
+
+
+nu    lm     dt       dx=2*pi/(lm+1) CFL=dt/nu/dx/dx=dt*(lm+1)^2/2/pi
+1     60    1e-3              0             0.3721
+1    128  
+
+0.5     64  1. e-3
+0.5    128  4.6e-4                            0.12450347046    
+0.5    256  1.5e-4
+0.5    512  3.6e-5
+
+
+0.1     64  1.e-3
+1e-1   256  > 2.5e-4
+
+0.01    64 1.e-3
+
+
+
+
+
+
+
+
+
+ordre temps/espace nu      lm         div     conv
+       1/DF4       0.1     256       3.1e-3   2.8e-3
+		       
+		       
+                   0.1     512       4.8e-4   4.5e-4
+                   0.01                       5. e-3
+                   0.001                      5.e-2
+
