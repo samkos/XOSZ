@@ -21,7 +21,7 @@ all: $(TARGET)
 zplot_control : zplot_control.c
 	cc -o zplot_control zplot_control.c
 
-$(TARGET) : $(OBJECTS)
+zephyr : $(OBJECTS)
 	$(COMPILER) -o $@ $(FFLAGS) $(OBJECTS) $(MPI_LIB) 
 
 %.o : %.f90

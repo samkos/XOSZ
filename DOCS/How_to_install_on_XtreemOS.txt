@@ -1,0 +1,43 @@
+** installation of Zephyr on XtreemOS
+**    Samuel KORTAS (January 2010)
+
+
+1) compiling and running Zephyr in sequential mode:
+
+a) installation of prerequisite
+
+in order to compile Zephyr you need to have installed the following
+packages :
+
+urpmi gfortran -a
+urpmi SOFTS/gnuplot-*
+
+b) compilation
+
+then you can compile Zephyr
+
+cd SRC
+make
+
+... to obtain the executable SRC/zephyr
+
+c) run a test
+
+cd RUN
+
+./runXOS cr2 1
+.... meaning run zephyr on 1 node only
+     using the dataset ../ADAT/zephyrcr.dat as input 
+
+the result output should appear on the screen and be
+saved along with the input file used in the directory
+cr2/<nb_procs>/<date_of_test>
+
+
+
+
+
+
+
+
+
