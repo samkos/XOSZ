@@ -34,9 +34,20 @@ saved along with the input file used in the directory
 cr2/<nb_procs>/<date_of_test>
 
 
+2) compiling and running Zephyr in mpi mode
 
+urpmi gcc-c++
+urpmi rsh
+export F77=g77
 
+cd SOFTS
+tar xvfz lam-6.5.9.tar.gz 
+cd lam-6.5.9
+./configure --with-fc=gfortran
+make -j 4
+make install
 
+cd ../../SRC
 
 
 

@@ -10,15 +10,22 @@
 TARGET = zephyr
 OBJECTS =  zuncol_mpi_timed.o zparam.o   zpara.o zgarbage.o \
 	   zdac.o   zcompact.o zinit.o zblas.o  zio.o  zmg.o \
-	   zcalcul.o  znavier.o ztest.o zmainone.o  second.o
+	   zcalcul.o  znavier.o ztest.o zmainone.o  second.o \
+	   zplot.o
 
-COMPILER  = mpif90 
-FFLAGS    =  -O3 -r8 -i8
+COMPILER  = mpif77 
+FFLAGS    =  -O3 
 
 all: $(TARGET)
 
 $(TARGET) : $(OBJECTS)
 	$(COMPILER) -o $@ $(FFLAGS) $(OBJECTS) $(MPI_LIB) 
+
+zplot_control : zplot_control.c
+	cc -o zplot_control zplot_control.c
+
+%.o : %.c
+	cc -c $<
 
 %.o : %.f90
 	$(COMPILER) $(MPI_INC) $(FFLAGS) -c $<

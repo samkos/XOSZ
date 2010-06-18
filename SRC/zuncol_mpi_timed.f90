@@ -497,16 +497,15 @@ contains
 
   !***********************************************************************
 
-  subroutine timer_print(n,tot)
+  subroutine timer_print(n)
     implicit none
 
-    integer, intent(in) :: n,tot
+    integer, intent(in) :: n
 
     if (my_task.eq.0) &
          & print '(A,I3,A,I3,A,F10.2,A,E10.5,A)&
          &',' task ',my_task&
-         & ,' Timer ',n,' Cpu Time : ',tchrono(n),' seconds/all   '&
-         &,tchrono(n)/tot,' seconds/all   '
+         & ,' Timer ',n,' Cpu Time : ',tchrono(n),' seconds'
     
 
   end subroutine timer_print
