@@ -27,7 +27,7 @@ sed 's|xxxxx/bip|./output|g;s/\!.*$//g' ../ADAT/zephyr$cas.dat >> $chemin/input
 cd $chemin
 ls -la
 lamboot
-nohup time mpirun -np $p $here/../SRC/zephyr > zephyr.out 2>&1 &
+nohup time mpirun -machinefile ~/HOSTS -np $p $here/../SRC/zephyr > zephyr.out 2>&1 &
 echo tailing the output $chemin/zephyr.out in 5  seconds...
 sleep 5
 tail -f zephyr.out

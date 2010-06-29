@@ -71,9 +71,11 @@ cd
 chown -R sk.sk XOSZ
 mv XOSZ ~sk/
 su  - sk
-cd XOSZ/RUN
+cd /home/sk/XOSZ/RUN
 
-. ./runXos cr2 1
+echo `hostname` 16 >  ~/HOSTS
+
+. ./runXosMPI cr2 4
 .... meaning run zephyr on 1 node only
      using the dataset ../ADAT/zephyrcr.dat as input 
 
