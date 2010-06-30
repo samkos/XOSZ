@@ -86,6 +86,7 @@ contains
     !! timer communications globales
     call timer_clear(2); call timer_start(2); call timer_stop(2)
 
+
     call coinit
 
     call sortie_entete

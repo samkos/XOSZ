@@ -14,7 +14,7 @@ OBJECTS =  zuncol_mpi_timed.o zparam.o   zpara.o zgarbage.o \
 	   zplot.o
 
 COMPILER  = mpif77 
-FFLAGS    =  -O3 
+FFLAGS    =  -O3 -fdefault-real-8
 
 all: $(TARGET)
 
@@ -22,10 +22,10 @@ $(TARGET) : $(OBJECTS)
 	$(COMPILER) -o $@ $(FFLAGS) $(OBJECTS) $(MPI_LIB) 
 
 zplot_control : zplot_control.c
-	cc -o zplot_control zplot_control.c
+	mpicc -o zplot_control zplot_control.c
 
 %.o : %.c
-	cc -c $<
+	mpicc -c $<
 
 %.o : %.f90
 	$(COMPILER) $(MPI_INC) $(FFLAGS) -c $<

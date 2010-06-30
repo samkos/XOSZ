@@ -38,6 +38,8 @@ contains
 
     it_start=0
     call lecture_input
+    print *,"ici"
+
 
     ncheck_first=ncheck
     ncheck_second=ncheck_precond
@@ -53,6 +55,8 @@ contains
     nom_file_cv=trim(nom_fic_output)//'cv_'&
          & //trim(nom_solver_short(abs(ntype_solver)))//'.dat'
     call init_para
+
+
 
     if (is_decal) then                                       ! start_out_light
        lmp_global=lm_global+1; nmp_global=nm_global+1; 
@@ -83,16 +87,24 @@ contains
        if (is_north) nmp=nmp-1                         
     endif                                                   ! out_light
     
+
+
     call output('lm_global ,nm _global        ',lm_global+2 ,nm_global+2)
     call output('lmu_global,nmu_global,lmu,nmu',lmu_global,nmu_global,lmu+2,nmu+2)
     call output('lmv_global,nmv_global,lmv,nmv',lmv_global,nmv_global,lmv+2,nmv+2)
     call output('lmp_global,nmp_global,lmp,nmp',lmp_global,nmp_global,lmp+2,nmp+2)  ! out_light
 
+    print *,"la-bas",nb_i_blocks,nb_k_blocks
+
     ok=min(min(lmu,nmu),min(lmv,nmv))
     ok=min(ok,min(lmp,nmp))
+    print *,"la0",nexample, ncheck,ok,lmv,nmv,lmu,nmv
     ok=global_min(ok)
+    print *,"la2",nexample, ncheck,ok,lmv,nmv,lmu,nmv
     if (nexample/=1.and.((ncheck==df4.or.ncheck==df4e.or.ncheck==vf4).and.ok<4)) &
          call parallel_stop ('(lm<4 or nm<4) while x-stencil sizes > 4 ')
+
+    print *,"la",nb_i_blocks,nb_k_blocks
 
     allocate(VTU (0:lmu+1,0:nmu+1)); allocate(VTU0(0:lmu+1,0:nmu+1)); 
     allocate(VTU1(0:lmu+1,0:nmu+1)); allocate(VTU2(0:lmu+1,0:nmu+1)); 
@@ -100,6 +112,7 @@ contains
     allocate(VTUS(0:lmu+1,0:nmu+1)); allocate(SMU (0:lmu+1,0:nmu+1),stat=ok); 
     if (ok/=0) stop 'VTU-SMU  : error alloc'
                                                                   
+
     allocate(VTV (0:lmv+1,0:nmv+1)); allocate(VTV0(0:lmv+1,0:nmv+1)); 
     allocate(VTV1(0:lmv+1,0:nmv+1)); allocate(VTV2(0:lmv+1,0:nmv+1)); 
     allocate(VTV3(0:lmv+1,0:nmv+1)); allocate(VTV4(0:lmv+1,0:nmv+1)); 
@@ -119,6 +132,7 @@ contains
     call output('size(VTU)',size(VTU,1),size(VTU,2))
     call output('size(VTV)',size(VTV,1),size(VTV,2))            
     call output('size(PRE)',size(PRE,1),size(PRE,2))            
+
 
 
 
