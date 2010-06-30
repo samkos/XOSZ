@@ -211,10 +211,7 @@ contains
     integer :: error
 
     call timer_start(2)
-    print *,"avant",r
     call MPI_Allreduce(r,s,1,MPI_DOUBLE_PRECISION,MPI_MIN,MPI_COMM_WORLD,error)
-    s=r
-    print *,"apres",r
     call timer_stop(2)
 
     return
@@ -358,7 +355,7 @@ contains
     implicit none
 
     integer                        :: task, tag
-    real(kind=prec), dimension(:,:) :: buf
+    real(kind=prec), dimension(:,:),intent(inout) :: buf
     real(kind=prec), dimension(size(buf)) :: buf1d
     integer                        :: error,nb,status
     
