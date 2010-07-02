@@ -46,7 +46,7 @@ export F77=g77
 cd SOFTS
 tar xvfz lam-6.5.9.tar.gz 
 cd lam-6.5.9
-./configure --with-fc=gfortran
+./configure --with-fc=gfortran --prefix=/home/samy/local
 make -j 4
 make install
 

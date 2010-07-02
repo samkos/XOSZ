@@ -14,7 +14,7 @@ OBJECTS =  zuncol_mpi_timed.o zparam.o   zpara.o zgarbage.o \
 	   zplot.o
 
 COMPILER  = mpif77 
-FFLAGS    =  -O3 -fdefault-real-8
+FFLAGS    =  -O3 -fdefault-real-8 -I/home/samy/local/include -L/home/samy/local/lib
 
 all: $(TARGET)
 
