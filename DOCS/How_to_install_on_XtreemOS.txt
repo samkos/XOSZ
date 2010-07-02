@@ -56,6 +56,9 @@ b) compile Zephyr for lam
 cd ../../SRC
 make -f Makefile.mpi clean
 make -f Makefile.mpi
+cp ../RUN/runXosMPI .
+chmod +x  runXosMPI
+. ./runXosMPI cr2 4
 
 
 
