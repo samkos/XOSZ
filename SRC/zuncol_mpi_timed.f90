@@ -133,7 +133,7 @@ contains
 
     call timer_start(2)
     r=real(i)
-    call MPI_Allreduce(r,s,1,MPI_DOUBLE_PRECISION,MPI_SUM,MPI_COMM_WORLD,error)
+    call MPI_Allreduce(r,s,1,MPI_REAL8,MPI_SUM,MPI_COMM_WORLD,error)
     j=int(s)
     call timer_stop(2)
 
@@ -149,7 +149,7 @@ contains
 
     call timer_start(2)
     r=real(i)
-    call MPI_Allreduce(r,s,1,MPI_DOUBLE_PRECISION,MPI_MAX,MPI_COMM_WORLD,error)
+    call MPI_Allreduce(r,s,1,MPI_REAL8,MPI_MAX,MPI_COMM_WORLD,error)
     j=int(s)
     call timer_stop(2)
     
@@ -180,7 +180,7 @@ contains
     integer :: error
     
     call timer_start(2)
-    call MPI_Allreduce(r,s,1,MPI_DOUBLE_PRECISION,MPI_SUM,MPI_COMM_WORLD,error)
+    call MPI_Allreduce(r,s,1,MPI_REAL8,MPI_SUM,MPI_COMM_WORLD,error)
     call timer_stop(2)
 
   end function global_real_add
@@ -195,7 +195,7 @@ contains
     integer :: error
 
     call timer_start(2)
-    call MPI_Allreduce(r,s,1,MPI_DOUBLE_PRECISION,MPI_MAX,MPI_COMM_WORLD,error)
+    call MPI_Allreduce(r,s,1,MPI_REAL8,MPI_MAX,MPI_COMM_WORLD,error)
     call timer_stop(2)
 
 
@@ -211,7 +211,7 @@ contains
     integer :: error
 
     call timer_start(2)
-    call MPI_Allreduce(r,s,1,MPI_DOUBLE_PRECISION,MPI_MIN,MPI_COMM_WORLD,error)
+    call MPI_Allreduce(r,s,1,MPI_REAL8,MPI_MIN,MPI_COMM_WORLD,error)
     call timer_stop(2)
 
     return
@@ -230,7 +230,7 @@ contains
 
     call timer_start(2)
     nb = size(r)
-    call MPI_Allreduce(r(1),s(1),nb,MPI_DOUBLE_PRECISION,MPI_MAX,MPI_COMM_WORLD,error)
+    call MPI_Allreduce(r(1),s(1),nb,MPI_REAL8,MPI_MAX,MPI_COMM_WORLD,error)
     call timer_stop(2)
 
   end function global_real_madd1d
@@ -270,7 +270,7 @@ contains
     integer          :: error,nb
 
     call timer_start(1)
-    call MPI_send(buf,nb,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,error)
+    call MPI_send(buf,nb,MPI_REAL8,task,tag,MPI_COMM_WORLD,error)
     call timer_stop(1)
 
   end subroutine snd_real_msg0d
@@ -285,7 +285,7 @@ contains
     integer          :: error,nb,status
     
     call timer_start(1)
-    call MPI_recv(buf,nb,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,status,error)
+    call MPI_recv(buf,nb,MPI_REAL8,task,tag,MPI_COMM_WORLD,status,error)
 !!$    nb_msg = nb_msg+1
 !!$    if (nb_msg.ge.50) buf=0.
     call timer_stop(1)
@@ -299,12 +299,12 @@ contains
     implicit none
 
     integer                        :: task, tag
-    real(kind=prec), dimension(:) :: buf
+    real(kind=prec), dimension(:) :: buf(1:)
     integer                        :: error,nb
 
     call timer_start(1)
     nb=size(buf)
-    call MPI_send(buf(1),nb,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,error)
+    call MPI_send(buf(1),nb,MPI_REAL8,task,tag,MPI_COMM_WORLD,error)
     call timer_stop(1)
     
     return
@@ -316,12 +316,12 @@ contains
     implicit none
 
     integer                        :: task, tag
-    real(kind=prec), dimension(:) :: buf
+    real(kind=prec), dimension(:), intent(inout) :: buf(1:)
     integer                        :: error,nb,status
     
     call timer_start(1)
     nb=size(buf)
-    call MPI_recv(buf(1),nb,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,status,error)
+    call MPI_recv(buf(1),nb,MPI_REAL8,task,tag,MPI_COMM_WORLD,status,error)
 !!$    nb_msg = nb_msg+1
 !!$    if (nb_msg.ge.50) buf=0.
     call timer_stop(1)
@@ -343,7 +343,7 @@ contains
     nb=size(buf)
     buf1d = reshape(buf,(/size(buf)/))
     !!print *,my_task,'sends ',buf1d
-    call MPI_send(buf1d(1),nb,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,error)
+    call MPI_send(buf1d,nb,MPI_REAL8,task,tag,MPI_COMM_WORLD,error)
     call timer_stop(1)
 
     return
@@ -361,7 +361,7 @@ contains
     
     call timer_start(1)
     nb=size(buf)
-    call MPI_recv(buf1d(1),nb,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,status,error)
+    call MPI_recv(buf1d,nb,MPI_REAL8,task,tag,MPI_COMM_WORLD,status,error)
     buf = reshape(buf1d,(/size(buf,1),size(buf,2)/))
 !!$    nb_msg = nb_msg+1
 !!$    if (nb_msg.ge.50) buf=0.

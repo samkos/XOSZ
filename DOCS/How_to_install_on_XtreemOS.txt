@@ -47,7 +47,7 @@ cd SOFTS
 tar xvfz lam-6.5.9.tar.gz 
 cd lam-6.5.9
 ./configure --with-fc=gfortran
-make -j 4
+make -j 4 > out
 make install
 
 
@@ -75,7 +75,7 @@ cd /home/sk/XOSZ/RUN
 
 echo `hostname` 16 >  ~/HOSTS
 
-. ./runXosMPI cr2 4
+. ./runXosMPI cr2 1
 .... meaning run zephyr on 1 node only
      using the dataset ../ADAT/zephyrcr.dat as input 
 
