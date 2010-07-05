@@ -281,7 +281,7 @@ contains
     implicit none
 
     integer          :: task, tag
-    real(kind=prec) :: buf
+    real(kind=prec),intent(inout) :: buf
     integer          :: error,nb,status
     
     call timer_start(1)
@@ -299,12 +299,13 @@ contains
     implicit none
 
     integer                        :: task, tag
-    real(kind=prec), dimension(:) :: buf(1:)
+    real(kind=prec), dimension(:) :: buf
     integer                        :: error,nb
 
     call timer_start(1)
     nb=size(buf)
-    call MPI_send(buf(1),nb,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,error)
+    call MPI_send(buf,nb,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,error)
+    !print *,my_task,"a envoye ",nb,buf
     call timer_stop(1)
     
     return
@@ -316,12 +317,13 @@ contains
     implicit none
 
     integer                        :: task, tag
-    real(kind=prec), dimension(:), intent(inout) :: buf(1:)
+    real(kind=prec), dimension(:),intent(inout) :: buf
     integer                        :: error,nb,status
     
     call timer_start(1)
     nb=size(buf)
-    call MPI_recv(buf(1),nb,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,status,error)
+    !print *,my_task,"a recoit ",nb,buf
+    call MPI_recv(buf,nb,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,status,error)
 !!$    nb_msg = nb_msg+1
 !!$    if (nb_msg.ge.50) buf=0.
     call timer_stop(1)

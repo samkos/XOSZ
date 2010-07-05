@@ -13,9 +13,8 @@ OBJECTS =  zuncol_mpi_timed.o zparam.o   zpara.o zgarbage.o \
 	   zcalcul.o  znavier.o ztest.o zmainone.o  second.o \
 	   zplot.o
 
-COMPILER  = mpif90 -I /usr/include
-FFLAGS    =  -O3 -fdefault-real-8 -fdefault-integer-8
-#FFLAGS    =  -g -O -fdefault-real-8 -fdefault-integer-8
+COMPILER  = mpif90 
+FFLAGS    =  -O3 -fdefault-real-8 -fdefault-integer-8 -I /usr/include
 
 all: $(TARGET)
 
