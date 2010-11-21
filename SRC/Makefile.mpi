@@ -13,8 +13,8 @@ OBJECTS =  zuncol_mpi_timed.o zparam.o   zpara.o zgarbage.o \
 	   zcalcul.o  znavier.o ztest.o zmainone.o  second.o \
 	   zplot.o
 
-COMPILER  = mpif77 
-FFLAGS    =  -O3 -fdefault-real-8 -I/home/samy/local/include -L/home/samy/local/lib
+COMPILER  = mpif90
+FFLAGS    =  -O3 -fdefault-real-8 -fdefault-integer-8 -I/home/samy/local/include -L/home/samy/local/lib
 
 all: $(TARGET)
 
