@@ -13,8 +13,8 @@ echo ================== running ==========================
 echo running... 
 pwd
 ls -l
-
-../SRC/zephyr < ./zephyr.in > zephyr.out
+cp ../SRC/zephyr .
+./zephyr < zephyr.in > zephyr.out
 date
 echo
 echo ==================== output ==========================
