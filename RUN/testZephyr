@@ -1,0 +1,17 @@
+echo running zephyr on $2 nodes using dataset ADAT/zephyr$1 ...
+
+cas=$1
+p=$2
+
+echo $p > ./zephyr.in
+sed 's|xxxxx/bip|./output|g;s/\!.*$//g' ../ADAT/zephyr$cas.dat >> ./zephyr.in
+
+
+date
+echo running... 
+../SRC/zephyr < ./zephyr.in > zephyr.out
+date
+echo
+echo ==================== output ==========================
+tail -25 zephyr.out
+echo ================ fin output ==========================
