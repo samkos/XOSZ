@@ -23,11 +23,26 @@ make
 
 c) run a test
 
-cd RUN
+from SRC directory, type :
 
-. ./runXos cr2 1
-.... meaning run zephyr on 1 node only
-     using the dataset ../ADAT/zephyrcr.dat as input 
+./zephyr ../ADAT/zephyrcr2.dat
+
+Zephyr should starts the calculation, dumping global convergence results on standard output.
+
+d) other examples,   backup/restore example
+
+the ../ADAT contains other examples of input files. 
+
+among them, 
+      zephyr28_save.dat
+that calculate a test solution from t=0 to t=0.2,  dumping current results in a file
+
+and 
+    zephyr28_retrieve.dat
+that restore former calculation and continues it.
+
+
+
 
 the result output should appear on the screen and be
 saved along with the input file used in the directory

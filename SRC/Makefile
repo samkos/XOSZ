@@ -14,6 +14,7 @@ OBJECTS =  zuncol_fake.o zparam.o   zpara.o zgarbage.o \
 
 COMPILER  = gfortran
 FFLAGS    =  -O3
+FFLAGS    =  -g
 
 all: $(TARGET) 
 

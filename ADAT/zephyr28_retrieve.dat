@@ -1,10 +1,10 @@
 1           ! nb_tasks
 ./output    ! fichier de sortie
 28          ! nexample
-0.3e00      ! start_0
-0.995         ! t_all
+0.e00      ! start_0
+0.99999         ! t_all
 0.00625     ! tau 
-0.1         ! t_print 
+0.00625         ! t_print 
 0           ! is_print       
 2           ! is_conv        >0: cv_global /5 : sauve fichier
 4           ! Schema Temporel d'integration
@@ -39,7 +39,7 @@
 1           ! nb_cycle
 1.0         ! sor_theta
 0           ! is_decale  0->non  1-> oui
-0           ! is_restart_save
+5           ! is_restart_save
 './save' ! fichier de sauvegarde globale
 
 ! solution testees

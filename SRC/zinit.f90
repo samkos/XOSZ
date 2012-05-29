@@ -1011,7 +1011,7 @@ contains
 
 
 
-       if (rbuffer(i0)>0) call restore_param(rbuffer,i0)         ! out_light
+       if (rbuffer(39)>0) call restore_param(rbuffer,i0)         ! out_light
 
        do i=1,nb_tasks-1
           call snd_msg(i,900+i,rbuffer)
@@ -1102,9 +1102,11 @@ contains
    use uncol, only : tchrono
    implicit none
    integer :: ok
+   character (len=200) :: nom_fichier_save
 
+   nom_fichier_save = trim(nom_fic_save)
    if (my_task==0) then
-      open(file=trim(nom_fic_save)//'save.dat',unit=69,form='unformatted',iostat=ok)
+      open(file=nom_fichier_save,unit=69,form='unformatted',iostat=ok)
       if (ok/=0) stop 'pb ouverture fichier sauvegarde'  
 
       is_restart_save=abs(is_restart_save)
@@ -1135,7 +1137,7 @@ contains
    endif
 
    if (my_task==0) close(69)
-   if (my_task==0) print *,'*** data Saved...'
+   if (my_task==0) print *,'*** data Saved... in ', nom_fichier_save
 
    return
  end subroutine save_data
@@ -1154,11 +1156,14 @@ contains
    real(kind=prec) :: t_all0, t_start0
    real(kind=prec), dimension(:) :: rbuffer
    integer :: i
+   character (len=200) :: nom_fichier_save
+
+   nom_fichier_save = trim(nom_fic_save)
 
    if (my_task==0) then   
-      open(file=trim(nom_fic_save)//'save.dat',unit=69,status='old',form='unformatted',iostat=ok)
+      open(file=nom_fichier_save,unit=69,status='old',form='unformatted',iostat=ok)
       if (ok/=0) then
-         print *,'*** fichier save non encore cree'
+         print *,'*** fichier save non encore cree',nom_fichier_save
          rbuffer(i)=-rbuffer(i)
       else
          read(69) nexample, t_start0, t_all0, tau, t_print, is_print, is_cv,&
@@ -1168,6 +1173,7 @@ contains
               & rho_ca, rlag, nbmax_ca, nbp_ca, nbmg, epsmg, epsmga, nb_prelis, nb_postlis,&
               & nb_cycle, sor_theta, is_decale, is_restart_save,temps,it,tchrono
 
+         print *,'*** fichier save ouvert',nom_fichier_save
          
 !!$      print *,'read', nexample, t_start, t_all, tau, t_print, is_print, is_cv,&
 !!$              & is_kuta, is_richardson, lm_global, nm_global, nu, ncheck,&
@@ -1253,7 +1259,7 @@ contains
 
    if (my_task==0) close(69)
 
-   print *,'*** data Restored...'
+   print *,'*** data Restored... at t_start=',t_start,' calculation to ',t_all
 
    return
  end subroutine restore_champs                                     ! end_out_light
