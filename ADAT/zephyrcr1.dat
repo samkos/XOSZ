@@ -1,8 +1,8 @@
-1           ! nb tasks
-'output' ! fichier de sortie generique
+1      ! nb_tasks
+./output ! fichier de sortie
 28          ! nexample
 0.3e00      ! start_0
-0.30625          ! t_all
+0.40625          ! t_all
 0.003125      ! tau 
 0.1         ! t_print 
 0           ! is_print       
@@ -40,7 +40,7 @@
 1.0         ! sor_theta
 0           ! is_decale  0->non  1-> oui
 0           ! is_restart_save
-'save' ! fichier de sauvegarde globale
+./save ! fichier de sauvegarde globale
 
 ! solution testees
 !         21     Cavite entrainee

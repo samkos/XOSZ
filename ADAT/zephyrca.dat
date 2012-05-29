@@ -1,8 +1,9 @@
-'xxxxx/c400'! fichier de sortie generique
+1           ! nb_tasks
+./output    ! fichier de sortie
 25          ! nexample
 0.5e00      ! start_0
 05099990    ! t_all
-0.250        ! tau 
+0.250       ! tau 
 0.500       ! t_print 
 2           ! is_print       
 0           ! is_conv        >0: cv_global /5 : sauve fichier
@@ -19,7 +20,7 @@
 215         ! npcg
 200         ! nprecond
 8           ! nrecvddm
-1.E-8      ! epsv
+1.E-8       ! epsv
 1.E-10      ! epsva
 1.E-8       ! epsvc 
 1.E-18      ! epsvac
@@ -37,9 +38,9 @@
 2           ! nb_post_lis
 1           ! nb_cycle
 1.0         ! sor_theta
-01           ! is_decale  0->non  1-> oui
+01          ! is_decale  0->non  1-> oui
 0           ! is_restart_save
-'xxxxx/c400'! fichier de sauvegarde globale
+./save      ! fichier de sauvegarde globale
 
 ! solution testees
 !         21     Cavite entrainee

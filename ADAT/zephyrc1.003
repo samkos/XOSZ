@@ -1,4 +1,5 @@
-'xxxxx/c10000'! fichier de sortie generique
+1      ! nb_tasks
+./output ! fichier de sortie
 25          ! nexample
 0.5e00      ! start_0
 05099990    ! t_all
@@ -39,7 +40,7 @@
 0.75         ! sor_theta
 01           ! is_decale  0->non  1-> oui
 01           ! is_restart_save
-'xxxxx/c10000'! fichier de sauvegarde globale
+./save ! fichier de sauvegarde globale
 
 ! solution testees
 !         21     Cavite entrainee
