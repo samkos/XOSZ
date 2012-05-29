@@ -38,7 +38,7 @@ among them,
 that calculate a test solution from t=0 to t=0.2,  dumping current results in a file
 
 and 
-    zephyr28_retrieve.dat
+    zephyr28_continues.dat
 that restore former calculation and continues it.
 
 
