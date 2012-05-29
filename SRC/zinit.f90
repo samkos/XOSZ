@@ -918,32 +918,45 @@ contains
     use disc
     use uncol
     implicit none
-    integer :: i,i0,ind
+    integer :: i,i0,ind, iargc, numarg
 
     integer, parameter :: input_unit = 7, output_unit=6, ok = 0
     integer :: open_status
-    character (len=200) :: line
+    character (len=200) :: line, arg, input_file_name
     integer :: dat1, RetCode, nb_input
     real(kind=prec), dimension(96) :: rbuffer=0.,nbuffer=0.
 
     if (my_task==0) then
 
+
+       !!call timestamp ( )
+
+       numarg = iargc ( )
+       
+       if (numarg /=1) then
+          print *,"usage : zephyr <input file>"
+          stop
+       end if
+       
+       call getarg ( 1, input_file_name)
+
+
 !!       open( unit=output_unit, & 
 !!         file='/bgl/FS2/ohess/Codes/zephyr/output', status="new", &
 !!!!            iostat=open_status )
        
-       if( open_status /= ok ) then
-          print *
-          print *, "Unable to open file"
-       end if
+       ! if( open_status /= ok ) then
+       !    print *
+       !    print *, "Unable to open file"
+       ! end if
 
        open( unit=input_unit, & 
-         file='input', status="old", &
+         file=input_file_name, status="old", &
             iostat=open_status )
        
        if( open_status /= ok ) then
           print *
-          print *, "Unable to open input file"
+          print *, "Unable to open input file ",input_file_name
        end if
 
        read (unit=input_unit, fmt=*) i
