@@ -3,6 +3,8 @@ module init
 
   use constante
   use para
+  use, intrinsic :: iso_fortran_env
+  
   integer, save :: ncheck_first,ncheck_second
 
   character(len=*), parameter, dimension(1:18) ::       &
@@ -916,10 +918,12 @@ contains
     use disc
     use uncol
     implicit none
-    integer :: i,i0
+    integer :: i,i0,ind
 
     integer, parameter :: input_unit = 7, output_unit=6, ok = 0
     integer :: open_status
+    character (len=200) :: line
+    integer :: dat1, RetCode, nb_input
     real(kind=prec), dimension(96) :: rbuffer=0.,nbuffer=0.
 
     if (my_task==0) then
@@ -943,14 +947,45 @@ contains
        end if
 
        read (unit=input_unit, fmt=*) i
-       read (unit=input_unit, fmt=*)   nom_fic_output
+
+       nb_input = 1
        i0=23
-       i0=39    ! out_light
-       do i=1,i0
-          read (unit=input_unit, fmt=*) rbuffer(i)
-       enddo
-       read (unit=input_unit, fmt=*) nom_fic_save
-       close (unit=input_unit)
+       i0=41    ! out_light
+       read_loop: do
+          read (input_unit, '(A)', iostat=RetCode)  line
+          if ( RetCode == iostat_end)  exit read_loop
+           if ( RetCode /= 0 ) then
+             print *,"erreur de lecture du fichier input"
+             stop
+             exit read_loop
+           end if
+           ind = index (line, "!")
+           if (ind  == 1 )  cycle read_loop
+           line = line(1:ind-1)
+           !!print *,"ligne lue :",line
+           if (len_trim(line)==0)  cycle read_loop
+
+           if (nb_input == 1) then
+              read (line, *) nom_fic_output
+              !!print *,"fic_ouput = ",nom_fic_output
+           else if (nb_input == i0) then
+              read (line, *) nom_fic_save
+              !!print *,"fic_save = ",nom_fic_save
+           else
+              read (line, fmt=*) rbuffer(nb_input-1)
+              !!print *,"data ",nb_input,":",rbuffer(nb_input-1)
+           end if
+           nb_input = nb_input + 1
+       end do read_loop
+
+       ! read (unit=input_unit, fmt=*)   
+       ! i0=23
+       ! i0=39    ! out_light
+       ! do i=1,i0
+       !    read (unit=input_unit, fmt=*) rbuffer(i)
+       ! enddo
+       ! read (unit=input_unit, fmt=*) nom_fic_save
+       ! close (unit=input_unit)
 
 !!!       read *,i
 !!!       read *,  nom_fic_output

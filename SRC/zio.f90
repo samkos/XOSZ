@@ -109,7 +109,7 @@ contains
     if (my_task.eq.master_task) then
        print *,'***********************************'
        print *,'*                                 *'
-       print *,'*  Alize v 0.4 (10 Janvier 1997)  *'
+       print *,'*  Zephyr v 0.5 (Juin 2012)       *'
        print *,'*                                 *'
        print *,'***********************************'
        print *,'>> '

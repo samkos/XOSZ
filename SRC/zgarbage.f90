@@ -7,8 +7,8 @@ module garbage
      module procedure derf_tab,derf_real
   end interface
 
- character(len=*), parameter :: type_machine='Blue GENE/L'
-!LIN character(len=*), parameter :: type_machine='PC Linux'
+!BG character(len=*), parameter :: type_machine='Blue GENE/L'
+character(len=*), parameter :: type_machine='PC Linux'
 !SGI character(len=*), parameter :: type_machine='Silicon Graphics'
 !SP2 character(len=*), parameter :: type_machine='IBM SP2'
 !T3D character(len=*), parameter :: type_machine='Cray T3E'
@@ -253,6 +253,7 @@ contains
      &E0*t**2-2._prec*t*x+x**2-2._prec*t*y+y**2)/nu)*t*x**2-4._prec*exp(-(2._prec*t*&
      &*2-2._prec*t*x+x**2-2._prec*t*y+y**2)/nu)*t**2*y+2._prec*exp(-(2._prec*t**2-2.&
      &E0*t*x+x**2-2._prec*t*y+y**2)/nu)*t*y**2
+
       s3 = s4+4._prec*exp(-(2._prec*t**2-2._prec*t*x+x**2-2._prec*t*y+y**2)/nu)*x*nu&
      &-2._prec*exp(-(2._prec*t**2-2._prec*t*x+x**2-2._prec*t*y+y**2)/nu)*x**3+4._prec*e&
      &xp(-(2._prec*t**2-2._prec*t*x+x**2-2._prec*t*y+y**2)/nu)*x*t*y-2._prec*exp(-(2&
