@@ -21,6 +21,7 @@ module io
   character(len=1), parameter, dimension(4) ::&
        & nom_mg_cycle=(/'V','W','X','Y'/)                                  ! end_out_light
 
+  integer, parameter :: ncs2fw=88
   
   
 contains
@@ -436,6 +437,27 @@ contains
            
            print *
        endif
+
+
+
+!THEMIS
+       open (file="THEMIS_Code2Themis", unit=ncs2fw, form='formatted', status='unknown', &
+            &position='append', err=900)
+       write(ncs2fw,3011) it,.999   ! THEMIS
+       close(ncs2fw)
+
+
+900 continue
+
+
+ 999  format(/,                                                   &
+'Zephyr : Erreur d''initialisation :',/,              &
+'Impossible d''ouvrir le fichier : ',A,/)
+
+
+!THEMIS
+ 3011 format(' CPU TIME FOR THE TIME STEP  ',I15,':     ',E14.5)
+
        call timer_print(2)
        call timer_print(1)
        call timer_print(0)
