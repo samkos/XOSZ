@@ -436,18 +436,14 @@ contains
            endif
            
            print *
+
+
        endif
 
 
 
-!THEMIS
-       open (file="THEMIS_Code2Themis", unit=ncs2fw, form='formatted', status='unknown', &
-            &position='append', err=900)
-       write(ncs2fw,3011) it,.999   ! THEMIS
-       close(ncs2fw)
 
 
-900 continue
 
 
  999  format(/,                                                   &
@@ -463,6 +459,12 @@ contains
        call timer_print(0)
 
     endif
+    
+    if (my_task==master_task) then
+       !THEMIS
+       write(ncs2fw,3011) it,.999   ! THEMIS
+    endif
+    
 
     call timer_start(0)
 
@@ -473,6 +475,25 @@ contains
     return
   end subroutine erreur
 
+  !************************************************************************
+
+  !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+  subroutine ioinit
+    !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+    open (file="THEMIS_Code2Themis", unit=ncs2fw, form='formatted', status='unknown', &
+            & err=900)
+900 continue
+  
+    return
+  end subroutine ioinit
+
+  !************************************************************************
+
+  !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+  subroutine ioend
+    !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+    close(ncs2fw)
+  end subroutine ioend
   !************************************************************************
 
   !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss

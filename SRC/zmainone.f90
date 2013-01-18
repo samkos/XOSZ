@@ -86,9 +86,11 @@ contains
     !! timer communications globales
     call timer_clear(2); call timer_start(2); call timer_stop(2)
 
+    call ioinit
     call coinit
 
     call sortie_entete
+
     
     it=it_start
     temps=t_start
@@ -317,6 +319,8 @@ contains
 
 
     call coend
+
+    call ioend
 
 
 !SP2  return

@@ -112,7 +112,7 @@ contains
 
     integer error
 
-!!    call MPI_finalize(error)
+    call MPI_finalize(error)
 
     return
 
