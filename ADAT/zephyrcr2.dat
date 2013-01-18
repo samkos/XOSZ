@@ -5,7 +5,7 @@
 0.999       ! t_all
 0.003125    ! tau 
 0.1         ! t_print 
-0           ! is_print       
+1           ! is_print       
 2           ! is_conv        >0: cv_global /5 : sauve fichier
 4           ! Schema Temporel d'integration
 2           ! 0--> 1     1--> current  2 -> richardson

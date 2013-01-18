@@ -291,6 +291,7 @@ contains
     use blas
     use init
     use conv
+    use uncol
     implicit none
 
     real(kind=prec), dimension(:,:) :: VTU,VTV,PRE,VTUS,VTVS,PRES
@@ -301,6 +302,7 @@ contains
     real(kind=prec) ::  err,errx,erry, errp, solmax,solumax,solwmax, solpmax &
          , solmax2,solumax2,solwmax2,solpmax2,err2,errx2,erry2,errp2, div
     integer :: n
+
 
     call timer_stop(0)
 
@@ -446,24 +448,14 @@ contains
 
 
 
- 999  format(/,                                                   &
-'Zephyr : Erreur d''initialisation :',/,              &
-'Impossible d''ouvrir le fichier : ',A,/)
 
-
-!THEMIS
- 3011 format(' CPU TIME FOR THE TIME STEP  ',I15,':     ',E14.5)
-
+       call timer_print(3)
        call timer_print(2)
        call timer_print(1)
        call timer_print(0)
 
     endif
     
-    if (my_task==master_task) then
-       !THEMIS
-       write(ncs2fw,3011) it,.999   ! THEMIS
-    endif
     
 
     call timer_start(0)
@@ -478,12 +470,54 @@ contains
   !************************************************************************
 
   !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+  subroutine infothemis
+    !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+
+    use uncol 
+    use disc
+
+
+    if (my_task==master_task) then
+
+       open(file="CHECKPOINT_NOW", unit=92, status='OLD', action='READ', err=900)
+       close(92)
+       is_checkpoint_forced = 10
+
+900 continue
+
+       if (is_checkpoint_forced/=0)   write(ncs2fw,3023)
+       
+       write(ncs2fw,3011) it,timer_get(3)   ! THEMIS
+
+       call flush(ncs2fw)
+
+    endif
+!THEMIS
+ 3011 format(' CPU TIME FOR THE TIME STEP  ',I15,':     ',E14.5)
+    return
+ 3023 format(' On the order of THEMIS Framework...')
+
+ 3020 format(/,/,                                                 &
+ ' Sortie intermediaire de fichiers suite',/,                     &
+ '   Sauvegarde a l''iteration ', I10, ', Temps physique ',E14.5,/,/)
+
+ 3024 format(                                                     &
+' Code stops now after having succesfully checkpointed ',/,       &
+ 'on the order of THEMIS Framework')
+  end subroutine infothemis
+
+  !************************************************************************
+
+  !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
   subroutine ioinit
     !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+
     open (file="THEMIS_Code2Themis", unit=ncs2fw, form='formatted', status='unknown', &
             & err=900)
 900 continue
   
+    is_checkpoint_forced = 0
+
     return
   end subroutine ioinit
 

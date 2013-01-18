@@ -19,7 +19,8 @@ module data
        ,is_richardson,is_restart_save,is_decale                            &
        ,lm_global,nm_global,ncheck,ncheck_precond,ns_solver,ntype_solver   &
        ,ntype_precond,nrecvddm,nrecvddmx,nrecvddmy,nprecond,npcg,ninterne                      &
-       ,ndirection,nbmax_ca,nbp_ca,nbmg,nb_prelis,nb_postlis,nb_cycle,is_cv
+       ,ndirection,nbmax_ca,nbp_ca,nbmg,nb_prelis,nb_postlis,nb_cycle,is_cv&
+       &, is_checkpoint_forced
 
   real(kind=prec), save :: t_start,t_all,tau,t_print                       &
        ,nu,epsv,epsvc,epsva,epsvac,epsmg,epsmga                            &

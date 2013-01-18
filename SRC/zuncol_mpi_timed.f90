@@ -24,6 +24,7 @@ module uncol
   integer,save :: nb_msg=0
 
 
+
   interface snd_msg
      module procedure snd_real_msg0d, snd_real_msg1d, snd_real_msg2d &
                      ,snd_int_msg0d
@@ -52,6 +53,7 @@ module uncol
      module procedure global_int_max, global_real_max
   end interface
   
+
   include "mpif.h"
 
 contains
@@ -509,6 +511,19 @@ contains
     
 
   end subroutine timer_print
+
+
+
+  !***********************************************************************
+
+  real(8) function timer_get(n)
+    implicit none
+
+    integer, intent(in) :: n
+
+    timer_get=tchrono(n)
+
+  end function timer_get
 
   !***********************************************************************
   !***********************************************************************

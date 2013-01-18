@@ -104,7 +104,11 @@ contains
 
     call timer_start(0)
 
-    do while (temps<=t_all) 
+    do while (temps<=t_all .and. (is_checkpoint_forced==0))
+
+       ! timing one iteration
+       call timer_clear(3); call timer_start(3);
+
        temps=temps+tau
        it=it+1
 
@@ -268,12 +272,17 @@ contains
        VTU1=VTU0;   VTV1=VTV0;  if (is_div) PRE1=PRE0;
        VTU0=VTU;    VTV0=VTV;   if (is_div) PRE0=PRE; 
 
+       ! timing one iteration
+       call timer_stop(3)       
+
+       call infothemis
+
        call erreur(VTU,VTV,PRE,VTUS,VTVS,PRES)
        call sortie_fichier(VTU,VTV,PRE)                           ! start_out_light
-       
 
-       if (is_restart_save/=0) then
-          if (mod(it,abs(is_restart_save))==0&
+       if (is_restart_save/=0.or.is_checkpoint_forced/=0) then
+          if (is_checkpoint_forced/=0&
+               & .or.mod(it,abs(is_restart_save))==0&
                & .or.temps+0.9*tau>t_all)   call save_data
        endif                                                      ! end_out_light
 

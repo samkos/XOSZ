@@ -962,7 +962,7 @@ contains
 
        nb_input = 1
        i0=23
-       i0=41    ! out_light
+       i0=39    ! out_light
        read_loop: do
           read (input_unit, '(A)', iostat=RetCode)  line
           if ( RetCode == iostat_end)  exit read_loop
@@ -1136,7 +1136,9 @@ contains
    endif
 
    if (my_task==0) close(69)
-   if (my_task==0) print *,'*** data Saved... in ', nom_fichier_save
+   if (my_task==0) write(*,999) nom_fichier_save,it
+
+999 format ('*** Data Saved in file',A20,'for it=',I10)
 
    return
  end subroutine save_data
@@ -1183,6 +1185,7 @@ contains
 !!$
          if (temps>=t_all) t_all=temps+max(t_all-t_start,t_all0-t_start0)
          t_start=temps
+         it_start=it
 
          rbuffer( 1) =  nexample        
          rbuffer( 2) =  t_start         
