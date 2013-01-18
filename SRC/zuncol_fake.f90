@@ -446,6 +446,17 @@ contains
   end subroutine timer_print
 
   !***********************************************************************
+
+  real(8) function timer_get(n)
+    implicit none
+
+    integer, intent(in) :: n
+
+    timer_get=tchrono(n)
+
+  end function timer_get
+
+  !***********************************************************************
   !***********************************************************************
   !                                                                      *
   !     MISCELLANEOUS                                                    *

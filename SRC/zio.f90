@@ -161,7 +161,7 @@ contains
        if (abs(is_restart_save)>0) then                    ! start_out_light
           print *,'>> '                                      
           print '(1X,A,A)'&
-               & ,'>> Sauvegarde globale dans         : ',trim(nom_fic_save)//'save.dat'
+               & ,'>> Sauvegarde globale dans         : ',trim(nom_fic_save)
           print *,'>> Tous les <n> pas de temps       : ',is_restart_save
        endif                                               ! end_out_light
 
@@ -475,7 +475,8 @@ contains
 
     use uncol 
     use disc
-
+    use data
+    implicit none
 
     if (my_task==master_task) then
 
@@ -485,9 +486,9 @@ contains
 
 900 continue
 
-       if (is_checkpoint_forced/=0)   write(ncs2fw,3023)
        
        write(ncs2fw,3011) it,timer_get(3)   ! THEMIS
+
 
        call flush(ncs2fw)
 
@@ -501,9 +502,6 @@ contains
  ' Sortie intermediaire de fichiers suite',/,                     &
  '   Sauvegarde a l''iteration ', I10, ', Temps physique ',E14.5,/,/)
 
- 3024 format(                                                     &
-' Code stops now after having succesfully checkpointed ',/,       &
- 'on the order of THEMIS Framework')
   end subroutine infothemis
 
   !************************************************************************
@@ -526,7 +524,20 @@ contains
   !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
   subroutine ioend
     !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+
+    use data
+    implicit none
+
+    if (is_checkpoint_forced/=0)   write(ncs2fw,3024)
+
+3024 format(                                                     &
+          ' Code stops now after having succesfully checkpointed ',/,       &
+          'on the order of THEMIS Framework')
+
     close(ncs2fw)
+
+
+
   end subroutine ioend
   !************************************************************************
 

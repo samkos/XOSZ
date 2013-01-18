@@ -980,7 +980,7 @@ contains
            if (nb_input == 1) then
               read (line, *) nom_fic_output
               !!print *,"fic_ouput = ",nom_fic_output
-           else if (nb_input == i0) then
+           else if (nb_input == i0+2) then
               read (line, *) nom_fic_save
               !!print *,"fic_save = ",nom_fic_save
            else
@@ -1008,7 +1008,7 @@ contains
 !!!       enddo
 !!!       read *,nom_fic_save
 
-
+       nom_fic_save = 'SAVE'
 
        if (rbuffer(39)>0) call restore_param(rbuffer,i0)         ! out_light
 
@@ -1138,7 +1138,7 @@ contains
    if (my_task==0) close(69)
    if (my_task==0) write(*,999) nom_fichier_save,it
 
-999 format ('*** Data Saved in file',A20,'for it=',I10)
+999 format ('*** Data Saved in file ',A20,'for it=',I10)
 
    return
  end subroutine save_data
@@ -1164,7 +1164,7 @@ contains
    if (my_task==0) then   
       open(file=nom_fichier_save,unit=69,status='old',form='unformatted',iostat=ok)
       if (ok/=0) then
-         print *,'*** fichier save non encore cree',nom_fichier_save
+         print *,'*** fichier SAVE non encore cree',nom_fichier_save
          rbuffer(i)=-rbuffer(i)
       else
          read(69) nexample, t_start0, t_all0, tau, t_print, is_print, is_cv,&

@@ -275,10 +275,11 @@ contains
        ! timing one iteration
        call timer_stop(3)       
 
-       call infothemis
 
        call erreur(VTU,VTV,PRE,VTUS,VTVS,PRES)
        call sortie_fichier(VTU,VTV,PRE)                           ! start_out_light
+
+       call infothemis
 
        if (is_restart_save/=0.or.is_checkpoint_forced/=0) then
           if (is_checkpoint_forced/=0&
@@ -308,6 +309,9 @@ contains
        endif                                                     ! end_out_light
        
     enddo
+
+
+1000 continue
 
     PRE=0._prec
 
