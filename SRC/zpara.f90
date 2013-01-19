@@ -101,6 +101,8 @@ contains
     nx=nx0-1
     ny=ny0-1
 
+    !!print *,'nx,ny',nx,ny
+
     if (iand(direction,stn_e)/=0.and.(.not.is_east))  &
          call snd_msg(p_east,from_w,INP(lm:nx+lm,:))
 

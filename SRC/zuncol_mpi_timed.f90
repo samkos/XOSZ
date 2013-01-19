@@ -54,9 +54,10 @@ module uncol
   end interface
   
 
-  include "mpif.h"
+
 
 contains
+
 
   !***********************************************************************
   !  begin uncol_routines.f
@@ -82,6 +83,7 @@ contains
   subroutine initialize_processors
 
     !  This routine initializes the tasks.
+    use mpi
     implicit none
 
     integer i
@@ -110,6 +112,7 @@ contains
     !  This routine terminates all tasks but the master_task, in case of
     !  PVM, or finishes the tracing, in case of PICL.
 
+    use mpi
     implicit none
 
     integer error
@@ -127,6 +130,7 @@ contains
 
 
   function global_int_add(i) result (j)
+    use mpi
     implicit none
 
     integer          :: i,j,error
@@ -144,6 +148,7 @@ contains
   !***********************************************************************
 
   function global_int_max(i) result (j)
+    use mpi
     implicit none
 
     integer          :: i,j,error
@@ -175,6 +180,7 @@ contains
   !***********************************************************************
 
   function global_real_add(r) result (s)
+    use mpi
     implicit none
 
     real(kind=prec), intent(in)  :: r
@@ -191,6 +197,7 @@ contains
   !***********************************************************************
 
   function global_real_max(r) result(s)
+    use mpi
     implicit none
 
     real(kind=prec) :: r,s
@@ -206,6 +213,7 @@ contains
   !***********************************************************************
 
   function global_real_min (r) result (s)
+    use mpi
     implicit none
 
     real(kind=prec), intent(in)   :: r
@@ -222,7 +230,7 @@ contains
   !***********************************************************************
   
   function global_real_madd1d (r) result(s)
-
+    use mpi
     implicit none
 
     real(kind=prec), dimension(:),      intent(in)  :: r
@@ -265,6 +273,7 @@ contains
   !***********************************************************************
 
   subroutine snd_real_msg0d( task, tag, buf, nb)
+    use mpi
     implicit none
 
     integer          :: task, tag
@@ -280,6 +289,7 @@ contains
   !***********************************************************************
 
   subroutine rcv_real_msg0d( task, tag, buf,nb)
+    use mpi
     implicit none
 
     integer          :: task, tag
@@ -298,6 +308,7 @@ contains
   !***********************************************************************
 
   subroutine snd_real_msg1d( task, tag, buf)
+    use mpi
     implicit none
 
     integer                        :: task, tag
@@ -315,6 +326,7 @@ contains
   !***********************************************************************
 
   subroutine rcv_real_msg1d( task, tag, buf)
+    use mpi
     implicit none
 
     integer                        :: task, tag
@@ -323,6 +335,7 @@ contains
     
     call timer_start(1)
     nb=size(buf)
+!!$    print *,'nb',nb
     call MPI_recv(buf(1),nb,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,status,error)
 !!$    nb_msg = nb_msg+1
 !!$    if (nb_msg.ge.50) buf=0.
@@ -334,17 +347,22 @@ contains
   !***********************************************************************
 
   subroutine snd_real_msg2d( task, tag, buf)
+    use mpi
     implicit none
 
     integer                        :: task, tag
     real(kind=prec), dimension(:,:) :: buf
     real(kind=prec), dimension(size(buf)) :: buf1d
     integer                        :: error,nb
+    integer, save :: tagplus=0,tag0
+    tag0 = tagplus*1000+tag
+    tagplus = tagplus+1
 
     call timer_start(1)
     nb=size(buf)
     buf1d = reshape(buf,(/size(buf)/))
-    !!print *,my_task,'sends ',buf1d
+    !print *,'in snd_real_msg2d',nb,buf1d
+    !print "(I7,X,I7,'   sends  ',14(E8.2,X))",tag0,my_task,buf1d(:4)
     call MPI_send(buf1d(1),nb,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,error)
     call timer_stop(1)
 
@@ -354,20 +372,26 @@ contains
   !***********************************************************************
 
   subroutine rcv_real_msg2d( task, tag, buf)
+    use mpi
     implicit none
 
     integer                        :: task, tag
     real(kind=prec), dimension(:,:),intent(inout) :: buf
-    real(kind=prec), dimension(size(buf)) :: buf1d
+    real(kind=prec), dimension(1024) :: buf1d
     integer                        :: error,nb,status
-    
+    integer, save :: tagplus=0,tag0
+    tag0 = tagplus*1000+tag
+    tagplus = tagplus+1
+
     call timer_start(1)
     nb=size(buf)
+    !print *,'in rcv_real_msg2d',nb,size(buf1d)
+    !print *,'in rcv_real_msg2d',nb,buf1d
     call MPI_recv(buf1d(1),nb,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,status,error)
     buf = reshape(buf1d,(/size(buf,1),size(buf,2)/))
 !!$    nb_msg = nb_msg+1
 !!$    if (nb_msg.ge.50) buf=0.
-    !!print *,my_task,'receives ',buf
+    !print "(I7,X,I7,' receives ',14(E8.2,X))",tag0,my_task,buf1d(:4)
     call timer_stop(1)
 
     return
@@ -376,6 +400,7 @@ contains
   !***********************************************************************
 
   subroutine snd_int_msg0d( task, tag, buf)
+    use mpi
     implicit none
 
     integer          :: task, tag
@@ -534,10 +559,11 @@ contains
   !***********************************************************************
 
   subroutine synchronize_processors( )
+    use mpi
     implicit none
     integer error
-
-    call MPI_Barrier(MPI_COMM_WORLD)
+    
+    call MPI_Barrier(MPI_COMM_WORLD, error)
 
   end subroutine synchronize_processors
 

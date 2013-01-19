@@ -13,7 +13,7 @@ OBJECTS =  zuncol_fake.o zparam.o   zpara.o zgarbage.o \
 	   zcalcul.o  znavier.o ztest.o zmainone.o  second.o zplot.o
 
 COMPILER  = gfortran
-FFLAGS    =  -O3
+FFLAGS    =  -O2 -g
 #FFLAGS    =  -g
 
 all: $(TARGET) 

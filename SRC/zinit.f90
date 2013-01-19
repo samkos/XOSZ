@@ -3,7 +3,7 @@ module init
 
   use constante
   use para
-  use, intrinsic :: iso_fortran_env
+  use, intrinsic :: iso_fortran_env , only :  iostat_end
   
   integer, save :: ncheck_first,ncheck_second
 
@@ -923,7 +923,8 @@ contains
     integer :: open_status
     character (len=200) :: line, arg, input_file_name
     integer :: dat1, RetCode, nb_input
-    real(kind=prec), dimension(96) :: rbuffer=0.,nbuffer=0.
+    real(kind=prec), dimension(96) :: rbuffer=0.
+    real(kind=prec), dimension(9) :: nbuffer=0.
 
     if (my_task==0) then
 
@@ -962,10 +963,10 @@ contains
 
        nb_input = 1
        i0=23
-       i0=39    ! out_light
+       i0=40    ! out_light
        read_loop: do
           read (input_unit, '(A)', iostat=RetCode)  line
-          if ( RetCode == iostat_end)  exit read_loop
+          if ( nb_input>i0 +1.or. RetCode == iostat_end)  exit read_loop
            if ( RetCode /= 0 ) then
              print *,"erreur de lecture du fichier input"
              stop
@@ -978,11 +979,11 @@ contains
            if (len_trim(line)==0)  cycle read_loop
 
            if (nb_input == 1) then
-              read (line, *) nom_fic_output
+              nom_fic_output = line
               !!print *,"fic_ouput = ",nom_fic_output
-           else if (nb_input == i0+2) then
-              read (line, *) nom_fic_save
-              !!print *,"fic_save = ",nom_fic_save
+           else if (nb_input == i0+1) then
+              nom_fic_save = line
+              !! print *,"fic_save = ",nom_fic_save
            else
               read (line, fmt=*) rbuffer(nb_input-1)
               !!print *,"data ",nb_input,":",rbuffer(nb_input-1)
@@ -1016,18 +1017,19 @@ contains
           call snd_msg(i,900+i,rbuffer)
        enddo
        
-       if (len(nom_fic_output)/=96) stop 'pb de transmission de chaine'
-       do i=1,96
-          nbuffer(i)=ichar(nom_fic_output(i:i))
-       enddo
-       do i=1,nb_tasks-1
-          call snd_msg(i,920+i,nbuffer)
-       enddo
+!!$       if (len(nom_fic_output)/=96) stop 'pb de transmission de chaine'
+!!$       do i=1,96
+!!$          nbuffer(i)=ichar(nom_fic_output(i:i))
+!!$       enddo
+!!$       print *,nbuffer
+!!$       do i=1,nb_tasks-1
+!!$          call snd_msg(i,920+i,nbuffer)
+!!$       enddo
     else
        call rcv_msg(0,900+my_task,rbuffer)
 
-       call rcv_msg(0,920+my_task,nbuffer)
-       write(nom_fic_output,'(96A1)') (char(int(nbuffer(i))),i=1,96)
+!!$       call rcv_msg(0,920+my_task,nbuffer)
+!!$       write(nom_fic_output,'(96A1)') (char(int(nbuffer(i))),i=1,96)
     endif
     
     nexample        =  rbuffer( 1) 
@@ -1069,6 +1071,8 @@ contains
     sor_theta       =  rbuffer(37)     
     is_decale       =  rbuffer(38) 
     is_restart_save =  rbuffer(39)       ! end_out_light
+
+!!$    print *,my_task,': lm,nm=',lm_global,nm_global
 
 !!$    print *,my_task,':', &                                            ! start_out_light
 !!$       is_print,is_kuta,nexample,is_unsteady                &

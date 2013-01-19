@@ -797,9 +797,9 @@ contains
 
       if (it.eq.1) then
          print *,'it=1'
-         if (is_u)   then; uu=0_prec; cu=0_prec; endif
-         if (is_v)   then; uv=0_prec; cv=0_prec; endif
-         if (is_div) then; up=0_prec; cp=0_prec; endif
+         if (is_u)   then; uu=0._prec; cu=0._prec; endif
+         if (is_v)   then; uv=0._prec; cv=0._prec; endif
+         if (is_div) then; up=0._prec; cp=0._prec; endif
          if (reconj) then
             allocate (coef_stock(0:stockmax),stat=ok); 
             if (ok/=0) stop 'coef_stock : error alloc'
@@ -808,21 +808,21 @@ contains
                if (ok/=0) stop 'usu : error alloc'
                allocate (csu(0:size(SMU,1)-1,0:size(SMU,2)-1,0:stockmax),stat=ok); 
                if (ok/=0) stop 'csu : error alloc'
-               usu=0_prec; csu=0_prec
+               usu=0._prec; csu=0._prec
             endif
             if (is_v) then
                allocate (usv(0:size(SMV,1)-1,0:size(SMV,2)-1,0:stockmax),stat=ok); 
                if (ok/=0) stop 'usv : error alloc'
                allocate (csv(0:size(SMV,1)-1,0:size(SMV,2)-1,0:stockmax),stat=ok); 
                if (ok/=0) stop 'csv : error alloc'
-               usv=0_prec; csv=0_prec
+               usv=0._prec; csv=0._prec
             endif
             if (is_div) then
                allocate (usp(0:size(SMP,1)-1,0:size(SMP,2)-1,0:stockmax),stat=ok); if (ok/=0) stop 'usp : error alloc'
                allocate (csp(0:size(SMP,1)-1,0:size(SMP,2)-1,0:stockmax),stat=ok); if (ok/=0) stop 'csp : error alloc'
-               usp=0_prec; csp=0_prec
+               usp=0._prec; csp=0._prec
             endif
-            coef_stock=0_prec
+            coef_stock=0._prec
             ndir_stock=0
             min_coef_stock=stock_critere
             where_min_coef_stock=0
@@ -864,7 +864,7 @@ contains
            ! print *,n,alpha,rho_1
          enddo
          if (ndir_stock.gt.0) then
-            min_coef_stock=10000_prec
+            min_coef_stock=10000._prec
             do n=0,ndir_stock-1
                if (coef_stock(n).lt.min_coef_stock) then
                   min_coef_stock=coef_stock(n)
@@ -877,7 +877,7 @@ contains
 
       ndir=-1
       gmres_deb=0
-      alpha=stock_critere/100_prec
+      alpha=stock_critere/100._prec
       
       !     
       !===============================================================
@@ -981,7 +981,7 @@ contains
          !SK     Normalisation
          !SK-------------------------------------------------------------
 
-         alpha=1_prec/sqrt(global_ddot(cu(:,:,ndir),cv(:,:,ndir),cp(:,:,ndir) &
+         alpha=1._prec/sqrt(global_ddot(cu(:,:,ndir),cv(:,:,ndir),cp(:,:,ndir) &
                                ,cu(:,:,ndir),cv(:,:,ndir),cp(:,:,ndir)))
          if (is_u)   uu(:,:,ndir)= alpha*uu(:,:,ndir)
          if (is_v)   uv(:,:,ndir)= alpha*uv(:,:,ndir)
@@ -1063,9 +1063,9 @@ contains
 
     call fixe_cl(SMU,SMV,SMP,VTU,VTV,PRE)
        
-    if (is_u)   qu=0_prec;
-    if (is_v)   qv=0_prec;
-    if (is_div) qp=0_prec;
+    if (is_u)   qu=0._prec;
+    if (is_v)   qv=0._prec;
+    if (is_div) qp=0._prec;
 
     call mavecxy(VTU,VTV,PRE,vu,vv,vp)
 
@@ -1098,12 +1098,12 @@ contains
        !=======================
        !     
        
-       sigma=0_prec
+       sigma=0._prec
        do while (err>epsv*err0.and.err>epsva.and.ncg<=ninterne)
 
           ncg=ncg+1
 
-          alpha=1_prec/sqrt(global_ddot(pu,pv,pp,pu,pv,pp))
+          alpha=1._prec/sqrt(global_ddot(pu,pv,pp,pu,pv,pp))
           
           if (is_u)   pu=alpha*pu      ! normalisation de P
           if (is_v)   pv=alpha*pv
@@ -1212,9 +1212,9 @@ contains
     real(kind=prec) ::  alpha,beta,err0,err,err1,errdiv=0._prec
     integer :: l,restart,ncg
     
-    if (is_u)    then; pu=0_prec; AMApu=0_prec; MAMApu=0_prec; endif
-    if (is_v)    then; pv=0_prec; AMApv=0_prec; MAMApv=0_prec; endif
-    if (is_div)  then; pp=0_prec; AMApp=0_prec; MAMApp=0_prec; endif
+    if (is_u)    then; pu=0._prec; AMApu=0._prec; MAMApu=0._prec; endif
+    if (is_v)    then; pv=0._prec; AMApv=0._prec; MAMApv=0._prec; endif
+    if (is_div)  then; pp=0._prec; AMApp=0._prec; MAMApp=0._prec; endif
     delta=0.
 
     call fixe_cl(SMU,SMV,SMP,VTU,VTV,PRE)

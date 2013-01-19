@@ -110,7 +110,7 @@ contains
     if (my_task.eq.master_task) then
        print *,'***********************************'
        print *,'*                                 *'
-       print *,'*  Zephyr v 0.5 (Juin 2012)       *'
+       print *,'*  Zephyr v 0.6 (Janvier 2013)    *'
        print *,'*                                 *'
        print *,'***********************************'
        print *,'>> '
@@ -547,6 +547,8 @@ contains
 
     use data,  only : nom_fic_output
     integer :: ok
+
+    return
 
     do
        open(file=trim(nom_fic_output)//'Z.dat',unit=79,iostat=ok)
