@@ -13,13 +13,14 @@ OBJECTS =  zuncol_mpi_timed.o zparam.o   zpara.o zgarbage.o \
 	   zcalcul.o  znavier.o ztest.o zmainone.o  second.o \
 	   zplot.o
 
-COMPILER  = mpif90
+COMPILER  = gfortran-4.5 -I /home/samy/OMPI/include/
+LINKER = /home/samy/OMPI/bin/mpif90
 FFLAGS    =  -O3 -fdefault-real-8 -fdefault-integer-8 -I/home/samy/local/include -L/home/samy/local/lib
 
 all: $(TARGET)
 
 $(TARGET) : $(OBJECTS)
-	$(COMPILER) -o $@ $(FFLAGS) $(OBJECTS) $(MPI_LIB) 
+	$(LINKER) $(OBJECTS) 
 
 zplot_control : zplot_control.c
 	mpicc -o zplot_control zplot_control.c
