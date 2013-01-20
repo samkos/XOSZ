@@ -1074,8 +1074,8 @@ contains
     sor_theta       =  rbuffer(37)     
     is_decale       =  rbuffer(38) 
     is_restart_save =  rbuffer(39)       ! end_out_light
-    t_start         =  rbuffer(40)       ! end_out_light
-    it_start        =  rbuffer(41)       ! end_out_light
+    !t_start         =  rbuffer(40)       ! end_out_light
+    !it_start        =  rbuffer(41)       ! end_out_light
     
 
 !!$    print *,my_task,': lm,nm=',lm_global,nm_global

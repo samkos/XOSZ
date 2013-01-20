@@ -5,7 +5,7 @@ OBJECTS =  zuncol_mpi_timed.o  zparam.o   zpara.o zgarbage.o \
 	   zcalcul.o  znavier.o ztest.o zmainone.o  second.o \
 	   zplot.o 
 
-COMPILER  = mpif90.openmpi
+COMPILER  = /home/samy/OMPI/bin/mpif90
 FFLAGS    =  -g -fbacktrace 
 #-fdefault-real-8 -fdefault-integer-8 -I/home/samy/local/include -L/home/samy/local/lib
 
