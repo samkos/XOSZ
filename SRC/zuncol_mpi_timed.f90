@@ -335,6 +335,7 @@ contains
     
     call timer_start(1)
     nb=size(buf)
+    print *,'in rcv_real_msg1d',nb
 !!$    print *,'nb',nb
     call MPI_recv(buf(1),nb,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,status,error)
 !!$    nb_msg = nb_msg+1
@@ -362,8 +363,8 @@ contains
     nb=size(buf)
     buf1d = reshape(buf,(/size(buf)/))
     !print *,'in snd_real_msg2d',nb,buf1d
-    !print "(I7,X,I7,'   sends  ',14(E8.2,X))",tag0,my_task,buf1d(:4)
-    call MPI_send(buf1d(1),nb,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,error)
+    !print "(I7,X,I7,'   sends  to',I7,I7,'values',14(E8.2,X))",tag0,my_task,task,nb,buf1d(:4)
+    call MPI_send(buf1d(1),nb,MPI_DOUBLE_PRECISION,task,tag0,MPI_COMM_WORLD,error)
     call timer_stop(1)
 
     return
@@ -377,7 +378,7 @@ contains
 
     integer                        :: task, tag
     real(kind=prec), dimension(:,:),intent(inout) :: buf
-    real(kind=prec), dimension(1024) :: buf1d
+    real(kind=prec), dimension(10240) :: buf1d
     integer                        :: error,nb,status
     integer, save :: tagplus=0,tag0
     tag0 = tagplus*1000+tag
@@ -386,12 +387,14 @@ contains
     call timer_start(1)
     nb=size(buf)
     !print *,'in rcv_real_msg2d',nb,size(buf1d)
-    !print *,'in rcv_real_msg2d',nb,buf1d
-    call MPI_recv(buf1d(1),nb,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,status,error)
+    !print *,'in rcv_real_msg2d',nb
+    !print "(I7,X,I7,' receives from ',I7,I7,' values ')",tag0,my_task,task,nb
+    call flush(6)
+    call MPI_recv(buf1d(1),nb,MPI_DOUBLE_PRECISION,task,tag0,MPI_COMM_WORLD,status,error)
     buf = reshape(buf1d,(/size(buf,1),size(buf,2)/))
 !!$    nb_msg = nb_msg+1
 !!$    if (nb_msg.ge.50) buf=0.
-    !print "(I7,X,I7,' receives ',14(E8.2,X))",tag0,my_task,buf1d(:4)
+    !print "(I7,X,I7,' has received  ',I7,' values ',14(E8.2,X))",tag0,my_task,nb,buf1d(:4)
     call timer_stop(1)
 
     return

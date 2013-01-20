@@ -245,7 +245,7 @@ contains
        endif
     endif                                               ! end_out_light
 
-    if (is_restart_save>0)  call restore_champs           ! out_light 
+!    if (is_restart_save>0)  call restore_champs           ! out_light 
 
     open(file=trim(nom_fic_output)//'Z.dat',unit=79,iostat=ok)
     write(79,*) controle_string
@@ -1013,6 +1013,9 @@ contains
 
        if (rbuffer(39)>0) call restore_param(rbuffer,i0)         ! out_light
 
+       rbuffer(40)    = t_start             ! end_out_light
+       rbuffer(41)    = it_start            ! end_out_light
+    
        do i=1,nb_tasks-1
           call snd_msg(i,900+i,rbuffer)
        enddo
@@ -1071,6 +1074,9 @@ contains
     sor_theta       =  rbuffer(37)     
     is_decale       =  rbuffer(38) 
     is_restart_save =  rbuffer(39)       ! end_out_light
+    t_start         =  rbuffer(40)       ! end_out_light
+    it_start        =  rbuffer(41)       ! end_out_light
+    
 
 !!$    print *,my_task,': lm,nm=',lm_global,nm_global
 
@@ -1125,6 +1131,7 @@ contains
 !!$              & nrecvddm, epsv, epsva, epsvc, epsvac, ninterne, ndirection, ns_solver,&
 !!$              & rho_ca, rlag, nbmax_ca, nbp_ca, nbmg, epsmg, epsmga, nb_prelis, nb_postlis,&
 !!$              & nb_cycle, sor_theta, is_decale, is_restart_save
+      print *,'parametres globaux sauvés par task 0'
    endif
 
    call save_or_retrieve(VTU0,1,1,69,p_save); call save_or_retrieve(VTV0,1,1,69,p_save); 
