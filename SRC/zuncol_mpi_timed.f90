@@ -378,7 +378,7 @@ contains
 
     integer                        :: task, tag
     real(kind=prec), dimension(:,:),intent(inout) :: buf
-    real(kind=prec), dimension(10240) :: buf1d
+    real(kind=prec), dimension(:), allocatable :: buf1d
     integer                        :: error,nb,status
     integer, save :: tagplus=0,tag0
     tag0 = tagplus*1000+tag
@@ -386,6 +386,7 @@ contains
 
     call timer_start(1)
     nb=size(buf)
+    allocate(buf1d(nb))
     !print *,'in rcv_real_msg2d',nb,size(buf1d)
     !print *,'in rcv_real_msg2d',nb
     !print "(I7,X,I7,' receives from ',I7,I7,' values ')",tag0,my_task,task,nb
@@ -396,6 +397,7 @@ contains
 !!$    if (nb_msg.ge.50) buf=0.
     !print "(I7,X,I7,' has received  ',I7,' values ',14(E8.2,X))",tag0,my_task,nb,buf1d(:4)
     call timer_stop(1)
+    deallocate(buf1d)
 
     return
   end subroutine rcv_real_msg2d
