@@ -28,7 +28,10 @@ zplot_control : zplot_control.c
 %.o : %.c
 	mpicc -c $<
 
-%.o : %.f90
+zparam.o : zparam.f90 
+	$(COMPILER) $(MPI_INC) $(FFLAGS) -c $<
+
+%.o : %.f90 zparam.o
 	$(COMPILER) $(MPI_INC) $(FFLAGS) -c $<
 
 clean: 

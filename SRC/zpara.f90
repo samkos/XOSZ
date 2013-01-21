@@ -508,6 +508,7 @@ contains
   subroutine save_or_retrieve(solution,nx,ny,unit,flag)
     !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
     use data, only : is_print
+    use debug
     implicit none
     real(kind=prec), dimension(0:,0:)            :: solution
     real(kind=prec), dimension(:,:), allocatable :: buffer
@@ -519,10 +520,22 @@ contains
     integer, dimension(0:nb_tasks-1) :: lmtask,nmtask
     integer, parameter:: chunk=10
 
+    logical :: debug_snd_old, debug_rcv_old
+
+    if (debug_save) then
+       debug_snd_old = debug_snd
+       debug_rcv_old = debug_rcv
+       debug_snd = .true.
+       debug_rcv = .true.
+    endif
+
     lm=size(solution,1)-2
     nm=size(solution,2)-2
     is_save     = (flag==p_save).or.(flag==p_save_txt)
     is_save_txt = (flag==p_save_txt)
+
+    print *,my_task, is_save,is_mpp
+    call flush(6)
 
     if (.not.is_save) solution=0._prec
 
@@ -541,13 +554,16 @@ contains
        enddo
     else
        i0=0; k0=0; i1=lm+1; k1=nm+1
+       ! getting rid of the ghost cells that need not to be saved
        if (.not.is_west)  i0=nx
        if (.not.is_east)  i1=lm+1-nx
        if (.not.is_south) k0=ny
        if (.not.is_north) k1=nm+1-ny
        if (my_task>0) then
+          ! sending to master the i and k extend of the domain I am in charge
           call snd_msg(0,tag_save_nobord+1000*my_task,i1-i0+1)
           call snd_msg(0,tag_save_nobord+3000*my_task,k1-k0+1)
+          ! sending/ceceiving data to/from of size chunk*(i1-i0+1)
           do k2=k0,k1,chunk
              if (is_save) then
                 call snd_msg(0,tag_save_nobord+100*my_task+k2-k0,solution(i0:i1,k2:min(k1,k2+chunk-1)))
@@ -556,6 +572,8 @@ contains
              endif
           enddo
        else
+          print *,"0,here00",my_task
+          call flush(6)
           do k=0,nb_k_blocks-1
              do i=0,nb_i_blocks-1
                 if ((i+k)==0) then
@@ -567,9 +585,13 @@ contains
                 call rcv_msg(task,tag_save_nobord+3000*task,nmtask(task))
              enddo
           enddo
+          print *,"0,here0",task
+          call flush(6)
+
           lm_all=sum(lmtask(0:nb_i_blocks-1)); 
           nm_all=sum(nmtask(0:nb_tasks-1:nb_i_blocks)); 
 
+          ! allocating a whole buffer that will receive all the contribution of nodes
           allocate(buffer (0:lm_all-1,chunk),stat=ok); if (ok/=0) stop 'buffer : error alloc'
 
           k0=0
@@ -591,6 +613,8 @@ contains
                       endif
                    else
                       if (is_save) then
+                         print *,"0,here",task
+                         call flush(6)
                          call rcv_msg(task,tag_save_nobord+100*task+k2-k0,buffer(i0:i0+lmtask(task)-1,1:k3-k2+1))
                       else
                          call snd_msg(task,tag_save_nobord+100*task+k2-k0,buffer(i0:i0+lmtask(task)-1,1:k3-k2+1))
@@ -623,6 +647,10 @@ contains
 
     tag_save_nobord=tag_save_nobord+1
 
+    if (debug_save) then
+       debug_snd = debug_snd_old
+       debug_rcv = debug_rcv_old
+    endif
     return
   end subroutine save_or_retrieve                                        ! end_out_light
 

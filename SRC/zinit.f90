@@ -934,11 +934,12 @@ contains
        numarg = iargc ( )
        
        if (numarg /=1) then
-          print *,"usage : zephyr <input file>"
-          stop
+          print *,"usage : zephyr <input file>   by default using ./input"
+          input_file_name = "./input"
+       else
+          call getarg ( 1, input_file_name)
        end if
        
-       call getarg ( 1, input_file_name)
 
 
 !!       open( unit=output_unit, & 
@@ -1117,7 +1118,7 @@ contains
    if (my_task==0) then
       open(file=nom_fichier_save,unit=69,form='unformatted',iostat=ok)
       if (ok/=0) stop 'pb ouverture fichier sauvegarde'  
-
+      
       is_restart_save=abs(is_restart_save)
       write (69) nexample, t_start, t_all, tau, t_print, is_print, is_cv,&
               & is_kuta, is_richardson, lm_global, nm_global, nu, ncheck,&

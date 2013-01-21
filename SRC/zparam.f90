@@ -178,4 +178,13 @@ module plot_flags
 end module plot_flags
 
 
+module debug
+
+  logical, save      :: debug_snd=.false.,  debug_rcv=.false., debug_save=.true.
+                     
+  contains
+    
+
+end module debug
+
 

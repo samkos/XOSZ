@@ -287,6 +287,7 @@ contains
                & .or.mod(it,abs(is_restart_save))==0&
                & .or.temps+0.9*tau>t_all)   then
              print *, my_task,'ici avant save'
+             call flush(6)
              call save_data
              endif
        endif                                                      ! end_out_light
