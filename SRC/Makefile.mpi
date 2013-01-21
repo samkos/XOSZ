@@ -13,10 +13,10 @@ OBJECTS =  zuncol_mpi_timed.o zparam.o   zpara.o zgarbage.o \
 	   zcalcul.o  znavier.o ztest.o zmainone.o  second.o \
 	   zplot.o
 
-COMPILER  = gfortran-4.5 -I /home/samy/OMPI/include/
-LINKER = gfortran-4.5
+COMPILER  = mpif90.mpich2  -fdefault-real-8 -fdefault-integer-8 
+LINKER = mpif90.openmpi
 FFLAGS    =  -O3 -fdefault-real-8 -fdefault-integer-8 -I/home/samy/local/include -L/home/samy/local/lib
-LIBS = -pthread -I/home/samy/OMPI/lib -L/home/samy/OMPI/lib -lmpi_f90 -lmpi_f77 -lmpi -ldl -lm -Wl,--export-dynamic -lrt -lnsl -lutil -lm -ldl
+LIBS = -pthread -I/home/samy/OMPI/lib -L/home/samy/OMPI/lib -lmpi_f90 -lmpi_f77 -lmpi -ldl -lm -Wl,--export-dynamic -lrt -lnsl -lutil -lm -ldl 
 all: $(TARGET)
 
 $(TARGET) : $(OBJECTS)

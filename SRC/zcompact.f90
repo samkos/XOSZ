@@ -53,7 +53,7 @@ contains
     Gcdf4y=Gcdf4x/dy/dy
     Gcdf4x=Gcdf4x/dx/dx
 
-    Hdf4=0_prec
+    Hdf4=0._prec
     Hdf4(0:3,-2)  = (/ -11._prec, 18._prec, -9._prec, 2._prec /) / 6._prec
     Hdf4(-1:1,-1) = (/ -1._prec,   0._prec,  1._prec /) / 2._prec
     Hdf4(-1:1,0)  = (/ -1._prec,   0._prec,  1._prec /) / 2._prec

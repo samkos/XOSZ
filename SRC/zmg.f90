@@ -83,10 +83,10 @@ contains
        if (is_u) then
           OUTU=0.
           OUTU(2:lmpl:3,0::3)=INPU(1:lmp+1,:)
-          OUTU(3:lmpl-2:3,0::3)=(2_prec*INPU(1:lmp,:)+INPU(2:lmp+1,:))/3._prec
-          OUTU(4:lmpl-1:3,0::3)=(INPU(1:lmp,:)+2_prec*INPU(2:lmp+1,:))/3._prec
+          OUTU(3:lmpl-2:3,0::3)=(2._prec*INPU(1:lmp,:)+INPU(2:lmp+1,:))/3._prec
+          OUTU(4:lmpl-1:3,0::3)=(INPU(1:lmp,:)+2._prec*INPU(2:lmp+1,:))/3._prec
 !!$          OUTU(1,0::3)       =2._prec*OUTU(2,0::3)-OUTU(3,0::3)
-!!$          OUTU(lmpl+1,0::3)  =2_prec*OUTU(lmpl,0::3)-OUTU(lmpl-1,0::3)
+!!$          OUTU(lmpl+1,0::3)  =2._prec*OUTU(lmpl,0::3)-OUTU(lmpl-1,0::3)
           OUTU(1,0::3)       =0._prec
           OUTU(lmpl+1,0::3)  =0._prec
           OUTU(:,1::3)       =(2._prec*OUTU(:,0:nmpl:3)+OUTU(:,3:nmpl+1:3))/3._prec
@@ -232,17 +232,17 @@ contains
              do k=k0,nmp+1-k0,j
                 do i=i0,lmp+1-i0,j
                    if (k+i==0) then
-                      VTU(0,0)=2_prec*SMU(0,0)-VTU(1,0)
-                      VTV(0,0)=2_prec*SMV(0,0)-VTV(0,1)
+                      VTU(0,0)=2._prec*SMU(0,0)-VTU(1,0)
+                      VTV(0,0)=2._prec*SMV(0,0)-VTV(0,1)
                    else if (k==0.and.i==lmp+1) then
-                      VTU(lmp+2,0)=2_prec*SMU(lmp+2,0)-VTU(lmp+1,0)
-                      VTV(lmp+1,0)=2_prec*SMV(lmp+1,0)-VTV(lmp+1,1)
+                      VTU(lmp+2,0)=2._prec*SMU(lmp+2,0)-VTU(lmp+1,0)
+                      VTV(lmp+1,0)=2._prec*SMV(lmp+1,0)-VTV(lmp+1,1)
                    else if (i==0.and.k==nmp+1) then
-                      VTU(0,nmp+1)=2_prec*SMU(0,nmp+1)-VTU(1,nmp+1)
-                      VTV(0,nmp+2)=2_prec*SMV(0,nmp+2)-VTV(0,nmp+1)
+                      VTU(0,nmp+1)=2._prec*SMU(0,nmp+1)-VTU(1,nmp+1)
+                      VTV(0,nmp+2)=2._prec*SMV(0,nmp+2)-VTV(0,nmp+1)
                    else if (i==lmp+1.and.k==nmp+1) then
-                      VTU(lmp+2,nmp+1)=2_prec*SMU(lmp+2,nmp+1)-VTU(lmp+1,nmp+1)
-                      VTV(lmp+1,nmp+2)=2_prec*SMV(lmp+1,nmp+2)-VTV(lmp+1,nmp+1)
+                      VTU(lmp+2,nmp+1)=2._prec*SMU(lmp+2,nmp+1)-VTU(lmp+1,nmp+1)
+                      VTV(lmp+1,nmp+2)=2._prec*SMV(lmp+1,nmp+2)-VTV(lmp+1,nmp+1)
                    else if (k==0) then
                       VTV(i,1)= SMV(i,0)-dy*p5invdx*(VTU(i+1,k)-VTU(i,k)-dx*SMP(i,k))
                       VTV(i,0)= 2._prec*SMV(i,0)-VTV(i,1)
