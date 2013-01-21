@@ -353,7 +353,7 @@ contains
 
     integer                        :: task, tag
     real(kind=prec), dimension(:,:) :: buf
-    real(kind=prec), dimension(size(buf)) :: buf1d
+    real(kind=prec), dimension(:), allocatable :: buf1d
     integer                        :: error,nb
     integer, save :: tagplus=0,tag0
     tag0 = tagplus*1000+tag
@@ -361,11 +361,13 @@ contains
 
     call timer_start(1)
     nb=size(buf)
+    allocate(buf1d(nb))
     buf1d = reshape(buf,(/size(buf)/))
     !print *,'in snd_real_msg2d',nb,buf1d
     !print "(I7,X,I7,'   sends  to',I7,I7,'values',14(E8.2,X))",tag0,my_task,task,nb,buf1d(:4)
     call MPI_send(buf1d(1),nb,MPI_DOUBLE_PRECISION,task,tag0,MPI_COMM_WORLD,error)
     call timer_stop(1)
+    deallocate(buf1d)
 
     return
   end subroutine snd_real_msg2d
@@ -378,7 +380,7 @@ contains
 
     integer                        :: task, tag
     real(kind=prec), dimension(:,:),intent(inout) :: buf
-    real(kind=prec), dimension(size(buf)) :: buf1d
+    real(kind=prec), dimension(1012) :: buf1d
     integer                        :: error,nb,status
     integer, save :: tagplus=0,tag0
     tag0 = tagplus*1000+tag
@@ -386,17 +388,25 @@ contains
 
     call timer_start(1)
     nb=size(buf)
+    !allocate(buf1d(nb))
     !print *,'in rcv_real_msg2d',nb,size(buf1d)
     !print *,'in rcv_real_msg2d',nb
     !print "(I7,X,I7,' receives from ',I7,I7,' values ')",tag0,my_task,task,nb
     call flush(6)
     call MPI_recv(buf1d(1),nb,MPI_DOUBLE_PRECISION,task,tag0,MPI_COMM_WORLD,status,error)
-    buf = reshape(buf1d,(/size(buf,1),size(buf,2)/))
+    !print *,my_task,'shape buf1d',shape(buf1d)
+    !print *,my_task,'shape buf',shape(buf)
+    !print *,buf1d
+    call flush(6)
+    buf = reshape(buf1d(1:nb),(/size(buf,1),size(buf,2)/))
 !!$    nb_msg = nb_msg+1
 !!$    if (nb_msg.ge.50) buf=0.
-    !print "(I7,X,I7,' has received  ',I7,' values ',14(E8.2,X))",tag0,my_task,nb,buf1d(:4)
+    
     call timer_stop(1)
+    !deallocate(buf1d)
+    !print "(I7,X,I7,' has received  ',I7,' values ',14(E8.2,X))",tag0,my_task,nb,buf1d(:4)
 
+    call flush(6)
     return
   end subroutine rcv_real_msg2d
 
