@@ -1110,6 +1110,7 @@ contains
    use disc
    use champs
    use uncol, only : tchrono
+   use debug
    implicit none
    integer :: ok
    character (len=200) :: nom_fichier_save
@@ -1132,7 +1133,9 @@ contains
 !!$              & nrecvddm, epsv, epsva, epsvc, epsvac, ninterne, ndirection, ns_solver,&
 !!$              & rho_ca, rlag, nbmax_ca, nbp_ca, nbmg, epsmg, epsmga, nb_prelis, nb_postlis,&
 !!$              & nb_cycle, sor_theta, is_decale, is_restart_save
-      print *,'parametres globaux sauvés par task 0'
+      if (debug_save) then
+         print *,'parametres globaux sauvés par task 0'
+      endif
    endif
 
    call save_or_retrieve(VTU0,1,1,69,p_save); call save_or_retrieve(VTV0,1,1,69,p_save); 

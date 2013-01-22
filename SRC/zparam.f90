@@ -1,3 +1,8 @@
+module selectprec
+  integer, parameter :: prec=kind(1.d0)
+end module selectprec
+
+
 module constante
   use selectprec
 
@@ -180,7 +185,7 @@ end module plot_flags
 
 module debug
 
-  logical, save      :: debug_snd=.false.,  debug_rcv=.false., debug_save=.true.
+  logical, save      :: debug_snd=.false.,  debug_rcv=.false., debug_save=.false.
                      
   contains
     

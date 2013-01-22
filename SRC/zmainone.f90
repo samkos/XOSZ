@@ -55,6 +55,7 @@ program principal
   use plot_flags
   use test
   use uncol
+  use debug
   implicit none
 
   call initialize_processors
@@ -286,8 +287,10 @@ contains
           if (is_checkpoint_forced/=0&
                & .or.mod(it,abs(is_restart_save))==0&
                & .or.temps+0.9*tau>t_all)   then
-             print *, my_task,'ici avant save'
-             call flush(6)
+             if (debug_save) then
+                print *, my_task,'ici avant save'
+                call flush(6)
+             endif
              call save_data
              endif
        endif                                                      ! end_out_light

@@ -534,7 +534,7 @@ contains
     is_save     = (flag==p_save).or.(flag==p_save_txt)
     is_save_txt = (flag==p_save_txt)
 
-    print *,my_task, is_save,is_mpp
+    !print *,my_task, is_save,is_mpp
     call flush(6)
 
     if (.not.is_save) solution=0._prec
@@ -572,7 +572,7 @@ contains
              endif
           enddo
        else
-          print *,"0,here00",my_task
+          !print *,"0,here00",my_task
           call flush(6)
           do k=0,nb_k_blocks-1
              do i=0,nb_i_blocks-1
@@ -585,7 +585,7 @@ contains
                 call rcv_msg(task,tag_save_nobord+3000*task,nmtask(task))
              enddo
           enddo
-          print *,"0,here0",task
+          !print *,"0,here0",task
           call flush(6)
 
           lm_all=sum(lmtask(0:nb_i_blocks-1)); 
@@ -613,8 +613,10 @@ contains
                       endif
                    else
                       if (is_save) then
-                         print *,"0,here",task
-                         call flush(6)
+                         if (debug_save) then
+                            print *,"0,here",task
+                            call flush(6)
+                         end if
                          call rcv_msg(task,tag_save_nobord+100*task+k2-k0,buffer(i0:i0+lmtask(task)-1,1:k3-k2+1))
                       else
                          call snd_msg(task,tag_save_nobord+100*task+k2-k0,buffer(i0:i0+lmtask(task)-1,1:k3-k2+1))

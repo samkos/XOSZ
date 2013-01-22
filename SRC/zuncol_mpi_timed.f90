@@ -1,7 +1,3 @@
-module selectprec
-  integer, parameter :: prec=kind(1.d0)
-end module selectprec
-
 module uncol
   
   use selectprec
