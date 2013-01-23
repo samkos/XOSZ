@@ -32,6 +32,11 @@ module para
      module procedure outdon_bord, outdon_nobord 
   end interface
 
+
+  interface rfr_stn
+     module procedure nonblocking_rfr_stn
+  end interface
+
 contains
 
   !************************************************************************
@@ -88,7 +93,7 @@ contains
   !************************************************************************
 
   !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
-  subroutine rfr_stn(INP,direction,nx0,ny0)
+  subroutine blocking_rfr_stn(INP,direction,nx0,ny0)
     !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
     implicit none
     real(kind=prec), dimension(0:,0:)  :: INP
@@ -129,10 +134,132 @@ contains
 
 
     return
-  end subroutine rfr_stn
+  end subroutine blocking_rfr_stn
 
 
   !************************************************************************
+
+
+  !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+  subroutine nonblocking_rfr_stn(INP,direction,nx0,ny0)
+    !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+    use mpi
+    implicit none
+    real(kind=prec), dimension(0:,0:)  :: INP
+    integer          :: direction,nx,ny,nx0,ny0
+    integer :: lm,nm
+    real(kind=prec), dimension(:), allocatable ::&
+         & buf_to_north,buf_to_east,buf_to_west,buf_to_south,&
+         & buf_from_north,buf_from_east,buf_from_west,buf_from_south
+    integer, dimension(2) :: req_north,req_east,req_west,req_south
+    integer, dimension(MPI_STATUS_SIZE,2) :: statuses
+    integer error, status, nb
+    integer, save :: tagplus=0,tag0
+    tag0 = tagplus*1000
+    tagplus = tagplus+1
+
+
+    lm=size(INP,1)-2*nx0; nm=size(INP,2)-2*ny0
+
+    nx=nx0-1
+    ny=ny0-1
+
+    !!print *,'nx,ny',nx,ny
+
+
+    if (iand(direction,stn_n)/=0.and.(.not.is_north)) then
+       nb = size(INP(:,ny+nm+1:2*ny+nm+1))
+       allocate(buf_from_north (nb))
+       allocate(buf_to_north (nb))
+       call MPI_IRECV (buf_from_north(1),nb,MPI_DOUBLE_PRECISION,p_north,&
+            & tag0+from_n,MPI_COMM_WORLD,req_north(1),error)
+       !call rcv_msg(p_north,from_n,INP(:,ny+nm+1:2*ny+nm+1))
+       buf_to_north  = reshape(INP(:,nm:ny+nm),(/nb/))
+       call MPI_ISEND (buf_to_north(1),nb,MPI_DOUBLE_PRECISION,p_north,&
+            & tag0+from_s,MPI_COMM_WORLD,req_north(2),error)
+       !call snd_msg(p_north,from_s,INP(:,nm:ny+nm))
+    end if
+
+    if (iand(direction,stn_e)/=0.and.(.not.is_east))  then
+       nb = size(INP(nx+lm+1:2*nx+lm+1,:))
+       allocate(buf_from_east (nb))
+       allocate(buf_to_east (nb))
+       call MPI_IRECV (buf_from_east(1),nb,MPI_DOUBLE_PRECISION,p_east,&
+            & tag0+from_e,MPI_COMM_WORLD,req_east(1),error)
+       !call rcv_msg(p_east,from_e,INP(nx+lm+1:2*nx+lm+1,:))
+       buf_to_east  = reshape(INP(lm:nx+lm,:),(/nb/))
+       call MPI_ISEND (buf_to_east(1),nb,MPI_DOUBLE_PRECISION,p_east,&
+            & tag0+from_w,MPI_COMM_WORLD,req_east(2),error)
+       !call snd_msg(p_east,from_w,INP(lm:nx+lm,:))
+    end if
+
+    if (iand(direction,stn_w)/=0.and.(.not.is_west))  then
+       nb = size(INP(0:nx,:))
+       allocate(buf_from_west (nb))
+       allocate(buf_to_west (nb))
+       call MPI_IRECV (buf_from_west(1),nb,MPI_DOUBLE_PRECISION,p_west,&
+            & tag0+from_w,MPI_COMM_WORLD,req_west(1),error)
+       !call rcv_msg(p_west,from_w,INP(0:nx,:))
+       buf_to_west  = reshape(INP(nx+1:2*nx+1,:),(/nb/))
+       call MPI_ISEND (buf_to_west(1),nb,MPI_DOUBLE_PRECISION,p_west,&
+            & tag0+from_e,MPI_COMM_WORLD,req_west(2),error)
+       !call snd_msg(p_west,from_e,INP(nx+1:2*nx+1,:))
+    end if
+
+    if (iand(direction,stn_s)/=0.and.(.not.is_south)) then
+       nb = size(INP(:,0:ny))
+       allocate(buf_from_south (nb))
+       allocate(buf_from_south (nb))
+       allocate(buf_to_south (nb))
+       call MPI_IRECV (buf_from_south(1),nb,MPI_DOUBLE_PRECISION,p_south,&
+            & tag0+from_s,MPI_COMM_WORLD,req_south(1),error)
+       !call rcv_msg(p_south,from_s,INP(:,0:ny))
+       buf_to_south  = reshape(INP(:,ny+1:2*ny+1),(/nb/))
+       call MPI_ISEND (buf_to_south(1),nb,MPI_DOUBLE_PRECISION,p_south,&
+            & tag0+from_n,MPI_COMM_WORLD,req_south(2),error)
+       !call snd_msg(p_south,from_n,INP(:,ny+1:2*ny+1))
+    end if
+
+
+    if (iand(direction,stn_n)/=0.and.(.not.is_north)) then
+       call MPI_WAITALL(2, req_north, statuses, error)
+       INP(:,ny+nm+1:2*ny+nm+1) = &
+            &reshape(buf_from_north,(/size(INP(:,ny+nm+1:2*ny+nm+1),1),size(INP(:,ny+nm+1:2*ny+nm+1),2)/))
+       deallocate(buf_to_north)
+       deallocate(buf_from_north)       
+    end if
+
+    if (iand(direction,stn_e)/=0.and.(.not.is_east))  then
+       call MPI_WAITALL(2, req_east, statuses, error)
+       INP(nx+lm+1:2*nx+lm+1,:) = &
+            &reshape(buf_from_east,(/size(INP(nx+lm+1:2*nx+lm+1,:),1),size(INP(nx+lm+1:2*nx+lm+1,:),2)/))
+       deallocate(buf_to_east)
+       deallocate(buf_from_east)       
+    end if
+
+    if (iand(direction,stn_w)/=0.and.(.not.is_west))  then
+       call MPI_WAITALL(2, req_west, statuses, error)
+       INP(0:nx,:) = &
+            &reshape(buf_from_west,(/size(INP(0:nx,:),1),size(INP(0:nx,:),2)/))
+       deallocate(buf_to_west)
+       deallocate(buf_from_west)       
+    end if
+
+    if (iand(direction,stn_s)/=0.and.(.not.is_south)) then
+       call MPI_WAITALL(2, req_south, statuses, error)
+       INP(:,0:ny) = reshape(buf_from_south,(/size(INP(:,0:ny),1),size(INP(:,0:ny),2)/))
+       deallocate(buf_to_south)
+       deallocate(buf_from_south)       
+    end if
+
+
+
+    return
+  end subroutine nonblocking_rfr_stn
+
+
+  !************************************************************************
+
 
   !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
   subroutine rfr_ddm_stn(INP,ideb,ifin,kdeb,kfin,rec0x,rec0y)

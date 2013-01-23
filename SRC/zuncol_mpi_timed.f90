@@ -32,6 +32,14 @@ module uncol
                      ,rcv_int_msg0d
   end interface
 
+  interface isnd_msg
+     module procedure isnd_real_msg2d 
+  end interface
+
+  interface ircv_msg
+     module procedure ircv_real_msg2d 
+  end interface
+
   interface bcast
      module procedure real_bcast, int_bcast
   end interface
@@ -507,6 +515,88 @@ contains
 
     return
   end subroutine int_bcast
+
+
+
+  !***********************************************************************
+
+  subroutine isnd_real_msg2d( task, tag, buf)
+    use mpi
+    use debug
+    implicit none
+
+    integer                        :: task, tag
+    real(kind=prec), dimension(:,:) :: buf
+    real(kind=prec), dimension(:), allocatable :: buf1d
+    integer                        :: error,nb
+    integer, save :: tagplus=0,tag0
+    tag0 = tagplus*1000+tag
+    tagplus = tagplus+1
+
+    call timer_start(1)
+    nb=size(buf)
+    allocate(buf1d(nb))
+    buf1d = reshape(buf,(/size(buf)/))
+    !if (debug_snd) print *,'in snd_real_msg2d',nb
+    call flush(6)
+    if (debug_snd) then
+       print "(I7,X,I7,'   sends  to',I7,I7,' values ',14(E8.2,X))",tag0,my_task,task,nb,buf1d(:4)
+       call flush(6)
+    end if
+    call MPI_send(buf1d(1),nb,MPI_DOUBLE_PRECISION,task,tag0,MPI_COMM_WORLD,error)
+    call timer_stop(1)
+    deallocate(buf1d)
+
+    return
+  end subroutine isnd_real_msg2d
+
+  !***********************************************************************
+
+  subroutine ircv_real_msg2d( task, tag, buf)
+    use mpi
+    use debug
+    implicit none
+
+    integer                        :: task, tag
+    real(kind=prec), dimension(:,:),intent(inout) :: buf
+    real(kind=prec), dimension(1012) :: buf1d
+    integer          :: error,nb,status
+    integer, save :: tagplus=0,tag0
+    tag0 = tagplus*1000+tag
+    tagplus = tagplus+1
+
+    call timer_start(1)
+    nb=size(buf)
+    if (debug_rcv) then 
+       print *,my_task,'in rcv_real_msg2d',nb
+       call flush(6)
+    end if
+    if (nb.gt.1012) then
+       print *,'pb nb>1012',nb
+       call flush(6)
+    endif
+
+    if (debug_rcv) then
+       print "(I7,X,I7,' receives from ',I7,I7,' values ')",tag0,my_task,task,nb
+       call flush(6)
+    end if
+    !!call MPI_recv(buf1d(1),nb,MPI_DOUBLE_PRECISION,task,tag0,MPI_COMM_WORLD,status,error)
+    call MPI_IRECV (buf1d(1),nb,MPI_DOUBLE_PRECISION,task,tag0,MPI_COMM_WORLD,status,error)
+    buf = reshape(buf1d(1:nb),(/size(buf,1),size(buf,2)/))
+    
+    call timer_stop(1)
+    !deallocate(buf1d)
+    if (debug_rcv) then
+       print "(I7,X,I7,' has received  ',I7,' values ',14(E8.2,X))",tag0,my_task,nb,buf1d(:4)
+       call flush(6)
+    end if
+    return
+  end subroutine ircv_real_msg2d
+
+
+
+
+
 
 
   !***********************************************************************
