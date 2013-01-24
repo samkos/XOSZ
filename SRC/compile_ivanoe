@@ -1,0 +1,17 @@
+module load intel_compilers/12.0.3.174
+module load open_mpi/intel/1.4.3
+module load totalview_debugger/8.9.0-0
+
+make -f Makefile.ivanoe clean
+
+mpif90 -g -c zparam.f90 zuncol_mpi_timed.f90    zpara.f90 zgarbage.f90 \
+	   zdac.f90   zcompact.f90 zinit.f90 zblas.f90  zio.f90  zmg.f90 \
+	   zcalcul.f90  znavier.f90 ztest.f90 zmainone.f90  
+
+mpicc -g -c  zplot.c second.c
+
+mpif90 -g -o zephyr  zparam.o zuncol_mpi_timed.o    zpara.o zgarbage.o \
+	   zdac.o   zcompact.o zinit.o zblas.o  zio.o  zmg.o \
+	   zcalcul.o  znavier.o ztest.o zmainone.o  second.o \
+	   zplot.o second.o
+

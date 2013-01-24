@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
-double second()
+double second_()
 {
         struct timeval tp;
         struct timezone tzp;

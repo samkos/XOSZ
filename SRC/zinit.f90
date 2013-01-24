@@ -245,7 +245,7 @@ contains
        endif
     endif                                               ! end_out_light
 
-!    if (is_restart_save>0)  call restore_champs           ! out_light 
+    if (is_restart_save>0)  call restore_champs           ! out_light 
 
     open(file=trim(nom_fic_output)//'Z.dat',unit=79,iostat=ok)
     write(79,*) controle_string
@@ -1076,7 +1076,7 @@ contains
     is_decale       =  rbuffer(38) 
     is_restart_save =  rbuffer(39)       ! end_out_light
     !t_start         =  rbuffer(40)       ! end_out_light
-    !it_start        =  rbuffer(41)       ! end_out_light
+    it_start        =  rbuffer(41)       ! end_out_light
     
 
 !!$    print *,my_task,': lm,nm=',lm_global,nm_global
@@ -1256,7 +1256,22 @@ contains
    use drapeaux
    use champs
    implicit none
-   
+   integer :: ok, ok_all
+
+   ok = 0
+   if (my_task==0) then
+      open(file="SAVE", unit=69, status='OLD', action='READ', err=900)
+      ok=-1
+900   ok= ok  + 1
+   endif
+    
+    ok_all = global_add(ok)
+    
+   print *,'ok_all',ok_all
+
+   if (ok_all/=0) return
+
+
 !!$   read (69) VTU0,VTU1,VTU2,VTU3,VTUS,VTV0,VTV1,VTV2,VTV3,VTVS
 !!$   if (is_ns) read (69) PRE0,PRE1,PRE2,PRE3,PRES
 !!$
@@ -1279,7 +1294,7 @@ contains
    print *,'*** data Restored... at t_start=',t_start,' calculation to ',t_all
 
    return
- end subroutine restore_champs                                     ! end_out_light
+7 end subroutine restore_champs                                     ! end_out_light
 
  !************************************************************************
  

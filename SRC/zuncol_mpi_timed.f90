@@ -409,14 +409,14 @@ contains
 
     integer                        :: task, tag
     real(kind=prec), dimension(:,:),intent(inout) :: buf
-    real(kind=prec), dimension(1012) :: buf1d
+    real(kind=prec), dimension(:),allocatable :: buf1d
     integer                        :: error,nb,status
     integer, save :: tagplus=0,tag0
     tag0 = tagplus*1000+tag
     tagplus = tagplus+1
 
     call timer_start(1)
-    nb=size(buf)
+    nb=size(buf,1)*size(buf,2)
     if (debug_rcv) then 
        print *,my_task,'in rcv_real_msg2d',nb
        call flush(6)
@@ -426,7 +426,7 @@ contains
        call flush(6)
     endif
 
-    !allocate(buf1d(nb))
+    allocate(buf1d(nb))
     !if (debug_rcv) print *,'in rcv_real_msg2d',nb,size(buf1d)
     !if (debug_rcv) print *,'in rcv_real_msg2d',nb
     if (debug_rcv) then
@@ -437,12 +437,12 @@ contains
     !print *,my_task,'shape buf1d',shape(buf1d)
     !print *,my_task,'shape buf',shape(buf)
     !print *,buf1d
-        buf = reshape(buf1d(1:nb),(/size(buf,1),size(buf,2)/))
+        buf = reshape(buf1d,(/size(buf,1),size(buf,2)/))
 !!$    nb_msg = nb_msg+1
 !!$    if (nb_msg.ge.50) buf=0.
     
     call timer_stop(1)
-    !deallocate(buf1d)
+    deallocate(buf1d)
     if (debug_rcv) then
        print "(I7,X,I7,' has received  ',I7,' values ',14(E8.2,X))",tag0,my_task,nb,buf1d(:4)
        call flush(6)
@@ -458,9 +458,11 @@ contains
 
     integer          :: task, tag
     integer          :: buf, error,status
+    real(kind=prec) :: bufr(1)
 
+    bufr(1) = buf
     call timer_start(1)
-    call MPI_send(buf,1,MPI_INTEGER,task,tag,MPI_COMM_WORLD,error)
+    call MPI_send(bufr(1),1,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,error)
     call timer_stop(1)
 
     return
@@ -477,7 +479,8 @@ contains
     real(kind=prec) :: bufr(1)
     
     call timer_start(1)
-    call MPI_recv(buf,1,MPI_INTEGER,task,tag,MPI_COMM_WORLD,status,error)
+    call MPI_recv(bufr(1),1,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,status,error)
+    buf = bufr(1)
     call timer_stop(1)
     
     return
