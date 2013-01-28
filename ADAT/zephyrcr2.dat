@@ -4,8 +4,8 @@
 0.3e00      ! start_0
 0.999       ! t_all
 0.003125    ! tau 
-0.003125     ! t_print 
-0           ! is_print       
+0.1     ! t_print 
+10           ! is_print       
 2           ! is_conv        >0: cv_global /5 : sauve fichier
 4           ! Schema Temporel d'integration
 2           ! 0--> 1     1--> current  2 -> richardson
@@ -39,7 +39,7 @@
 1           ! nb_cycle
 1.0         ! sor_theta
 0           ! is_decale  0->non  1-> oui
-0           ! is_restart_save
+5           ! is_restart_save
 ./save ! fichier de sauvegarde globale
 
 ! solution testees

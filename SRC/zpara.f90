@@ -639,7 +639,8 @@ contains
     implicit none
     real(kind=prec), dimension(0:,0:)            :: solution
     real(kind=prec), dimension(:,:), allocatable :: buffer
-    integer           :: nx,ny,unit
+    real(kind=prec), dimension(:), allocatable  :: buffer1d
+    integer           :: nx,ny,unit,nsize
     integer           :: flag
     logical           :: is_save, is_save_txt
 
@@ -695,7 +696,13 @@ contains
              if (is_save) then
                 call snd_msg(0,tag_save_nobord+100*my_task+k2-k0,solution(i0:i1,k2:min(k1,k2+chunk-1)))
              else
-                call rcv_msg(0,tag_save_nobord+100*my_task+k2-k0,solution(i0:i1,k2:min(k1,k2+chunk-1)))
+                nsize = size(solution(i0:i1,k2:min(k1,k2+chunk-1)))
+                allocate(buffer1d(nsize))
+                call rcv_msg(0,tag_save_nobord+100*my_task+k2-k0,buffer1d)
+                solution(i0:i1,k2:min(k1,k2+chunk-1)) = reshape(buffer1d,&
+                     & (/size(solution(i0:i1,k2:min(k1,k2+chunk-1)),1),&
+                     &  size(solution(i0:i1,k2:min(k1,k2+chunk-1)),2)/))
+                deallocate(buffer1d)
              endif
           enddo
        else
@@ -744,7 +751,13 @@ contains
                             print *,"0,here",task
                             call flush(6)
                          end if
-                         call rcv_msg(task,tag_save_nobord+100*task+k2-k0,buffer(i0:i0+lmtask(task)-1,1:k3-k2+1))
+                         nsize = size(buffer(i0:i0+lmtask(task)-1,1:k3-k2+1))
+                         allocate(buffer1d(nsize))                
+                         call rcv_msg(task,tag_save_nobord+100*task+k2-k0,buffer1d)
+                         buffer(i0:i0+lmtask(task)-1,1:k3-k2+1) = reshape(buffer1d,&
+                              & (/size(buffer(i0:i0+lmtask(task)-1,1:k3-k2+1),1),&
+                              &  size(buffer(i0:i0+lmtask(task)-1,1:k3-k2+1),2)/))
+                         deallocate(buffer1d)
                       else
                          call snd_msg(task,tag_save_nobord+100*task+k2-k0,buffer(i0:i0+lmtask(task)-1,1:k3-k2+1))
                       endif
