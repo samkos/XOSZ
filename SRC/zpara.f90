@@ -640,7 +640,7 @@ contains
     real(kind=prec), dimension(0:,0:)            :: solution
     real(kind=prec), dimension(:,:), allocatable :: buffer
     integer           :: nx,ny,unit
-    integer           :: flag, res
+    integer           :: flag
     logical           :: is_save, is_save_txt
 
     integer           :: i,k,task,i0,k0,i1,k1,k2,k3,k4,lm,nm,lm_all,nm_all,ok
@@ -708,10 +708,8 @@ contains
                    cycle
                 endif
                 task=k*nb_i_blocks+i
-                call rcv_msg(task,tag_save_nobord+1000*task,res)
-                lmtask(task)=res
-                call rcv_msg(task,tag_save_nobord+3000*task,res)
-                nmtask(task)=res
+                call rcv_msg(task,tag_save_nobord+1000*task,lmtask(task))
+                call rcv_msg(task,tag_save_nobord+3000*task,nmtask(task))
              enddo
           enddo
           !print *,"0,here0",task
