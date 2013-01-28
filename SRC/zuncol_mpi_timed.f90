@@ -393,7 +393,7 @@ contains
        print "(I7,X,I7,'   sends  to',I7,I7,' values ',14(E8.2,X))",tag0,my_task,task,nb,buf1d(:4)
        call flush(6)
     end if
-    call MPI_send(buf1d(1),nb,MPI_DOUBLE_PRECISION,task,tag0,MPI_COMM_WORLD,error)
+    call MPI_send(buf1d(1),nb,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,error)
     call timer_stop(1)
     deallocate(buf1d)
 
@@ -433,11 +433,12 @@ contains
        print "(I7,X,I7,' receives from ',I7,I7,' values ')",tag0,my_task,task,nb
        call flush(6)
     end if
-    call MPI_recv(buf1d(1),nb,MPI_DOUBLE_PRECISION,task,tag0,MPI_COMM_WORLD,status,error)
+    call MPI_recv(buf1d(1),nb,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,status,error)
     !print *,my_task,'shape buf1d',shape(buf1d)
     !print *,my_task,'shape buf',shape(buf)
-    !print *,buf1d
-        buf = reshape(buf1d(1:nb),(/size(buf,1),size(buf,2)/))
+!    print *,buf1d
+  !  call flush(6)
+    buf = reshape(buf1d(1:nb),(/size(buf,1),size(buf,2)/))
 !!$    nb_msg = nb_msg+1
 !!$    if (nb_msg.ge.50) buf=0.
     
