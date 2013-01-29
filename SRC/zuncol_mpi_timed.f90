@@ -328,6 +328,7 @@ contains
 
   subroutine snd_real_msg1d( task, tag, buf)
     use mpi
+    use debug
     implicit none
 
     integer                        :: task, tag
@@ -337,6 +338,10 @@ contains
     call timer_start(1)
     nb=size(buf)
     call MPI_send(buf(1),nb,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,error)
+    if (debug_rcv) then
+       print "('snd1d',X,I7,X,I7,' sent from ',I7,I7,' values ')",tag,my_task,task,nb
+       call flush(6)
+    end if
     call timer_stop(1)
     
     return
@@ -355,14 +360,16 @@ contains
     
     call timer_start(1)
     nb=size(buf)
-    if (debug_rcv) then 
-       print *,my_task,'in rcv_real_msg1d',nb
+    if (debug_rcv) then
+       print "('rcv1d',X,I7,X,I7,' receives from ',I7,I7,' values ')",tag,my_task,task,nb
        call flush(6)
     end if
-!!$    print *,'nb',nb
     call MPI_recv(buf(1),nb,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,status,error)
-!!$    nb_msg = nb_msg+1
-!!$    if (nb_msg.ge.50) buf=0.
+    if (debug_rcv) then
+       print "('rcv1d',X,I7,X,I7,' received from ',I7,I7,' values ')",tag,my_task,task,nb
+       call flush(6)
+    end if
+
     call timer_stop(1)
 
     return
@@ -390,7 +397,7 @@ contains
     !if (debug_snd) print *,'in snd_real_msg2d',nb
     call flush(6)
     if (debug_snd) then
-       print "(I7,X,I7,'   sends  to',I7,I7,' values ',14(E8.2,X))",tag0,my_task,task,nb,buf1d(:4)
+       print "('snd2d',X,I7,X,I7,'   sends  to',I7,I7,' values ',14(E8.2,X))",tag0,my_task,task,nb,buf1d(:4)
        call flush(6)
     end if
     call MPI_send(buf1d(1),nb,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,error)
@@ -430,7 +437,7 @@ contains
     !if (debug_rcv) print *,'in rcv_real_msg2d',nb,size(buf1d)
     !if (debug_rcv) print *,'in rcv_real_msg2d',nb
     if (debug_rcv) then
-       print "(I7,X,I7,' receives from ',I7,I7,' values ')",tag0,my_task,task,nb
+       print "('rcv2d',X,I7,X,I7,' receives from ',I7,I7,' values ')",tag0,my_task,task,nb
        call flush(6)
     end if
     call MPI_recv(buf1d,nb,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,status,error)
@@ -454,13 +461,18 @@ contains
 
   subroutine snd_int_msg0d( task, tag, buf)
     use mpi
+    use debug
     implicit none
 
     integer          :: task, tag
     integer          :: buf, error,status
 
     call timer_start(1)
-    call MPI_send(buf,1,MPI_INTEGER,task,tag,MPI_COMM_WORLD,error)
+    if (debug_snd) then 
+       print *,my_task,'in snd_int_msg0d',' to ',task,' tag ',tag
+       call flush(6)
+    end if
+    call MPI_send(buf,1,MPI_INTEGER4,task,tag,MPI_COMM_WORLD,error)
     call timer_stop(1)
 
     return
@@ -470,6 +482,7 @@ contains
 
   subroutine rcv_int_msg0d( task, tag, buf)
     use mpi
+    use debug
     implicit none
 
     integer          :: task, tag,error,status
@@ -477,7 +490,15 @@ contains
     real(kind=prec) :: bufr(1)
     
     call timer_start(1)
-    call MPI_recv(buf,1,MPI_INTEGER,task,tag,MPI_COMM_WORLD,status,error)
+    if (debug_rcv) then 
+       print *,my_task,'receiving in rcv_int_msg0d',' from ',task,' tag ',tag
+       call flush(6)
+    end if
+    call MPI_recv(buf,1,MPI_INTEGER4,task,tag,MPI_COMM_WORLD,status,error)
+    if (debug_rcv) then 
+       print *,my_task,'receiving in rcv_int_msg0d',' from ',task,' tag ',tag
+       call flush(6)
+    end if
     call timer_stop(1)
     
     return

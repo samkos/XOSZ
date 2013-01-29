@@ -282,7 +282,8 @@ contains
 
        call infothemis
 
-       print *,my_task,'restart_save,it,temps',is_restart_save,it,temps
+       if (debug_save)&
+            & print *,my_task,'restart_save,it,temps',is_restart_save,it,temps
        if (is_restart_save/=0.or.is_checkpoint_forced/=0) then
           if (is_checkpoint_forced/=0&
                & .or.mod(it,abs(is_restart_save))==0&

@@ -632,7 +632,7 @@ contains
   !************************************************************************  ! start_out_light
 
   !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
-  subroutine save_or_retrieve(solution,nx,ny,unit,flag)
+  subroutine save_or_retrieve(nom_solution,solution,nx,ny,unit,flag)
     !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
     use data, only : is_print
     use debug
@@ -640,6 +640,7 @@ contains
     real(kind=prec), dimension(0:,0:)            :: solution
     real(kind=prec), dimension(:,:), allocatable :: buffer
     real(kind=prec), dimension(:), allocatable  :: buffer1d
+    character (len=*) :: nom_solution
     integer           :: nx,ny,unit,nsize
     integer           :: flag
     logical           :: is_save, is_save_txt
@@ -655,6 +656,8 @@ contains
        debug_rcv_old = debug_rcv
        debug_snd = .true.
        debug_rcv = .true.
+       print *,my_task,' in save_or_retrieve ',nom_solution
+       call flush(6)
     endif
 
     lm=size(solution,1)-2
@@ -706,8 +709,6 @@ contains
              endif
           enddo
        else
-          !print *,"0,here00",my_task
-          call flush(6)
           do k=0,nb_k_blocks-1
              do i=0,nb_i_blocks-1
                 if ((i+k)==0) then
@@ -715,12 +716,14 @@ contains
                    cycle
                 endif
                 task=k*nb_i_blocks+i
+                if (debug_save) then
+                   print *,' receiving block information for task ',task
+                   call flush(6)
+                end if
                 call rcv_msg(task,tag_save_nobord+1000*task,lmtask(task))
                 call rcv_msg(task,tag_save_nobord+3000*task,nmtask(task))
              enddo
           enddo
-          !print *,"0,here0",task
-          call flush(6)
 
           lm_all=sum(lmtask(0:nb_i_blocks-1)); 
           nm_all=sum(nmtask(0:nb_tasks-1:nb_i_blocks)); 
@@ -738,6 +741,10 @@ contains
                    enddo
                 endif
                 do i=0,nb_i_blocks-1
+                   if (debug_save) then
+                      print *,' processing block i,k2,k3 ',i,k2,k3
+                      call flush(6)
+                   end if
                    task=k*nb_i_blocks+i
                    if ((task)==0) then 
                       if (is_save) then
@@ -746,21 +753,22 @@ contains
                          solution(i0:i0+lmtask(task)-1,k2:k3)=buffer(i0:i0+lmtask(task)-1,1:k3-k2+1)
                       endif
                    else
+                      nsize = size(buffer(i0:i0+lmtask(task)-1,1:k3-k2+1))
+                      allocate(buffer1d(nsize))                
                       if (is_save) then
                          if (debug_save) then
                             print *,"0,here",task
                             call flush(6)
                          end if
-                         nsize = size(buffer(i0:i0+lmtask(task)-1,1:k3-k2+1))
-                         allocate(buffer1d(nsize))                
                          call rcv_msg(task,tag_save_nobord+100*task+k2-k0,buffer1d)
                          buffer(i0:i0+lmtask(task)-1,1:k3-k2+1) = reshape(buffer1d,&
                               & (/size(buffer(i0:i0+lmtask(task)-1,1:k3-k2+1),1),&
                               &  size(buffer(i0:i0+lmtask(task)-1,1:k3-k2+1),2)/))
-                         deallocate(buffer1d)
                       else
-                         call snd_msg(task,tag_save_nobord+100*task+k2-k0,buffer(i0:i0+lmtask(task)-1,1:k3-k2+1))
+                         buffer1d = reshape(buffer(i0:i0+lmtask(task)-1,1:k3-k2+1),(/nsize/))
+                         call snd_msg(task,tag_save_nobord+100*task+k2-k0,buffer1d)
                       endif
+                      deallocate(buffer1d)
                    endif
                    i0=i0+lmtask(task)                
                 enddo
@@ -792,6 +800,8 @@ contains
     if (debug_save) then
        debug_snd = debug_snd_old
        debug_rcv = debug_rcv_old
+       print *,my_task,' out of  save_or_retrieve ',nom_solution
+       call flush(6)
     endif
     return
   end subroutine save_or_retrieve                                        ! end_out_light

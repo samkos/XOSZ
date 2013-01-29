@@ -1138,16 +1138,16 @@ contains
       endif
    endif
 
-   call save_or_retrieve(VTU0,1,1,69,p_save); call save_or_retrieve(VTV0,1,1,69,p_save); 
-   call save_or_retrieve(VTU1,1,1,69,p_save); call save_or_retrieve(VTV1,1,1,69,p_save); 
-   call save_or_retrieve(VTU2,1,1,69,p_save); call save_or_retrieve(VTV2,1,1,69,p_save); 
-   call save_or_retrieve(VTU3,1,1,69,p_save); call save_or_retrieve(VTV3,1,1,69,p_save); 
+   call save_or_retrieve('VTU0',VTU0,1,1,69,p_save); call save_or_retrieve('VTV0',VTV0,1,1,69,p_save); 
+   call save_or_retrieve('VTU1',VTU1,1,1,69,p_save); call save_or_retrieve('VTV1',VTV1,1,1,69,p_save); 
+   call save_or_retrieve('VTU2',VTU2,1,1,69,p_save); call save_or_retrieve('VTV2',VTV2,1,1,69,p_save); 
+   call save_or_retrieve('VTU3',VTU3,1,1,69,p_save); call save_or_retrieve('VTV3',VTV3,1,1,69,p_save); 
 
    if (is_ns) then
-      call save_or_retrieve(PRE0,1,1,69,p_save); 
-      call save_or_retrieve(PRE1,1,1,69,p_save); 
-      call save_or_retrieve(PRE2,1,1,69,p_save); 
-      call save_or_retrieve(PRE3,1,1,69,p_save); 
+      call save_or_retrieve('PRE0',PRE0,1,1,69,p_save); 
+      call save_or_retrieve('PRE1',PRE1,1,1,69,p_save); 
+      call save_or_retrieve('PRE2',PRE2,1,1,69,p_save); 
+      call save_or_retrieve('PRE3',PRE3,1,1,69,p_save); 
    endif
 
    if (my_task==0) close(69)
@@ -1260,17 +1260,17 @@ contains
 !!$   read (69) VTU0,VTU1,VTU2,VTU3,VTUS,VTV0,VTV1,VTV2,VTV3,VTVS
 !!$   if (is_ns) read (69) PRE0,PRE1,PRE2,PRE3,PRES
 !!$
-   call save_or_retrieve(VTU0,1,1,69,p_retrieve); call save_or_retrieve(VTV0,1,1,69,p_retrieve); 
-   call save_or_retrieve(VTU1,1,1,69,p_retrieve); call save_or_retrieve(VTV1,1,1,69,p_retrieve); 
-   call save_or_retrieve(VTU2,1,1,69,p_retrieve); call save_or_retrieve(VTV2,1,1,69,p_retrieve); 
-   call save_or_retrieve(VTU3,1,1,69,p_retrieve); call save_or_retrieve(VTV3,1,1,69,p_retrieve); 
+   call save_or_retrieve('VTU0',VTU0,1,1,69,p_retrieve); call save_or_retrieve('VTV0',VTV0,1,1,69,p_retrieve); 
+   call save_or_retrieve('VTU1',VTU1,1,1,69,p_retrieve); call save_or_retrieve('VTV1',VTV1,1,1,69,p_retrieve); 
+   call save_or_retrieve('VTU2',VTU2,1,1,69,p_retrieve); call save_or_retrieve('VTV2',VTV2,1,1,69,p_retrieve); 
+   call save_or_retrieve('VTU3',VTU3,1,1,69,p_retrieve); call save_or_retrieve('VTV3',VTV3,1,1,69,p_retrieve); 
    VTU=VTU0; VTV=VTV0
 
    if (is_ns) then
-      call save_or_retrieve(PRE0,1,1,69,p_retrieve); 
-      call save_or_retrieve(PRE1,1,1,69,p_retrieve); 
-      call save_or_retrieve(PRE2,1,1,69,p_retrieve); 
-      call save_or_retrieve(PRE3,1,1,69,p_retrieve); 
+      call save_or_retrieve('PRE0',PRE0,1,1,69,p_retrieve); 
+      call save_or_retrieve('PRE1',PRE1,1,1,69,p_retrieve); 
+      call save_or_retrieve('PRE2',PRE2,1,1,69,p_retrieve); 
+      call save_or_retrieve('PRE3',PRE3,1,1,69,p_retrieve); 
       PRE=PRE0
    endif
 
