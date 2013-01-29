@@ -486,15 +486,14 @@ contains
 
 900 continue
 
-       
-       write(ncs2fw,3011) it,timer_get(3)   ! THEMIS
+       write(ncs2fw,3011) it,1+int((t_all-t_start)/tau),timer_get(3)   ! THEMIS
 
 
        call flush(ncs2fw)
 
     endif
 !THEMIS
- 3011 format(' CPU TIME FOR THE TIME STEP  ',I15,':     ',E14.5)
+ 3011 format(' CPU TIME FOR THE TIME STEP  ',I7,' FROM ',I10,' : ',E14.5)
     return
  3023 format(' On the order of THEMIS Framework...')
 
@@ -607,7 +606,7 @@ contains
     call timer_stop(0)
 
     if (my_task==0) open(file=trim(nom_fic_output)//trim(string)//'.dat',unit=79)
-    call save_or_retrieve(VTU,1,1,79,p_save_txt)
+    call save_or_retrieve('VTU',VTU,1,1,79,p_save_txt)
     if (my_task==0) close(79)
     if (my_task==0) call plot( &
          & trim(nom_fic_output)//trim(string)//'.dat' &
