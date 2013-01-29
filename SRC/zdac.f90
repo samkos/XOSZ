@@ -467,6 +467,7 @@ contains
          aly,bly,cly,fly,gly,aiy,biy,ciy,fiy
 
     real(kind=prec), dimension(0:1,0:size(OUTY,1)-1,0:nb_k_blocks-1) :: buffer
+    real(kind=prec), dimension(2*size(OUTY,1)) :: buffer1d
     real(kind=prec), dimension(0:size(OUTY,1)-1,-1:nb_k_blocks-1)   :: vec,diy
 
     integer :: lm,nm,nmv,i,j,k,i0,i1,k0,k1
@@ -546,7 +547,8 @@ contains
           enddo
           k=0
           do i=j,nb_tasks-1,nb_i_blocks
-             if (i.ne.my_task) call rcv_msg(i,tag_dacy+i,buffer(:,:,k))
+             if (i.ne.my_task) call rcv_msg(i,tag_dacy+i,buffer1d)
+             buffer(:,:,k) = reshape(buffer1d,(/size(buffer,1),size(buffer,2)/))
              k=k+1
           enddo
        endif
@@ -650,11 +652,18 @@ contains
     if (nb_i_blocks.ne.1) then
        j=iline*nb_i_blocks
        do i=j,j+nb_i_blocks-1
-          if (i/=my_task) call snd_msg(i,tag_dacx+my_task,buffer(:,icolumn))
+          buffer1d = buffer(:,icolumn)
+          if (i/=my_task) call snd_msg(i,tag_dacx+my_task,buffer1d)
        enddo
        do i=j,j+nb_i_blocks-1
           if (i/=my_task) then
              call rcv_msg(i,tag_dacx+i,buffer1d)
+             print *,"buffer1d",my_task,buffer1d
+             call flush(6)
+             print *,"i,j,i-j ",my_task,i,j,i-j,size(buffer(:,i-j)),size(buffer1d)
+             call flush(6)
+             print *,"buffer ",my_task,buffer(:,i-j)
+             call flush(6)
              buffer(:,i-j) = buffer1d
           endif          
        enddo
@@ -664,6 +673,8 @@ contains
     !SK     formation systeme interface
     !SK     
     do i=0,nb_i_blocks-2
+       print *,' i ',i
+       call flush(6)
        aix(2+i)=buffer(id_a,i)
        fix(2+i)=buffer(id_c,i)/buffer(iu_b,i+1)
        bix(2+i)=buffer(id_b,i)-fix(2+i)*buffer(iu_a,i+1)

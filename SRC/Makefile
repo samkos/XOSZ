@@ -15,7 +15,8 @@ OBJECTS =  zparam.o zuncol_mpi_timed.o    zpara.o zgarbage.o \
 
 COMPILER  = mpif90
 LINKER = mpif90 
-FFLAGS    =    -g -O3 -fdump-core -fbacktrace 
+FFLAGS    =    -g -O3 -fdump-core -fbacktrace  
+#-fbounds-check
 LIBS = -pthread -I/home/samy/OMPI/lib -L/home/samy/OMPI/lib -lmpi_f90 -lmpi_f77 -lmpi -ldl -lm -Wl,--export-dynamic -lrt -lnsl -lutil -lm -ldl 
 all: $(TARGET)
 
