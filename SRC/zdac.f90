@@ -707,6 +707,7 @@ contains
     real(kind=prec), dimension(:), pointer :: &
          aly,bly,cly,fly,gly,aiy,biy,ciy,fiy
     real(kind=prec), dimension(0:5,0:nb_k_blocks-1) :: buffer
+    real(kind=prec), dimension(0:5) :: buffer1d
 
     integer :: nm, i, j, k, k0, k1
 
@@ -753,7 +754,10 @@ contains
        enddo
        k=0
        do i=j,nb_tasks-1,nb_i_blocks
-          if (i/=my_task) call rcv_msg(i,tag_dacy+i,buffer(:,k))
+          if (i/=my_task) then
+             call rcv_msg(i,tag_dacy+i,buffer1d)
+             buffer(:,k) = buffer1d
+          end if
           k=k+1
        enddo
     endif
