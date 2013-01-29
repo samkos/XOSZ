@@ -479,6 +479,7 @@ contains
 
 900 continue
 
+       !write(*,3012) it,t_start,t_all,tau,1+int((t_all-t_start)/tau),timer_get(3)   ! THEMIS
        write(ncs2fw,3011) it,1+int((t_all-t_start)/tau),timer_get(3)   ! THEMIS
 
 
@@ -487,6 +488,7 @@ contains
     endif
 !THEMIS
  3011 format(' CPU TIME FOR THE TIME STEP  ',I7,' FROM ',I10,' : ',E14.5)
+ 3012 format(' CPU TIME FOR THE TIME STEP  ',I7,' t_start,t_all,tau ',3E14.5,' FROM ',I10,' : ',E14.5)
     return
  3023 format(' On the order of THEMIS Framework...')
 

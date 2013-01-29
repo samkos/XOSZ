@@ -27,7 +27,7 @@ module data
        ,ndirection,nbmax_ca,nbp_ca,nbmg,nb_prelis,nb_postlis,nb_cycle,is_cv&
        &, is_checkpoint_forced
 
-  real(kind=prec), save :: t_start,t_all,tau,t_print                       &
+  real(kind=prec)  :: t_start,t_all,tau,t_print                       &
        ,nu,epsv,epsvc,epsva,epsvac,epsmg,epsmga                            &
        ,rlag,rho_ca,tol_ca,sor_theta ,xmin,ymin,xmax,ymax,un_ms_sor_theta  
 
