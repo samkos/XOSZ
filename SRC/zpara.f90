@@ -646,6 +646,9 @@ contains
     logical           :: is_save, is_save_txt
 
     integer           :: i,k,task,i0,k0,i1,k1,k2,k3,k4,lm,nm,lm_all,nm_all,ok
+    integer :: i0_task,i1_task,k0_task,k1_task
+    logical :: is_task_north,is_task_east,is_task_west,is_task_south
+    integer :: p_task_north,p_task_east,p_task_west,p_task_south
     integer, dimension(0:nb_tasks-1) :: lmtask,nmtask
     integer, parameter:: chunk=10
 
@@ -692,9 +695,12 @@ contains
        if (.not.is_north) k1=nm+1-ny
        if (my_task>0) then
           ! sending to master the i and k extend of the domain I am in charge
-          print *,'my_task sending size_block i1-i0+1,k1-k0+1',my_task,i1-i0+1,k1-k0+1
-          call snd_msg(0,tag_save_nobord+1000*my_task,i1-i0+1)
-          call snd_msg(0,tag_save_nobord+3000*my_task,k1-k0+1)
+          if (debug_save) then
+             print *,'my_task sending size_block i1-i0+1,k1-k0+1',my_task,i1-i0+1,k1-k0+1
+             call flush(6)
+          end if
+          !call snd_msg(0,tag_save_nobord+1000*my_task,i1-i0+1)
+          !call snd_msg(0,tag_save_nobord+3000*my_task,k1-k0+1)
           ! sending/ceceiving data to/from of size chunk*(i1-i0+1)
           do k2=k0,k1,chunk
              if (is_save) then
@@ -717,14 +723,43 @@ contains
                    cycle
                 endif
                 task=k*nb_i_blocks+i
+                
+                p_task_east = mod(task+1,nb_i_blocks)  &
+                     + int(task/nb_i_blocks)*nb_i_blocks
+                p_task_west = mod(task+nb_i_blocks-1,nb_i_blocks) &
+                     + int(task/nb_i_blocks)*nb_i_blocks
+                p_task_south = mod(task+nb_tasks-nb_i_blocks,nb_tasks)
+                p_task_north = mod(task+nb_i_blocks,nb_tasks)
+                
+                if (mod(task,nb_i_blocks).eq.0) p_task_west=no_proc
+                if (mod(task,nb_i_blocks).eq.nb_i_blocks-1) p_task_east=no_proc
+                if (task.lt.nb_i_blocks) p_task_south=no_proc
+                if (task.ge.nb_tasks-nb_i_blocks) p_task_north=no_proc
+
+                is_task_west=p_task_west.eq.no_proc
+                is_task_east=p_task_east.eq.no_proc
+                is_task_north=p_task_north.eq.no_proc
+                is_task_south=p_task_south.eq.no_proc
+
+                i0_task=0; k0_task=0; i1_task=lm+1; k1_task=nm+1
+                ! getting rid of the ghost cells that need not to be saved
+                if (.not.is_task_west)  i0_task=nx
+                if (.not.is_task_east)  i1_task=lm+1-nx
+                if (.not.is_task_south) k0_task=ny
+                if (.not.is_task_north) k1_task=nm+1-ny
+
                 if (debug_save) then
                    print *,' receiving block information for task ',task
                    call flush(6)
                 end if
-                call rcv_msg(task,tag_save_nobord+1000*task,nsize)
-                lmtask(task)=nsize
-                call rcv_msg(task,tag_save_nobord+3000*task,nsize)
-                nmtask(task)=nsize
+                !call rcv_msg(task,tag_save_nobord+1000*task,nsize)
+                lmtask(task)=i1_task-i0_task+1
+                !call rcv_msg(task,tag_save_nobord+3000*task,nsize)
+                nmtask(task)=k1_task-k0_task+1
+                if (debug_save) then
+                   print *,'0 recalculating size_block for task,i1-i0+1,k1-k0+1',task,lmtask(task),nmtask(task)
+                   call flush(6)
+                end if
              enddo
           enddo
 
