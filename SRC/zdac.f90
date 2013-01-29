@@ -606,6 +606,7 @@ contains
     real(kind=prec), dimension(:), pointer :: &
          alx,blx,clx,flx,glx,aix,bix,cix,fix
     real(kind=prec), dimension(0:5,0:nb_i_blocks-1) :: buffer
+    real(kind=prec), dimension(0:5) :: buffer1d
     integer          :: lm,i0,i1,i,j
 
     lm=size(Q,1)-2
@@ -652,7 +653,10 @@ contains
           if (i/=my_task) call snd_msg(i,tag_dacx+my_task,buffer(:,icolumn))
        enddo
        do i=j,j+nb_i_blocks-1
-          if (i/=my_task) call rcv_msg(i,tag_dacx+i,buffer(:,i-j))
+          if (i/=my_task) then
+             call rcv_msg(i,tag_dacx+i,buffer1d)
+             buffer(:,i-j) = buffer1d
+          endif          
        enddo
     endif
 

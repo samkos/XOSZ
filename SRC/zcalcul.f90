@@ -345,7 +345,7 @@ contains
        if (is_print>=3*niv_solve-1.and.is_div) &
             & errdiv=sqrt(global_sum(rp*rp))
        if (ncg==1) err0=err
-       if (is_print>=3*niv_solve-1.and.my_task>=0)&
+       if (is_print>=3*niv_solve-1.and.my_task==0)&
             & print '(A,1X,I5,A,1X,I5,2E16.7)','niveau ',niv_solve&
             & ,' erreur BiCGSTAB : ',ncg,err,errdiv
        if (is_cv_file.and.niv_solve==1)&
@@ -380,7 +380,7 @@ contains
 
 !    if (niv_solve==1) call outdon(SMU,'SMU',1,1)
 
-    if (is_print>=3*niv_solve-2.and.my_task>=0) then
+    if (is_print>=3*niv_solve-2.and.my_task==0) then
        if (ncg.eq.ncgmax) then
           print '(A,1X,I5,A,1X,2E16.7)'&
                & ,'Sorry! BiCGSTAB n''a pas converge : ncg =',ncg&
@@ -545,11 +545,11 @@ contains
        if (is_print>=3*niv_solve-1.and.is_div)&
             & errdiv=sqrt(global_sum(rp(:,:,0)*rp(:,:,0)))
 
-       if (is_print>=3*niv_solve-1.and.my_task>=0)&
+       if (is_print>=3*niv_solve-1.and.my_task==0)&
             & print '(A,1X,I5,A,1X,I5,2E16.7)'&
             & ,'niveau ',niv_solve,' erreur BiCGSTAB(l) : '&
             & ,ncg,err,errdiv
-       if (my_task>=0.and.is_cv_file.and.niv_solve==1)&
+       if (my_task==0.and.is_cv_file.and.niv_solve==1)&
             & write (78,'(I5,1X,2E16.7)')&
             & ncg,err,errdiv
        if (is_div.and.niv_solve==1) call sortie_champ(xp(:,:,0),'p')
@@ -569,7 +569,7 @@ contains
     if (is_v)   VTV=xv(:,:,0); 
     if (is_div) PRE=xp(:,:,0); 
     
-    if (is_print>=3*niv_solve-2.and.my_task>=0) then
+    if (is_print>=3*niv_solve-2.and.my_task==0) then
        if (ncg.eq.ncgmax) then
           print '(A,1X,I5,A,1X,2E16.7)'&
                & ,'Sorry! BiCGSTAB(l) n''a pas converge : ncg =',ncg&
@@ -641,7 +641,7 @@ contains
        if (is_print>=3*niv_solve-1.and.is_div)&
             & errdiv=sqrt(global_sum(rp*rp))
        if (ncg<=2) err0=err
-       if (is_print>=3*niv_solve-1.and.my_task>=0)&
+       if (is_print>=3*niv_solve-1.and.my_task==0)&
             & print '(A,1X,I5,A,1X,I5,2E16.7)'&
             & ,'niveau ',niv_solve,' erreur GMRES : ',ncg,err,errdiv
        if (is_cv_file.and.ncg>=2.and.niv_solve==1)&
@@ -711,7 +711,7 @@ contains
 
     call conv_collect(err0,err,ncg-1)
 
-    if (is_print>=3*niv_solve-2.and.my_task>=0) then
+    if (is_print>=3*niv_solve-2.and.my_task==0) then
        if (ncg.eq.ncgmax) then
           print '(A,1X,I5,A,1X,2E16.7)'&
                & ,'Sorry! GMRES n''a pas converge : ncg =',ncg&
@@ -1002,7 +1002,7 @@ contains
          err=sqrt(global_ddot(ru,rv,rp,ru,rv,rp))
          if (is_print>=3*niv_solve-1.and.is_div)&
             & errdiv=sqrt(global_sum(rp*rp))
-         if (is_print>=3*niv_solve-1.and.my_task>=0)&
+         if (is_print>=3*niv_solve-1.and.my_task==0)&
               & print '(A,1X,I5,A,1X,I5,2E16.7)','niveau ',niv_solve&
               & ,' erreur GMRESR : ',ncg,err,errdiv
          if (is_cv_file.and.niv_solve==1)&
@@ -1019,7 +1019,7 @@ contains
 
       call conv_collect(err0,err,ncg-1)
 
-      if (is_print>=3*niv_solve-2.and.my_task>=0) then
+      if (is_print>=3*niv_solve-2.and.my_task==0) then
          if (ncg.eq.ncgmax) then
             print '(A,1X,I5,A,1X,2E16.7)'&
                  & ,'Sorry! GMRESR n''a pas converge : ncg =',ncg&
@@ -1136,7 +1136,7 @@ contains
           err=sqrt(global_ddot(ru,rv,rp,ru,rv,rp))
           if (is_print>=3*niv_solve.and.is_div)&
             & errdiv=sqrt(global_sum(rp*rp))
-          if (is_print>=3*niv_solve.and.my_task>=0)&
+          if (is_print>=3*niv_solve.and.my_task==0)&
                & print '(A,1X,I5,A,1X,I5,2E16.7)','niveau ',niv_solve&
                & ,' erreur ORTHODIR  : ',err,errdiv
           if (err<epsv*err0.or.err<epsva) exit
@@ -1159,7 +1159,7 @@ contains
 
        enddo
 
-       if (is_print>=3*niv_solve-1.and.my_task>=0)&
+       if (is_print>=3*niv_solve-1.and.my_task==0)&
             & print '(A,1X,I5,A,1X,I5,2E16.7)'&
             & ,'niveau ',niv_solve,' erreur ORTHODIR : '&
             & ,restart,err,errdiv
@@ -1171,7 +1171,7 @@ contains
 
     call conv_collect(err1,err,restart-1)
 
-    if (is_print>=3*niv_solve-2.and.my_task>=0)  then
+    if (is_print>=3*niv_solve-2.and.my_task==0)  then
        if (restart.eq.ncgmax+1) then
           print '(A,1X,I5,A,1X,2E16.7)'&
                & ,'Sorry! ORTHODIR n''a pas converge : ncg =',restart&
@@ -1243,7 +1243,7 @@ contains
        err=sqrt(global_ddot(ru,rv,rp,ru,rv,rp))
        err0=err
        if (restart==1) err1=err0
-      if (is_print>=3*niv_solve-1.and.my_task>=0)&
+      if (is_print>=3*niv_solve-1.and.my_task==0)&
            & print '(A,1X,I5,A,1X,I5,2E16.7)'&
            & ,'niveau ',niv_solve&
            & ,' erreur ORTHOMIN(inside) : ',restart,err,errdiv
@@ -1285,7 +1285,7 @@ contains
           err=global_ddot(ru,rv,rp,ru,rv,rp)
           if (is_print>=3*niv_solve.and.is_div)&
             & errdiv=sqrt(global_sum(rp*rp))
-          if (is_print>=3*niv_solve.and.my_task>=0)&
+          if (is_print>=3*niv_solve.and.my_task==0)&
                & print '(A,1X,I5,A,1X,I5,2E16.7)'&
                & ,'niveau ',niv_solve,' erreur ORTHOMIN : ',err,errdiv
 
@@ -1334,7 +1334,7 @@ contains
     call conv_collect(err0,err,restart-1)
 
 
-    if (is_print>=3*niv_solve-2.and.my_task>=0) then
+    if (is_print>=3*niv_solve-2.and.my_task==0) then
        if (restart.eq.ncgmax) then
           print '(A,1X,I5,A,1X,2E16.7)'&
                & ,'Sorry! ORTHOMIN n''a pas converge : ncg =',restart&
@@ -1521,7 +1521,7 @@ contains
        if (is_print>=3*niv_solve-1.and.is_div)&
             & errdiv=sqrt(global_sum(rp*rp))
 
-       if (is_print>=3*niv_solve-1.and.my_task>=0)&
+       if (is_print>=3*niv_solve-1.and.my_task==0)&
             & print '(A,1X,I5,A,1X,I5,2E16.7)','niveau ',niv_solve&
             & ,' erreur MG : ',nmg,err,errdiv
        if (is_cv_file.and.niv_solve==1)&
@@ -1540,7 +1540,7 @@ contains
 
     call conv_collect(err0,err,nmg-1)
 
-    if (is_print>=3*niv_solve-2.and.my_task>=0) then
+    if (is_print>=3*niv_solve-2.and.my_task==0) then
        if (nmg.eq.nmgmax) then
           print *,'Sorry! MG n''a pas converge : nmg =',nmg,' err=',err,errdiv
        else
@@ -1602,7 +1602,7 @@ contains
        err=sqrt(global_ddot(RU,RV,RP,RU,RV,RP))
        if (is_div) errdiv=sqrt(global_sum(RP*RP))
 
-       if (is_print>=3*niv_solve-1.and.my_task>=0)&
+       if (is_print>=3*niv_solve-1.and.my_task==0)&
             & print '(A,1X,I5,A,1X,I5,2E16.7)'&
             & ,'niveau ',niv_solve,' erreur lisseur : ',nmg&
             & ,err,errdiv
@@ -1629,7 +1629,7 @@ contains
     call conv_collect(err0,err,nmg-1)
 
 
-    if (is_print>=3*niv_solve-2.and.my_task>=0) then
+    if (is_print>=3*niv_solve-2.and.my_task==0) then
        if (nmg.eq.nmgmax) then
           print '(A,1X,I5,A,1X,2E16.7)'&
                & ,'Sorry! lisseur n''a pas converge : nmg =',nmg&
@@ -1715,7 +1715,7 @@ contains
           if (is_div) errdiv=sqrt(global_sum(RP*RP))
 
 
-          if (is_print>=3*niv_solve-1.and.my_task>=0)&
+          if (is_print>=3*niv_solve-1.and.my_task==0)&
                & print '(A,1X,I5,A,1X,I5,2E16.7)'&
                & ,'niveau ',niv_solve,' erreur Schwarz  : ',nmg&
                & ,err,errdiv
@@ -1738,7 +1738,7 @@ contains
 
     call output('is_mpp ap',l1=is_mpp)
 
-    if (is_print>=3*niv_solve-2.and.my_task>=0) then
+    if (is_print>=3*niv_solve-2.and.my_task==0) then
        if (nmg.eq.nmgmax) then
           print '(A,1X,I5,A,1X,2E16.7)'&
                & ,'Sorry! Schwarz n''a pas converge : nmg =',nmg&

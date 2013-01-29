@@ -34,7 +34,7 @@ module para
 
 
   interface rfr_stn
-     module procedure blocking_rfr_stn
+     module procedure nonblocking_rfr_stn
   end interface
 
 contains
@@ -208,7 +208,6 @@ contains
 
     if (iand(direction,stn_s)/=0.and.(.not.is_south)) then
        nb = size(INP(:,0:ny))
-       allocate(buf_from_south (nb))
        allocate(buf_from_south (nb))
        allocate(buf_to_south (nb))
        call MPI_IRECV (buf_from_south(1),nb,MPI_DOUBLE_PRECISION,p_south,&

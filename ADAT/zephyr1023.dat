@@ -4,7 +4,7 @@
 0.e00       ! start_0
 0.012       ! t_all
 0.003125    ! tau 
-0.012       ! t_print 
+0.003125       ! t_print 
 0           ! is_print       
 2           ! is_conv        >0: cv_global /5 : sauve fichier
 4           ! Schema Temporel d'integration
