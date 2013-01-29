@@ -465,14 +465,17 @@ contains
     implicit none
 
     integer          :: task, tag
-    integer          :: buf, error,status
+    integer          :: buf, error,status,n
+    real(kind=prec),dimension(1) :: rvalue
 
+    n=1
     call timer_start(1)
     if (debug_snd) then 
-       print *,my_task,'in snd_int_msg0d',' to ',task,' tag ',tag
+       print *,my_task,'in snd_int_msg0d',' to ',task,' tag ',tag,' buf ',buf,rvalue
        call flush(6)
     end if
-    call MPI_send(buf,1,MPI_INTEGER4,task,tag,MPI_COMM_WORLD,error)
+    rvalue(1) = buf
+    call MPI_send(rvalue(1),n,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,error)
     call timer_stop(1)
 
     return
@@ -485,18 +488,20 @@ contains
     use debug
     implicit none
 
-    integer          :: task, tag,error,status
-    integer          :: buf
-    real(kind=prec) :: bufr(1)
+    integer          :: task, tag,error,status,n
+    integer,intent(out)          :: buf
+    real(kind=prec),dimension(1) :: rvalue
     
+    n=1
     call timer_start(1)
     if (debug_rcv) then 
        print *,my_task,'receiving in rcv_int_msg0d',' from ',task,' tag ',tag
        call flush(6)
     end if
-    call MPI_recv(buf,1,MPI_INTEGER4,task,tag,MPI_COMM_WORLD,status,error)
+    call MPI_recv(rvalue(1),n,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,status,error)
+    buf = rvalue(1)
     if (debug_rcv) then 
-       print *,my_task,'receiving in rcv_int_msg0d',' from ',task,' tag ',tag
+       print *,my_task,'received in rcv_int_msg0d',' from ',task,' tag ',tag,'error',error,' buf=',buf,rvalue
        call flush(6)
     end if
     call timer_stop(1)

@@ -692,6 +692,7 @@ contains
        if (.not.is_north) k1=nm+1-ny
        if (my_task>0) then
           ! sending to master the i and k extend of the domain I am in charge
+          print *,'my_task sending size_block i1-i0+1,k1-k0+1',my_task,i1-i0+1,k1-k0+1
           call snd_msg(0,tag_save_nobord+1000*my_task,i1-i0+1)
           call snd_msg(0,tag_save_nobord+3000*my_task,k1-k0+1)
           ! sending/ceceiving data to/from of size chunk*(i1-i0+1)
@@ -720,8 +721,10 @@ contains
                    print *,' receiving block information for task ',task
                    call flush(6)
                 end if
-                call rcv_msg(task,tag_save_nobord+1000*task,lmtask(task))
-                call rcv_msg(task,tag_save_nobord+3000*task,nmtask(task))
+                call rcv_msg(task,tag_save_nobord+1000*task,nsize)
+                lmtask(task)=nsize
+                call rcv_msg(task,tag_save_nobord+3000*task,nsize)
+                nmtask(task)=nsize
              enddo
           enddo
 
@@ -757,7 +760,7 @@ contains
                       allocate(buffer1d(nsize))                
                       if (is_save) then
                          if (debug_save) then
-                            print *,"0,here",task
+                            print *,"avt rcv block task,nsize,lmtask(task),k2,k3",task,nsize,lmtask(task),k2,k3
                             call flush(6)
                          end if
                          call rcv_msg(task,tag_save_nobord+100*task+k2-k0,buffer1d)
