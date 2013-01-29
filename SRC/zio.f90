@@ -306,7 +306,7 @@ contains
 
     call timer_stop(0)
 
-    if (it==it_start.or.mod(it,nt_print)==0) then
+    if (it-it_start<=2.or.mod(it,nt_print)==0) then
 
 !       call fixe_cl(VTU,VTV,PRE,VTU,VTV,PRE,.true.)  ! met les ghost-cells  a 0
        
@@ -443,16 +443,9 @@ contains
        endif
 
 
-
-
-
-
-
-
-       call timer_print(3)
-       call timer_print(2)
-       call timer_print(1)
-       call timer_print(0)
+       call timer_print("reduction",2)
+       call timer_print('messages',1)
+       call timer_print('total',0)
 
     endif
     
