@@ -209,7 +209,7 @@ contains
 
 
     temps=t_start  
-    if (is_unsteady>0) then
+    if (is_unsteady>0.and.it_start==0) then
        temps=temps-3._prec*tau; call exacte; VTU3=VTUS; VTV3=VTVS; PRE3=PRES
        temps=temps+tau;         call exacte; VTU2=VTUS; VTV2=VTVS; PRE2=PRES
        temps=temps+tau;         call exacte; VTU1=VTUS; VTV1=VTVS; PRE1=PRES
