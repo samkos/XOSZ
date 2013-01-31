@@ -689,9 +689,9 @@ contains
     integer, intent(in) :: n
     character(len=*) :: what 
     if (my_task.eq.0) &
-         & print '(A,I3,A,A15,I3,A,F10.2,A,E10.5,A)&
+         & print '(A,I3," Timer (",I1,") ",A15,A,F10.2,A,E10.5,A)&
          &',' task ',my_task&
-         & ,' Timer ',what,n,' Cpu Time : ',tchrono(n),' seconds'
+         & ,n, what,' Cpu Time : ',tchrono(n),' seconds'
     
 
   end subroutine timer_print

@@ -443,6 +443,7 @@ contains
        endif
 
 
+       call timer_print("one iteration",3)
        call timer_print("reduction",2)
        call timer_print('messages',1)
        call timer_print('total',0)
