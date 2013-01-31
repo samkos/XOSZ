@@ -470,7 +470,11 @@ contains
     use disc
     use data
     implicit none
-
+    integer :: is_checkpoint_forced_all
+    
+    
+    is_checkpoint_forced = 0
+    
     if (my_task==master_task) then
 
        open(file="CHECKPOINT_NOW", unit=92, status='OLD', action='READ', err=900)
@@ -486,6 +490,11 @@ contains
        call flush(ncs2fw)
 
     endif
+
+    is_checkpoint_forced_all = global_add(is_checkpoint_forced)
+    is_checkpoint_forced = is_checkpoint_forced_all
+
+ 
 !THEMIS
  3011 format(' CPU TIME FOR THE TIME STEP  ',I7,' FROM ',I10,' : ',E14.5)
  3012 format(' CPU TIME FOR THE TIME STEP  ',I7,' t_start,t_all,tau ',3E14.5,' FROM ',I10,' : ',E14.5)
