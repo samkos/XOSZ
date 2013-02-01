@@ -7,14 +7,14 @@
 #
 # makefile for poetest.bcast, test of point to point bandwidth
    
-TARGET = zephyr zplot_control
+TARGET = zephyr_seq zplot_control
 OBJECTS =  zuncol_fake.o zparam.o   zpara.o zgarbage.o \
 	   zdac.o   zcompact.o zinit.o zblas.o  zio.o  zmg.o \
 	   zcalcul.o  znavier.o ztest.o zmainone.o  second.o zplot.o
 
 COMPILER  = gfortran
 FFLAGS    =  -O2 -g
-#FFLAGS    =  -g
+FFLAGS    =  -g
 
 all: $(TARGET) 
 
@@ -22,11 +22,11 @@ all: $(TARGET)
 zplot_control : zplot_control.c
 	cc -o zplot_control zplot_control.c
 
-zephyr : $(OBJECTS)
+zephyr_seq : $(OBJECTS)
 	$(COMPILER) -o $@ $(FFLAGS) $(OBJECTS) $(MPI_LIB) 
 
 %.o : %.f90
-	$(COMPILER) $(MPI_INC) $(FFLAGS) -c $<
+	$(COMPILER) $(MPI_INC) $(FFLAGS) -DSEQ -cpp -c $<
 
 clean: 
 	rm -f z*.o second.o zephyr *.mod  *.lst

@@ -433,14 +433,15 @@ contains
 
   !***********************************************************************
 
-  subroutine timer_print(n)
+  subroutine timer_print(what,n)
     implicit none
 
     integer, intent(in) :: n
-
+    character(len=*) :: what 
     if (my_task.eq.0) &
-         & print '(A,I3,A,F10.2,A)',' task ',my_task&
-         & ,' Cpu Time : ',tchrono(n),' seconds'
+         & print '(A,I3," Timer (",I1,") ",A15,A,F10.2,A,E10.5,A)&
+         &',' task ',my_task&
+         & ,n, what,' Cpu Time : ',tchrono(n),' seconds'
     
 
   end subroutine timer_print

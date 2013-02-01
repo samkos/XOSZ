@@ -143,10 +143,13 @@ contains
   !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
   subroutine nonblocking_rfr_stn(INP,direction,nx0,ny0)
     !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+#ifndef SEQ
     use mpi
+#endif
     implicit none
     real(kind=prec), dimension(0:,0:)  :: INP
     integer          :: direction,nx,ny,nx0,ny0
+#ifndef SEQ
     integer :: lm,nm
     real(kind=prec), dimension(:), allocatable ::&
          & buf_to_north,buf_to_east,buf_to_west,buf_to_south,&
@@ -252,7 +255,7 @@ contains
     end if
 
 
-
+#endif
     return
   end subroutine nonblocking_rfr_stn
 
@@ -658,7 +661,7 @@ contains
        debug_rcv_old = debug_rcv
        debug_snd = .true.
        debug_rcv = .true.
-       print *,my_task,' in save_or_retrieve ',nom_solution
+       print *,my_task,' in save_or_retrieve ',nom_solution,size(solution,1),size(solution,2)
        call flush(6)
     endif
 
@@ -685,6 +688,7 @@ contains
              read (unit)  solution(:,k)
           endif
        enddo
+       if (is_save)   call flush(unit)
     else
        i0=0; k0=0; i1=lm+1; k1=nm+1
        ! getting rid of the ghost cells that need not to be saved

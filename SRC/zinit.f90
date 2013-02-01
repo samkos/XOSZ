@@ -245,7 +245,7 @@ contains
        endif
     endif                                               ! end_out_light
 
-!    if (is_restart_save>0)  call restore_champs           ! out_light 
+    if (is_restart_save>0.and.it_start.gt.0)  call restore_champs           ! out_light 
 
     open(file=trim(nom_fic_output)//'Z.dat',unit=79,iostat=ok)
     write(79,*) controle_string
@@ -1256,7 +1256,10 @@ contains
    use drapeaux
    use champs
    implicit none
-   
+   real(kind=prec), dimension(96) :: rbuffer=0.
+   integer :: i0
+
+   call restore_param(rbuffer,i0)         ! out_light   
 !!$   read (69) VTU0,VTU1,VTU2,VTU3,VTUS,VTV0,VTV1,VTV2,VTV3,VTVS
 !!$   if (is_ns) read (69) PRE0,PRE1,PRE2,PRE3,PRES
 !!$
