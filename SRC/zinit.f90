@@ -1134,7 +1134,7 @@ contains
 !!$              & rho_ca, rlag, nbmax_ca, nbp_ca, nbmg, epsmg, epsmga, nb_prelis, nb_postlis,&
 !!$              & nb_cycle, sor_theta, is_decale, is_restart_save
       if (debug_save) then
-         print *,'parametres globaux sauvés par task 0'
+         print *,'parametres globaux sauvés par task 0',tchrono
       endif
    endif
 
@@ -1189,7 +1189,7 @@ contains
               & rho_ca, rlag, nbmax_ca, nbp_ca, nbmg, epsmg, epsmga, nb_prelis, nb_postlis,&
               & nb_cycle, sor_theta, is_decale, is_restart_save,temps,it,tchrono
 
-         print *,'*** fichier SAVE en cours de lecture'
+         print *,'*** fichier SAVE en cours de lecture',tchrono
          
 !!$      print *,'read', nexample, t_start, t_all, tau, t_print, is_print, is_cv,&
 !!$              & is_kuta, is_richardson, lm_global, nm_global, nu, ncheck,&
@@ -1259,7 +1259,7 @@ contains
    real(kind=prec), dimension(96) :: rbuffer=0.
    integer :: i0
 
-   call restore_param(rbuffer,i0)         ! out_light   
+!!$   call restore_param(rbuffer,i0)         ! out_light   
 !!$   read (69) VTU0,VTU1,VTU2,VTU3,VTUS,VTV0,VTV1,VTV2,VTV3,VTVS
 !!$   if (is_ns) read (69) PRE0,PRE1,PRE2,PRE3,PRES
 !!$
