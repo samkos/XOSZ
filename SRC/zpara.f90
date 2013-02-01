@@ -636,7 +636,7 @@ contains
   !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
   subroutine save_or_retrieve(nom_solution,solution,nx,ny,unit,flag)
     !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
-    use data, only : is_print
+    use data
     use debug
     implicit none
     real(kind=prec), dimension(0:,0:)            :: solution
@@ -648,7 +648,7 @@ contains
     logical           :: is_save, is_save_txt
 
     integer           :: i,k,task,i0,k0,i1,k1,k2,k3,k4,lm,nm,lm_all,nm_all,ok
-    integer :: i0_task,i1_task,k0_task,k1_task
+    integer :: i0_task,i1_task,k0_task,k1_task,lm0,nm0
     logical :: is_task_north,is_task_east,is_task_west,is_task_south
     integer :: p_task_north,p_task_east,p_task_west,p_task_south
     integer, dimension(0:nb_tasks-1) :: lmtask,nmtask
@@ -721,10 +721,6 @@ contains
        else
           do k=0,nb_k_blocks-1
              do i=0,nb_i_blocks-1
-                if ((i+k)==0) then
-                   lmtask(0)=i1-i0+1; nmtask(0)=k1-k0+1
-                   cycle
-                endif
                 task=k*nb_i_blocks+i
                 
                 p_task_east = mod(task+1,nb_i_blocks)  &
@@ -744,21 +740,22 @@ contains
                 is_task_north=p_task_north.eq.no_proc
                 is_task_south=p_task_south.eq.no_proc
 
-                i0_task=0; k0_task=0; i1_task=lm+1; k1_task=nm+1
+
+                print *,'global',lm_global,nm_global,nb_i_blocks,nb_k_blocks
+                lm0=(lm_global)/nb_i_blocks+1
+                nm0=(nm_global)/nb_k_blocks+1
                 ! getting rid of the ghost cells that need not to be saved
-                if (.not.is_task_west)  i0_task=nx
-                if (.not.is_task_east)  i1_task=lm+1-nx
-                if (.not.is_task_south) k0_task=ny
-                if (.not.is_task_north) k1_task=nm+1-ny
+                if (.not.is_task_east)  lm0=lm_global-lm0*(nb_i_blocks-1)
+                if (.not.is_task_north) nm0=nm_global-nm0*(nb_k_blocks-1)
 
                 if (debug_save) then
                    print *,' receiving block information for task ',task
                    call flush(6)
                 end if
                 !call rcv_msg(task,tag_save_nobord+1000*task,nsize)
-                lmtask(task)=i1_task-i0_task+1
+                lmtask(task)=lm0
                 !call rcv_msg(task,tag_save_nobord+3000*task,nsize)
-                nmtask(task)=k1_task-k0_task+1
+                nmtask(task)=nm0
                 if (debug_save) then
                    print *,'0 recalculating size_block for task,i1-i0+1,k1-k0+1',task,lmtask(task),nmtask(task)
                    call flush(6)
@@ -766,8 +763,29 @@ contains
              enddo
           enddo
 
-          lm_all=sum(lmtask(0:nb_i_blocks-1)); 
-          nm_all=sum(nmtask(0:nb_tasks-1:nb_i_blocks)); 
+          if (my_task==0) then
+             write(*,'(A)',advance="no") " >> lmtask : "
+             do k=nb_k_blocks-1,0,-1
+                write (*,'(16I6)',advance="no") (lmtask(i),i=k*nb_i_blocks,(k+1)*nb_i_blocks-1)
+                if (k>0) then; print *; write(*,'(A)',advance="no") " >>          "; endif
+             enddo
+             print *; print *,'>>'
+             write(*,'(A)',advance="no") " >> nmtask : "
+             do k=nb_k_blocks-1,0,-1
+                write (*,'(16I6)',advance="no") (nmtask(i),i=k*nb_i_blocks,(k+1)*nb_i_blocks-1)
+                if (k>0) then; print *; write(*,'(A)',advance="no") " >>          "; endif
+            enddo
+
+
+
+          lm_all=sum(lmtask(0:nb_i_blocks-1))+1
+          nm_all=sum(nmtask(0:nb_tasks-1:nb_i_blocks)) 
+
+          print *,'lmtask',lmtask(0:nb_i_blocks-1),lm_all,nb_i_blocks
+          print *,'nmtask',nmtask(0:nb_tasks-1:nb_i_blocks),nm_all,nb_k_blocks
+          call flush(6)
+          end if
+!!$          call parallel_stop
 
           ! allocating a whole buffer that will receive all the contribution of nodes
           allocate(buffer (0:lm_all-1,chunk),stat=ok); if (ok/=0) stop 'buffer : error alloc'
@@ -778,6 +796,8 @@ contains
                 i0=0; k3=min(k0+nmtask(k*nb_i_blocks)-1,k2+chunk-1)
                 if (.not.is_save) then
                    do k4=1,k3-k2+1
+                      print *,size(buffer(:,k4),1)
+                      call flush(6)
                       read (unit) buffer(:,k4)
                    enddo
                 endif

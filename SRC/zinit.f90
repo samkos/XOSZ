@@ -1126,7 +1126,8 @@ contains
               & ncheck_precond, ntype_solver, ntype_precond, npcg, nprecond,&
               & nrecvddm, epsv, epsva, epsvc, epsvac, ninterne, ndirection, ns_solver,&
               & rho_ca, rlag, nbmax_ca, nbp_ca, nbmg, epsmg, epsmga, nb_prelis, nb_postlis,&
-              & nb_cycle, sor_theta, is_decale, is_restart_save,temps,it,tchrono
+              & nb_cycle, sor_theta, is_decale, is_restart_save,temps,it, &
+              & tchrono(0),tchrono(1),tchrono(2),tchrono(3),tchrono(4),tchrono(5)
 !!$      print *,'write', nexample, t_start, t_all, tau, t_print, is_print, is_cv,&
 !!$              & is_kuta, is_richardson, lm_global, nm_global, nu, ncheck,&
 !!$              & ncheck_precond, ntype_solver, ntype_precond, npcg, nprecond,&
@@ -1134,7 +1135,7 @@ contains
 !!$              & rho_ca, rlag, nbmax_ca, nbp_ca, nbmg, epsmg, epsmga, nb_prelis, nb_postlis,&
 !!$              & nb_cycle, sor_theta, is_decale, is_restart_save
       if (debug_save) then
-         print *,'parametres globaux sauvés par task 0',tchrono
+         print *,'parametres globaux sauvés par task 0'
       endif
    endif
 
@@ -1187,7 +1188,8 @@ contains
               & ncheck_precond, ntype_solver, ntype_precond, npcg, nprecond,&
               & nrecvddm, epsv, epsva, epsvc, epsvac, ninterne, ndirection, ns_solver,&
               & rho_ca, rlag, nbmax_ca, nbp_ca, nbmg, epsmg, epsmga, nb_prelis, nb_postlis,&
-              & nb_cycle, sor_theta, is_decale, is_restart_save,temps,it,tchrono
+              & nb_cycle, sor_theta, is_decale, is_restart_save,temps,it,&
+              & tchrono(0),tchrono(1),tchrono(2),tchrono(3),tchrono(4),tchrono(5)
 
          print *,'*** fichier SAVE en cours de lecture',tchrono
          
