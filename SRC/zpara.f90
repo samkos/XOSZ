@@ -736,23 +736,25 @@ contains
           enddo
        enddo
 
-       if (my_task==0) then
-          write(*,'(A)',advance="no") " >> lmxnm  : "
+       if (my_task==0.and.debug_save_size.or.debug_save) then
+          lm_all=sum(lmtask(0:nb_i_blocks-1))+1
+          nm_all=sum(nmtask(0:nb_tasks-1:nb_i_blocks))+1 
+          
+          write(*,'(A)',advance="no") " >> lmxnm  :  |"
           do k=nb_k_blocks-1,0,-1
              write (*,'(16(I3,"x",I3,"|"))',advance="no") (lmtask(i),nmtask(i),i=k*nb_i_blocks,(k+1)*nb_i_blocks-1)
-             if (k>0) then; print *; write(*,'(A)',advance="no") " >>          "; endif
-             enddo
-             print *; print *,'>>'
+             if (k>0) then
+                print *; write(*,'(A)',advance="no") " >>            "; 
+             endif
+          end do
+          write (*,'("==> ",I3,"x",I3)',advance="no") lm_all,nm_all
+          print *,; print *,'>>'
 
-             
-             lm_all=sum(lmtask(0:nb_i_blocks-1))+1
-             nm_all=sum(nmtask(0:nb_tasks-1:nb_i_blocks)) 
 
-             print *,'lmtask',lmtask(0:nb_i_blocks-1),lm_all,nb_i_blocks
-             print *,'nmtask',nmtask(0:nb_tasks-1:nb_i_blocks),nm_all,nb_k_blocks
-                call flush(6)
-             end if
-!!$          call parallel_stop
+          !print *,'lmtask',lmtask(0:nb_i_blocks-1),lm_all,nb_i_blocks
+          !print *,'nmtask',nmtask(0:nb_tasks-1:nb_i_blocks),nm_all,nb_k_blocks
+          call flush(6)
+       end if
 
 
        i0=0; k0=0; 
@@ -764,6 +766,7 @@ contains
           ! sending to master the i and k extend of the domain I am in charge
           if (debug_save.or.debug_save_size) then
              print *,'my_task sending i0,i1, size_block i1-i0+1,k1-k0+1',my_task,i0,i1,i1-i0+1,k1-k0+1
+             debug_save_size=.false.
              call flush(6)
           end if
           !call snd_msg(0,tag_save_nobord+1000*my_task,i1-i0+1)
@@ -808,12 +811,12 @@ contains
                    task=k*nb_i_blocks+i
                    if ((task)==0) then 
                       if (is_save) then
-                         buffer(i0:i0+lmtask(task)-1,1:k3-k2+1)=solution(i0:i0+lmtask(task)-1,k2:k3)
+                         buffer(i0:i0+lmtask(task),1:k3-k2+1)=solution(i0:i0+lmtask(task),k2:k3)
                       else
-                         solution(i0:i0+lmtask(task)-1,k2:k3)=buffer(i0:i0+lmtask(task)-1,1:k3-k2+1)
+                         solution(i0:i0+lmtask(task),k2:k3)=buffer(i0:i0+lmtask(task),1:k3-k2+1)
                       endif
                    else
-                      nsize = size(buffer(i0:i0+lmtask(task)-1,1:k3-k2+1))
+                      nsize = size(buffer(i0:i0+lmtask(task),1:k3-k2+1))
                       allocate(buffer1d(nsize))                
                       if (is_save) then
                          if (debug_save.or.debug_save_size) then
@@ -821,11 +824,11 @@ contains
                             call flush(6)
                          end if
                          call rcv_msg(task,tag_save_nobord+100*task+k2-k0,buffer1d)
-                         buffer(i0:i0+lmtask(task)-1,1:k3-k2+1) = reshape(buffer1d,&
-                              & (/size(buffer(i0:i0+lmtask(task)-1,1:k3-k2+1),1),&
-                              &  size(buffer(i0:i0+lmtask(task)-1,1:k3-k2+1),2)/))
+                         buffer(i0:i0+lmtask(task),1:k3-k2+1) = reshape(buffer1d,&
+                              & (/size(buffer(i0:i0+lmtask(task),1:k3-k2+1),1),&
+                              &  size(buffer(i0:i0+lmtask(task),1:k3-k2+1),2)/))
                       else
-                         buffer1d = reshape(buffer(i0:i0+lmtask(task)-1,1:k3-k2+1),(/nsize/))
+                         buffer1d = reshape(buffer(i0:i0+lmtask(task),1:k3-k2+1),(/nsize/))
                          call snd_msg(task,tag_save_nobord+100*task+k2-k0,buffer1d)
                       endif
                       deallocate(buffer1d)
