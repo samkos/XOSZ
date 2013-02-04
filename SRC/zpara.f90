@@ -656,7 +656,7 @@ contains
 
     logical :: debug_snd_old, debug_rcv_old
 
-    if (debug_save.and.flag==p_save) then
+    if (debug_save) then
        debug_snd_old = debug_snd
        debug_rcv_old = debug_rcv
        debug_snd = .true.
@@ -736,9 +736,10 @@ contains
           enddo
        enddo
 
+       lm_all=sum(lmtask(0:nb_i_blocks-1))+1
+       nm_all=sum(nmtask(0:nb_tasks-1:nb_i_blocks))+1 
+
        if (my_task==0.and.debug_save_size.or.debug_save) then
-          lm_all=sum(lmtask(0:nb_i_blocks-1))+1
-          nm_all=sum(nmtask(0:nb_tasks-1:nb_i_blocks))+1 
           
           write(*,'(A)',advance="no") " >> lmxnm  :  |"
           do k=nb_k_blocks-1,0,-1
@@ -766,7 +767,7 @@ contains
           ! sending to master the i and k extend of the domain I am in charge
           if (debug_save.or.debug_save_size) then
              print *,'my_task sending i0,i1, size_block i1-i0+1,k1-k0+1',my_task,i0,i1,i1-i0+1,k1-k0+1
-             debug_save_size=.false.
+             !debug_save_size=.false.
              call flush(6)
           end if
           !call snd_msg(0,tag_save_nobord+1000*my_task,i1-i0+1)
@@ -790,7 +791,7 @@ contains
           ! allocating a whole buffer that will receive all the contribution of nodes
           allocate(buffer (0:lm_all,chunk),stat=ok); if (ok/=0) stop 'buffer : error alloc'
           if (my_task==0) then
-             print *,"size buffer on task0 ",size(buffer,1)
+             print *,"size buffer on task 0 ",size(buffer,1)
              call flush(6)
           end if
 
