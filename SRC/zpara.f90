@@ -652,11 +652,11 @@ contains
     logical :: is_task_north,is_task_east,is_task_west,is_task_south
     integer :: p_task_north,p_task_east,p_task_west,p_task_south
     integer, dimension(0:nb_tasks-1) :: lmtask,nmtask
-    integer, parameter:: chunk=10
+    integer, parameter:: chunk=1
 
     logical :: debug_snd_old, debug_rcv_old
 
-    if (debug_save) then
+    if (debug_save.and.flag==p_save) then
        debug_snd_old = debug_snd
        debug_rcv_old = debug_rcv
        debug_snd = .true.
@@ -690,16 +690,80 @@ contains
        enddo
        if (is_save)   call flush(unit)
     else
-       i0=0; k0=0; i1=lm+1; k1=nm+1
+       ! calculation of size of block for eaxch task
+
+       do k=0,nb_k_blocks-1
+          do i=0,nb_i_blocks-1
+             task=k*nb_i_blocks+i
+
+             p_task_east = mod(task+1,nb_i_blocks)  &
+                  + int(task/nb_i_blocks)*nb_i_blocks
+             p_task_west = mod(task+nb_i_blocks-1,nb_i_blocks) &
+                  + int(task/nb_i_blocks)*nb_i_blocks
+             p_task_south = mod(task+nb_tasks-nb_i_blocks,nb_tasks)
+             p_task_north = mod(task+nb_i_blocks,nb_tasks)
+
+             if (mod(task,nb_i_blocks).eq.0) p_task_west=no_proc
+             if (mod(task,nb_i_blocks).eq.nb_i_blocks-1) p_task_east=no_proc
+             if (task.lt.nb_i_blocks) p_task_south=no_proc
+             if (task.ge.nb_tasks-nb_i_blocks) p_task_north=no_proc
+
+             is_task_west=p_task_west.eq.no_proc
+             is_task_east=p_task_east.eq.no_proc
+             is_task_north=p_task_north.eq.no_proc
+             is_task_south=p_task_south.eq.no_proc
+
+
+             !print *,'global',lm_global,nm_global,nb_i_blocks,nb_k_blocks
+             lm0=(lm_global+1)/nb_i_blocks
+             nm0=(nm_global+1)/nb_k_blocks
+             ! getting rid of the ghost cells that need not to be saved
+             if (is_task_east)  lm0=lm_global-lm0*(nb_i_blocks-1)
+             if (is_task_north) nm0=nm_global-nm0*(nb_k_blocks-1)
+
+             if (debug_save) then
+                print *,' receiving block information for task ',task
+                call flush(6)
+             end if
+             !call rcv_msg(task,tag_save_nobord+1000*task,nsize)
+             lmtask(task)=lm0
+             !call rcv_msg(task,tag_save_nobord+3000*task,nsize)
+             nmtask(task)=nm0
+             if (debug_save) then
+                print *,'0 recalculating size_block for task,i1-i0+1,k1-k0+1',task,lmtask(task),nmtask(task)
+                call flush(6)
+             end if
+          enddo
+       enddo
+
+       if (my_task==0) then
+          write(*,'(A)',advance="no") " >> lmxnm  : "
+          do k=nb_k_blocks-1,0,-1
+             write (*,'(16(I3,"x",I3,"|"))',advance="no") (lmtask(i),nmtask(i),i=k*nb_i_blocks,(k+1)*nb_i_blocks-1)
+             if (k>0) then; print *; write(*,'(A)',advance="no") " >>          "; endif
+             enddo
+             print *; print *,'>>'
+
+             
+             lm_all=sum(lmtask(0:nb_i_blocks-1))+1
+             nm_all=sum(nmtask(0:nb_tasks-1:nb_i_blocks)) 
+
+             print *,'lmtask',lmtask(0:nb_i_blocks-1),lm_all,nb_i_blocks
+             print *,'nmtask',nmtask(0:nb_tasks-1:nb_i_blocks),nm_all,nb_k_blocks
+                call flush(6)
+             end if
+!!$          call parallel_stop
+
+
+       i0=0; k0=0; 
        ! getting rid of the ghost cells that need not to be saved
        if (.not.is_west)  i0=nx
-       if (.not.is_east)  i1=lm+1-nx
        if (.not.is_south) k0=ny
-       if (.not.is_north) k1=nm+1-ny
+       i1=i0+lmtask(my_task); k1=k0+nmtask(my_task)
        if (my_task>0) then
           ! sending to master the i and k extend of the domain I am in charge
-          if (debug_save) then
-             print *,'my_task sending size_block i1-i0+1,k1-k0+1',my_task,i1-i0+1,k1-k0+1
+          if (debug_save.or.debug_save_size) then
+             print *,'my_task sending i0,i1, size_block i1-i0+1,k1-k0+1',my_task,i0,i1,i1-i0+1,k1-k0+1
              call flush(6)
           end if
           !call snd_msg(0,tag_save_nobord+1000*my_task,i1-i0+1)
@@ -719,76 +783,13 @@ contains
              endif
           enddo
        else
-          do k=0,nb_k_blocks-1
-             do i=0,nb_i_blocks-1
-                task=k*nb_i_blocks+i
-                
-                p_task_east = mod(task+1,nb_i_blocks)  &
-                     + int(task/nb_i_blocks)*nb_i_blocks
-                p_task_west = mod(task+nb_i_blocks-1,nb_i_blocks) &
-                     + int(task/nb_i_blocks)*nb_i_blocks
-                p_task_south = mod(task+nb_tasks-nb_i_blocks,nb_tasks)
-                p_task_north = mod(task+nb_i_blocks,nb_tasks)
-                
-                if (mod(task,nb_i_blocks).eq.0) p_task_west=no_proc
-                if (mod(task,nb_i_blocks).eq.nb_i_blocks-1) p_task_east=no_proc
-                if (task.lt.nb_i_blocks) p_task_south=no_proc
-                if (task.ge.nb_tasks-nb_i_blocks) p_task_north=no_proc
-
-                is_task_west=p_task_west.eq.no_proc
-                is_task_east=p_task_east.eq.no_proc
-                is_task_north=p_task_north.eq.no_proc
-                is_task_south=p_task_south.eq.no_proc
-
-
-                print *,'global',lm_global,nm_global,nb_i_blocks,nb_k_blocks
-                lm0=(lm_global)/nb_i_blocks+1
-                nm0=(nm_global)/nb_k_blocks+1
-                ! getting rid of the ghost cells that need not to be saved
-                if (.not.is_task_east)  lm0=lm_global-lm0*(nb_i_blocks-1)
-                if (.not.is_task_north) nm0=nm_global-nm0*(nb_k_blocks-1)
-
-                if (debug_save) then
-                   print *,' receiving block information for task ',task
-                   call flush(6)
-                end if
-                !call rcv_msg(task,tag_save_nobord+1000*task,nsize)
-                lmtask(task)=lm0
-                !call rcv_msg(task,tag_save_nobord+3000*task,nsize)
-                nmtask(task)=nm0
-                if (debug_save) then
-                   print *,'0 recalculating size_block for task,i1-i0+1,k1-k0+1',task,lmtask(task),nmtask(task)
-                   call flush(6)
-                end if
-             enddo
-          enddo
-
-          if (my_task==0) then
-             write(*,'(A)',advance="no") " >> lmtask : "
-             do k=nb_k_blocks-1,0,-1
-                write (*,'(16I6)',advance="no") (lmtask(i),i=k*nb_i_blocks,(k+1)*nb_i_blocks-1)
-                if (k>0) then; print *; write(*,'(A)',advance="no") " >>          "; endif
-             enddo
-             print *; print *,'>>'
-             write(*,'(A)',advance="no") " >> nmtask : "
-             do k=nb_k_blocks-1,0,-1
-                write (*,'(16I6)',advance="no") (nmtask(i),i=k*nb_i_blocks,(k+1)*nb_i_blocks-1)
-                if (k>0) then; print *; write(*,'(A)',advance="no") " >>          "; endif
-            enddo
-
-
-
-          lm_all=sum(lmtask(0:nb_i_blocks-1))+1
-          nm_all=sum(nmtask(0:nb_tasks-1:nb_i_blocks)) 
-
-          print *,'lmtask',lmtask(0:nb_i_blocks-1),lm_all,nb_i_blocks
-          print *,'nmtask',nmtask(0:nb_tasks-1:nb_i_blocks),nm_all,nb_k_blocks
-          call flush(6)
-          end if
-!!$          call parallel_stop
-
+          ! task 0 is storing all data in a big buffer
           ! allocating a whole buffer that will receive all the contribution of nodes
-          allocate(buffer (0:lm_all-1,chunk),stat=ok); if (ok/=0) stop 'buffer : error alloc'
+          allocate(buffer (0:lm_all,chunk),stat=ok); if (ok/=0) stop 'buffer : error alloc'
+          if (my_task==0) then
+             print *,"size buffer on task0 ",size(buffer,1)
+             call flush(6)
+          end if
 
           k0=0
           do k=0,nb_k_blocks-1
@@ -796,8 +797,6 @@ contains
                 i0=0; k3=min(k0+nmtask(k*nb_i_blocks)-1,k2+chunk-1)
                 if (.not.is_save) then
                    do k4=1,k3-k2+1
-                      print *,size(buffer(:,k4),1)
-                      call flush(6)
                       read (unit) buffer(:,k4)
                    enddo
                 endif
@@ -817,7 +816,7 @@ contains
                       nsize = size(buffer(i0:i0+lmtask(task)-1,1:k3-k2+1))
                       allocate(buffer1d(nsize))                
                       if (is_save) then
-                         if (debug_save) then
+                         if (debug_save.or.debug_save_size) then
                             print *,"avt rcv block task,nsize,lmtask(task),k2,k3",task,nsize,lmtask(task),k2,k3
                             call flush(6)
                          end if

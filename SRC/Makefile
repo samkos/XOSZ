@@ -29,10 +29,10 @@ zplot_control : zplot_control.c
 	mpicc -c $<
 
 zparam.o : zparam.f90 
-	$(COMPILER) $(MPI_INC) $(FFLAGS) -c $<
+	$(COMPILER) $(MPI_INC) $(FFLAGS) -DMPI -cpp -c $<
 
 %.o : %.f90 zparam.o
-	$(COMPILER) $(MPI_INC) $(FFLAGS) -c $<
+	$(COMPILER) $(MPI_INC) $(FFLAGS) -DMPI -cpp -c $<
 
 clean: 
 	rm -f z*.o second.o zephyr *.mod  *.lst
