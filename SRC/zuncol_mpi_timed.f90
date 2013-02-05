@@ -339,7 +339,7 @@ contains
     nb=size(buf)
     call MPI_send(buf(1),nb,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,error)
     if (debug_rcv) then
-       print "('snd1d',X,I7,X,I7,' sent from ',I7,I7,' values ')",tag,my_task,task,nb
+       print "('snd1d',X,'tag',X,I7,' sent from ',I7,' to ',I7,I7,' values ')",tag,my_task,task,nb
        call flush(6)
     end if
     call timer_stop(1)
@@ -361,12 +361,13 @@ contains
     call timer_start(1)
     nb=size(buf)
     if (debug_rcv) then
-       print "('rcv1d',X,I7,X,I7,' receives from ',I7,I7,' values ')",tag,my_task,task,nb
+       print "('rcv1d',' tag ',I7,' task ',I7,' receives from ',I7,I7,' values ')",tag,my_task,task,nb
        call flush(6)
     end if
     call MPI_recv(buf(1),nb,MPI_DOUBLE_PRECISION,task,tag,MPI_COMM_WORLD,status,error)
-    if (debug_rcv) then
-       print "('rcv1d',X,I7,X,I7,' received from ',I7,I7,' values ')",tag,my_task,task,nb
+    if (debug_rcv.and..false.) then
+       nb=size(buf)
+       print "('rcv1d',' tag ',I7,' task ',I7,' received from ',I7,I7,' values ')",tag,my_task,task,nb
        call flush(6)
     end if
 

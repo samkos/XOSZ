@@ -648,11 +648,11 @@ contains
     logical           :: is_save, is_save_txt
 
     integer           :: i,k,task,i0,k0,i1,k1,k2,k3,k4,lm,nm,lm_all,nm_all,ok
-    integer :: i0_task,i1_task,k0_task,k1_task,lm0,nm0
+    integer :: i0_task,i1_task,k0_task,k1_task,lm0,nm0,i4
     logical :: is_task_north,is_task_east,is_task_west,is_task_south
     integer :: p_task_north,p_task_east,p_task_west,p_task_south
     integer, dimension(0:nb_tasks-1) :: lmtask,nmtask
-    integer, parameter:: chunk=1
+    integer, parameter:: chunk=100
 
     logical :: debug_snd_old, debug_rcv_old
 
@@ -766,7 +766,7 @@ contains
        if (my_task>0) then
           ! sending to master the i and k extend of the domain I am in charge
           if (debug_save.or.debug_save_size) then
-             print *,'my_task sending i0,i1, size_block i1-i0+1,k1-k0+1',my_task,i0,i1,i1-i0+1,k1-k0+1
+             print "('task ',I3,'sending to 0',I3,'bytes x ',I3,' lines')",my_task,i1-i0+1,k1-k0+1
              !debug_save_size=.false.
              call flush(6)
           end if
@@ -790,19 +790,29 @@ contains
           ! task 0 is storing all data in a big buffer
           ! allocating a whole buffer that will receive all the contribution of nodes
           allocate(buffer (0:lm_all,chunk),stat=ok); if (ok/=0) stop 'buffer : error alloc'
-          if (my_task==0) then
+          if (my_task==0.and.debug_save) then
              print *,"size buffer on task 0 ",size(buffer,1)
              call flush(6)
           end if
 
           k0=0
           do k=0,nb_k_blocks-1
-             do k2=k0,k0+nmtask(k*nb_i_blocks)-1,chunk
-                i0=0; k3=min(k0+nmtask(k*nb_i_blocks)-1,k2+chunk-1)
+             do k2=k0,k0+nmtask(k*nb_i_blocks),chunk
+                i0=0; k3=min(k0+nmtask(k*nb_i_blocks),k2+chunk-1)
                 if (.not.is_save) then
                    do k4=1,k3-k2+1
                       read (unit) buffer(:,k4)
                    enddo
+                   if (check_save) then
+                      do k4=1,k3-k2+1
+                         do i=0,lm_all
+                            buffer(i,k4) = i+k4*100
+                         end  do
+                      end do
+                      do k4=k3-k2+1,1,-1
+                         print '(I5,"b",I2,"->",100(F5.0,X))',my_task,k4,(buffer(i,k4),i=0,lm_all)
+                      end do
+                   end if
                 endif
                 do i=0,nb_i_blocks-1
                    if (debug_save) then
@@ -825,15 +835,24 @@ contains
                             call flush(6)
                          end if
                          call rcv_msg(task,tag_save_nobord+100*task+k2-k0,buffer1d)
+                         if (check_save) then
+                            print '(I5,"RCV ",10(F5.0,X))',my_task,(buffer1d(i4),i4=1,size(buffer1d,1))
+                            call flush(6)
+                         endif
                          buffer(i0:i0+lmtask(task),1:k3-k2+1) = reshape(buffer1d,&
                               & (/size(buffer(i0:i0+lmtask(task),1:k3-k2+1),1),&
                               &  size(buffer(i0:i0+lmtask(task),1:k3-k2+1),2)/))
                       else
                          buffer1d = reshape(buffer(i0:i0+lmtask(task),1:k3-k2+1),(/nsize/))
+                         if (check_save) then
+                            print '(I5,"SND ",10(F5.0,X))',my_task,(buffer1d(i4),i4=1,size(buffer1d,1))
+                            call flush(6)
+                         end if
                          call snd_msg(task,tag_save_nobord+100*task+k2-k0,buffer1d)
                       endif
                       deallocate(buffer1d)
                    endif
+                   if (i0==0) i0=1
                    i0=i0+lmtask(task)                
                 enddo
                 if (is_save) then
@@ -849,6 +868,7 @@ contains
                    endif
                 endif
              enddo
+             if (k0==0) k0=1
              k0=k0+nmtask(task)                
           enddo
           deallocate(buffer,stat=ok); if (ok/=0) stop 'error alloc'
@@ -867,6 +887,14 @@ contains
        print *,my_task,' out of  save_or_retrieve ',nom_solution
        call flush(6)
     endif
+
+    if (check_save) then
+       do k=size(solution,2),0,-1
+          print '(I5,"o",I2,"->",10(F5.0,X))',my_task,k,(solution(i,k),i=0,size(solution,1)-1)
+       end do
+       call parallel_stop
+    end if
+
     return
   end subroutine save_or_retrieve                                        ! end_out_light
 
