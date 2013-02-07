@@ -1145,7 +1145,7 @@ contains
         MPI_MODE_RDONLY, & 
         MPI_INFO_NULL, thefile, ierror) 
 
-   call save_or_retrieve('VTU0',VTU0,1,1,thefile,p_save); call save_or_retrieve('VTV0',VTV0,1,1,thefile,p_save); 
+   call save_or_retrieve('VTU0',VTU0,1,1,100+thefile,p_save); call save_or_retrieve('VTV0',VTV0,1,1,thefile,p_save); 
    call save_or_retrieve('VTU1',VTU1,1,1,thefile,p_save); call save_or_retrieve('VTV1',VTV1,1,1,thefile,p_save); 
    call save_or_retrieve('VTU2',VTU2,1,1,thefile,p_save); call save_or_retrieve('VTV2',VTV2,1,1,thefile,p_save); 
    call save_or_retrieve('VTU3',VTU3,1,1,thefile,p_save); call save_or_retrieve('VTV3',VTV3,1,1,thefile,p_save); 
@@ -1282,17 +1282,17 @@ contains
          MPI_INFO_NULL, thefile, ierror) 
 
 
-   call save_or_retrieve('VTU0',VTU0,1,1,69,p_retrieve); call save_or_retrieve('VTV0',VTV0,1,1,69,p_retrieve); 
-   call save_or_retrieve('VTU1',VTU1,1,1,69,p_retrieve); call save_or_retrieve('VTV1',VTV1,1,1,69,p_retrieve); 
-   call save_or_retrieve('VTU2',VTU2,1,1,69,p_retrieve); call save_or_retrieve('VTV2',VTV2,1,1,69,p_retrieve); 
-   call save_or_retrieve('VTU3',VTU3,1,1,69,p_retrieve); call save_or_retrieve('VTV3',VTV3,1,1,69,p_retrieve); 
+   call save_or_retrieve('VTU0',VTU0,1,1,100+thefile,p_retrieve); call save_or_retrieve('VTV0',VTV0,1,1,thefile,p_retrieve); 
+   call save_or_retrieve('VTU1',VTU1,1,1,thefile,p_retrieve); call save_or_retrieve('VTV1',VTV1,1,1,thefile,p_retrieve); 
+   call save_or_retrieve('VTU2',VTU2,1,1,thefile,p_retrieve); call save_or_retrieve('VTV2',VTV2,1,1,thefile,p_retrieve); 
+   call save_or_retrieve('VTU3',VTU3,1,1,thefile,p_retrieve); call save_or_retrieve('VTV3',VTV3,1,1,thefile,p_retrieve); 
    VTU=VTU0; VTV=VTV0
 
    if (is_ns) then
-      call save_or_retrieve('PRE0',PRE0,1,1,69,p_retrieve); 
-      call save_or_retrieve('PRE1',PRE1,1,1,69,p_retrieve); 
-      call save_or_retrieve('PRE2',PRE2,1,1,69,p_retrieve); 
-      call save_or_retrieve('PRE3',PRE3,1,1,69,p_retrieve); 
+      call save_or_retrieve('PRE0',PRE0,1,1,thefile,p_retrieve); 
+      call save_or_retrieve('PRE1',PRE1,1,1,thefile,p_retrieve); 
+      call save_or_retrieve('PRE2',PRE2,1,1,thefile,p_retrieve); 
+      call save_or_retrieve('PRE3',PRE3,1,1,thefile,p_retrieve); 
       PRE=PRE0
    endif
 

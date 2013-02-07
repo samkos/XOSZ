@@ -653,9 +653,11 @@ contains
     logical :: is_task_north,is_task_east,is_task_west,is_task_south
     integer :: p_task_north,p_task_east,p_task_west,p_task_south
     integer, dimension(0:nb_tasks-1) :: lmtask,nmtask
-    integer :: filetype, rank, ierror, thefile, nb_tasks
+    integer, save :: filetype
+    integer :: ierror
     integer :: sizes(2), subsizes(2), starts(2) 
 
+    debug_save=.true.
 
     if (debug_save) then
        print *,my_task,' in save_or_retrieve ',nom_solution,size(solution,1),size(solution,2)
@@ -724,20 +726,24 @@ contains
        print *,my_task,sizes(1),sizes(2),subsizes(1),subsizes(2),starts(1),starts(2)
        call flush(6)
 
-       call MPI_TYPE_CREATE_SUBARRAY(2, sizes, subsizes, starts, & 
-            MPI_ORDER_FORTRAN, MPI_DOUBLE_PRECISION,       & 
-            filetype, ierror)
-
-       call MPI_FILE_SET_VIEW(thefile, 0, MPI_DOUBLE_PRECISION, & 
-            filetype, 'native',   MPI_INFO_NULL, ierror) 
+       if (unit.gt.90) then
+          unit = unit-100
+          call MPI_TYPE_CREATE_SUBARRAY(2, sizes, subsizes, starts, & 
+               MPI_ORDER_FORTRAN, MPI_DOUBLE_PRECISION,       & 
+               filetype, ierror)
+          
+          call MPI_FILE_SET_VIEW(unit, 0, MPI_DOUBLE_PRECISION, & 
+               filetype, 'native',   MPI_INFO_NULL, ierror) 
+          print *,"herrrrrrrre"
+       end if
 
        if (is_save) then
                 
-          call MPI_FILE_WRITE_ALL(thefile, solution, subsizes(1)*subsizes(2), MPI_DOUBLE_PRECISION, & 
+          call MPI_FILE_WRITE_ALL(abs(unit), solution, subsizes(1)*subsizes(2), MPI_DOUBLE_PRECISION, & 
                MPI_STATUS_IGNORE, ierror) 
 
        else
-          call MPI_FILE_READ_ALL(thefile, solution, subsizes(1)*subsizes(2), MPI_DOUBLE_PRECISION, & 
+          call MPI_FILE_READ_ALL(abs(unit), solution, subsizes(1)*subsizes(2), MPI_DOUBLE_PRECISION, & 
                MPI_STATUS_IGNORE, ierror) 
        end if
        
