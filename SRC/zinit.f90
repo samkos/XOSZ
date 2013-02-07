@@ -1112,7 +1112,9 @@ contains
    use uncol, only : tchrono
    use debug
    implicit none
-   integer :: ok
+   include 'mpif.h' 
+
+   integer :: ok, thefile,ierror
    character (len=200) :: nom_fichier_save
 
    nom_fichier_save = trim(nom_fic_save)
@@ -1139,17 +1141,25 @@ contains
       endif
    endif
 
-   call save_or_retrieve('VTU0',VTU0,1,1,69,p_save); call save_or_retrieve('VTV0',VTV0,1,1,69,p_save); 
-   call save_or_retrieve('VTU1',VTU1,1,1,69,p_save); call save_or_retrieve('VTV1',VTV1,1,1,69,p_save); 
-   call save_or_retrieve('VTU2',VTU2,1,1,69,p_save); call save_or_retrieve('VTV2',VTV2,1,1,69,p_save); 
-   call save_or_retrieve('VTU3',VTU3,1,1,69,p_save); call save_or_retrieve('VTV3',VTV3,1,1,69,p_save); 
+   call MPI_FILE_OPEN(MPI_COMM_WORLD, './SAVE_data', & 
+        MPI_MODE_RDONLY, & 
+        MPI_INFO_NULL, thefile, ierror) 
+
+   call save_or_retrieve('VTU0',VTU0,1,1,thefile,p_save); call save_or_retrieve('VTV0',VTV0,1,1,thefile,p_save); 
+   call save_or_retrieve('VTU1',VTU1,1,1,thefile,p_save); call save_or_retrieve('VTV1',VTV1,1,1,thefile,p_save); 
+   call save_or_retrieve('VTU2',VTU2,1,1,thefile,p_save); call save_or_retrieve('VTV2',VTV2,1,1,thefile,p_save); 
+   call save_or_retrieve('VTU3',VTU3,1,1,thefile,p_save); call save_or_retrieve('VTV3',VTV3,1,1,thefile,p_save); 
 
    if (is_ns) then
-      call save_or_retrieve('PRE0',PRE0,1,1,69,p_save); 
-      call save_or_retrieve('PRE1',PRE1,1,1,69,p_save); 
-      call save_or_retrieve('PRE2',PRE2,1,1,69,p_save); 
-      call save_or_retrieve('PRE3',PRE3,1,1,69,p_save); 
+      call save_or_retrieve('PRE0',PRE0,1,1,thefile,p_save); 
+      call save_or_retrieve('PRE1',PRE1,1,1,thefile,p_save); 
+      call save_or_retrieve('PRE2',PRE2,1,1,thefile,p_save); 
+      call save_or_retrieve('PRE3',PRE3,1,1,thefile,p_save); 
    endif
+   
+   call MPI_FILE_CLOSE(thefile, ierror) 
+
+
 
    if (my_task==0) close(69)
    if (my_task==0) write(*,999) nom_fichier_save,it
@@ -1258,13 +1268,20 @@ contains
    use drapeaux
    use champs
    implicit none
+   include 'mpif.h' 
    real(kind=prec), dimension(96) :: rbuffer=0.
-   integer :: i0
+   integer :: i0, ierror, thefile
 
 !!$   call restore_param(rbuffer,i0)         ! out_light   
 !!$   read (69) VTU0,VTU1,VTU2,VTU3,VTUS,VTV0,VTV1,VTV2,VTV3,VTVS
 !!$   if (is_ns) read (69) PRE0,PRE1,PRE2,PRE3,PRES
 !!$
+
+    call MPI_FILE_OPEN(MPI_COMM_WORLD, './SAVE_data', & 
+         MPI_MODE_WRONLY + MPI_MODE_CREATE , & 
+         MPI_INFO_NULL, thefile, ierror) 
+
+
    call save_or_retrieve('VTU0',VTU0,1,1,69,p_retrieve); call save_or_retrieve('VTV0',VTV0,1,1,69,p_retrieve); 
    call save_or_retrieve('VTU1',VTU1,1,1,69,p_retrieve); call save_or_retrieve('VTV1',VTV1,1,1,69,p_retrieve); 
    call save_or_retrieve('VTU2',VTU2,1,1,69,p_retrieve); call save_or_retrieve('VTV2',VTV2,1,1,69,p_retrieve); 
@@ -1280,6 +1297,9 @@ contains
    endif
 
    if (my_task==0) close(69)
+
+   call MPI_FILE_CLOSE(thefile, ierror) 
+
 
    print *,'*** data Restored... at t_start=',t_start,' calculation to ',t_all
 
