@@ -678,47 +678,35 @@ contains
     lm0=(lm_global)/nb_i_blocks
     nm0=(nm_global)/nb_k_blocks
     
+
+
+    lm=size(solution,1)-2
+    nm=size(solution,2)-2
+
+    i0=0; k0=0; i1=lm+1; k1=nm+1
+    if (.not.is_west)  i0=nx
+    if (.not.is_east)  i1=lm+1-nx
+    if (.not.is_south) k0=ny
+    if (.not.is_north) k1=nm+1-ny
+
+
    do k=0,nb_k_blocks-1
       do i=0,nb_i_blocks-1
          task=k*nb_i_blocks+i
 
          if (task.eq.my_task) then
-
-                p_task_east = mod(task+1,nb_i_blocks)  &
-                     + int(task/nb_i_blocks)*nb_i_blocks
-                p_task_west = mod(task+nb_i_blocks-1,nb_i_blocks) &
-                     + int(task/nb_i_blocks)*nb_i_blocks
-                p_task_south = mod(task+nb_tasks-nb_i_blocks,nb_tasks)
-                p_task_north = mod(task+nb_i_blocks,nb_tasks)
-
-                if (mod(task,nb_i_blocks).eq.0) p_task_west=no_proc
-                if (mod(task,nb_i_blocks).eq.nb_i_blocks-1) p_task_east=no_proc
-                if (task.lt.nb_i_blocks) p_task_south=no_proc
-                if (task.ge.nb_tasks-nb_i_blocks) p_task_north=no_proc
-
-                is_task_west=p_task_west.eq.no_proc
-                is_task_east=p_task_east.eq.no_proc
-                is_task_north=p_task_north.eq.no_proc
-                is_task_south=p_task_south.eq.no_proc
-
-                ! getting rid of the ghost cells that need not to be saved
-                starts(1) = lm0*i
-                starts(2) = nm0*k
-                subsizes(1) = lm0
-                subsizes(2) = nm0
-                if (.not.is_task_west)  then
-                   starts(1) = lm0*i+1
-                   subsizes(1) = lm0-1
-                end if
-                if (.not.is_task_south) then
-                   starts(2) = nm0*k+1
-                   subsizes(2) = nm0-1
-                end if
-                if (is_task_west) subsizes(1)=subsizes(1)+1
-                if (is_task_south) subsizes(2)=subsizes(2)+1
-                if (is_task_east)  subsizes(1)=lm_global-lm0*(nb_i_blocks-1)+2
-                if (is_task_north) subsizes(2)=nm_global-nm0*(nb_k_blocks-1)+2
-       print *,my_task,sizes(1),sizes(2),subsizes(1),subsizes(2),starts(1),starts(2)
+            ! getting rid of the ghost cells that need not to be saved
+            starts(1) = lm0*i
+            starts(2) = nm0*k
+            subsizes(1) = i1-i0+1
+            subsizes(2) = k1-k0+1
+            if (.not.is_task_west)  then
+               starts(1) = lm0*i+1-(nx-i0)
+            end if
+            if (.not.is_task_south) then
+               starts(2) = nm0*k+1-(ny-k0)
+            end if
+                print *,my_task,sizes(1),sizes(2),subsizes(1),subsizes(2),starts(1),starts(2),size(solution,1),size(solution,2)
        call flush(6)
 
              end if
