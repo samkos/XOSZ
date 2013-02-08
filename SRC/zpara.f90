@@ -655,7 +655,7 @@ contains
     integer :: ierror
     integer :: sizes(2), subsizes(2), starts(2) 
 
-    debug_save=.false.
+    debug_save=.true.
     check_save = .false.
 
     if (debug_save) then
@@ -714,6 +714,8 @@ contains
                    starts(2) = nm0*k+1
                    subsizes(2) = nm0-1
                 end if
+                if (is_task_west) subsizes(1)=subsizes(1)+1
+                if (is_task_south) subsizes(2)=subsizes(2)+1
                 if (is_task_east)  subsizes(1)=lm_global-lm0*(nb_i_blocks-1)+2
                 if (is_task_north) subsizes(2)=nm_global-nm0*(nb_k_blocks-1)+2
        print *,my_task,sizes(1),sizes(2),subsizes(1),subsizes(2),starts(1),starts(2)
