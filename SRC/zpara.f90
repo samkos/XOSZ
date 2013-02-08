@@ -641,6 +641,7 @@ contains
     implicit none
     include 'mpif.h' 
     real(kind=prec), dimension(0:,0:)            :: solution
+    real(kind=prec), dimension(:,:), allocatable :: solution_buf
     character (len=*) :: nom_solution
     integer           :: nx,ny,unit,nsize
     integer           :: flag
@@ -690,6 +691,12 @@ contains
     if (.not.is_north) k1=nm+1-ny
 
 
+    allocate(solution_buf(i0:i1,k0:k1))
+    subsizes(1) = i1-i0+1
+    subsizes(2) = k1-k0+1
+        
+
+
    do k=0,nb_k_blocks-1
       do i=0,nb_i_blocks-1
          task=k*nb_i_blocks+i
@@ -706,7 +713,8 @@ contains
             if (.not.is_task_south) then
                starts(2) = nm0*k+1-(ny-k0)
             end if
-                print *,my_task,sizes(1),sizes(2),subsizes(1),subsizes(2),starts(1),starts(2),size(solution,1),size(solution,2)
+                print *,my_task,sizes(1),sizes(2),subsizes(1),subsizes(2),starts(1),starts(2),&
+                     & size(solution_buf,1),size(solution_buf,2)
        call flush(6)
 
              end if
@@ -739,13 +747,15 @@ contains
              end do
           end if
           
-          call MPI_FILE_WRITE_ALL(unit, solution, subsizes(1)*subsizes(2), MPI_DOUBLE_PRECISION, & 
+          solution_buf(i0:i1,k0:k1) = solution(i0:i1,k0:k1)
+          call MPI_FILE_WRITE_ALL(unit, solution_buf, subsizes(1)*subsizes(2), MPI_DOUBLE_PRECISION, & 
                MPI_STATUS_IGNORE, ierror) 
 
 
        else
-          call MPI_FILE_READ_ALL(unit, solution, subsizes(1)*subsizes(2), MPI_DOUBLE_PRECISION, & 
+          call MPI_FILE_READ_ALL(unit, solution_buf, subsizes(1)*subsizes(2), MPI_DOUBLE_PRECISION, & 
                MPI_STATUS_IGNORE, ierror) 
+          solution(i0:i1,k0:k1) = solution_buf(i0:i1,k0:k1)
        end if
        
 
