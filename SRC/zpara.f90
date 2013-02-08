@@ -701,29 +701,29 @@ contains
                 is_task_north=p_task_north.eq.no_proc
                 is_task_south=p_task_south.eq.no_proc
 
-
                 ! getting rid of the ghost cells that need not to be saved
-                starts(1) = lm0*(nb_i_blocks-1)
-                starts(2) = nm0*(nb_k_blocks-1)
+                starts(1) = lm0*i
+                starts(2) = nm0*k
                 subsizes(1) = lm0
                 subsizes(2) = nm0
                 if (.not.is_task_west)  then
-                   starts(1) = lm0*(nb_i_blocks-1)+1
+                   starts(1) = lm0*i+1
                    subsizes(1) = lm0-1
                 end if
                 if (.not.is_task_south) then
-                   starts(2) = nm0*(nb_k_blocks-1)+1
+                   starts(2) = nm0*k+1
                    subsizes(2) = nm0-1
                 end if
                 if (is_task_east)  subsizes(1)=lm_global-lm0*(nb_i_blocks-1)+2
                 if (is_task_north) subsizes(2)=nm_global-nm0*(nb_k_blocks-1)+2
+       print *,my_task,sizes(1),sizes(2),subsizes(1),subsizes(2),starts(1),starts(2)
+       call flush(6)
+
              end if
           enddo
        enddo
 
 
-       print *,my_task,sizes(1),sizes(2),subsizes(1),subsizes(2),starts(1),starts(2)
-       call flush(6)
 
        if (unit.gt.90) then
           unit = unit-100
