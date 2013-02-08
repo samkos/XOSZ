@@ -641,8 +641,6 @@ contains
     implicit none
     include 'mpif.h' 
     real(kind=prec), dimension(0:,0:)            :: solution
-    real(kind=prec), dimension(:,:), allocatable :: buffer
-    real(kind=prec), dimension(:), allocatable  :: buffer1d
     character (len=*) :: nom_solution
     integer           :: nx,ny,unit,nsize
     integer           :: flag
@@ -657,7 +655,8 @@ contains
     integer :: ierror
     integer :: sizes(2), subsizes(2), starts(2) 
 
-    debug_save=.true.
+    debug_save=.false.
+    check_save = .false.
 
     if (debug_save) then
        print *,my_task,' in save_or_retrieve ',nom_solution,size(solution,1),size(solution,2)
@@ -674,10 +673,10 @@ contains
 
 
     !print *,'global',lm_global,nm_global,nb_i_blocks,nb_k_blocks
-    sizes(1) = lm_global+1
-    sizes(2) = nm_global+1
-    lm0=(lm_global+1)/nb_i_blocks
-    nm0=(nm_global+1)/nb_k_blocks
+    sizes(1) = lm_global+2
+    sizes(2) = nm_global+2
+    lm0=(lm_global)/nb_i_blocks
+    nm0=(nm_global)/nb_k_blocks
     
    do k=0,nb_k_blocks-1
       do i=0,nb_i_blocks-1
@@ -716,8 +715,8 @@ contains
                    starts(2) = nm0*(nb_k_blocks-1)+1
                    subsizes(2) = nm0-1
                 end if
-                if (is_task_east)  subsizes(1)=lm_global-lm0*(nb_i_blocks-1)+1
-                if (is_task_north) subsizes(2)=nm_global-nm0*(nb_k_blocks-1)+1
+                if (is_task_east)  subsizes(1)=lm_global-lm0*(nb_i_blocks-1)+2
+                if (is_task_north) subsizes(2)=nm_global-nm0*(nb_k_blocks-1)+2
              end if
           enddo
        enddo
@@ -738,19 +737,28 @@ contains
        end if
 
        if (is_save) then
-                
-          call MPI_FILE_WRITE_ALL(abs(unit), solution, subsizes(1)*subsizes(2), MPI_DOUBLE_PRECISION, & 
+          if (check_save) then
+             do k4=0,nm_global+1
+                do i=0,lm_global+1
+                   solution(i,k4) = i+k4*100
+                end  do
+             end do
+             print *,lm_global,nm_global
+             do k4=nm_global+1,0,-1
+                print '(I5,"b",I2,"->",100(F5.0,X))',my_task,k4,(solution(i,k4),i=0,lm_global+1)
+             end do
+          end if
+          
+          call MPI_FILE_WRITE_ALL(unit, solution, subsizes(1)*subsizes(2), MPI_DOUBLE_PRECISION, & 
                MPI_STATUS_IGNORE, ierror) 
 
+
        else
-          call MPI_FILE_READ_ALL(abs(unit), solution, subsizes(1)*subsizes(2), MPI_DOUBLE_PRECISION, & 
+          call MPI_FILE_READ_ALL(unit, solution, subsizes(1)*subsizes(2), MPI_DOUBLE_PRECISION, & 
                MPI_STATUS_IGNORE, ierror) 
        end if
        
 
-       call MPI_TYPE_CREATE_SUBARRAY(2, sizes, subsizes, starts, & 
-            MPI_ORDER_FORTRAN, MPI_DOUBLE_PRECISION,       & 
-            filetype, ierror)
 
     if (debug_save) then
        print *,my_task,' out of  save_or_retrieve ',nom_solution
@@ -758,8 +766,8 @@ contains
     endif
 
     if (check_save) then
-       do k=size(solution,2),0,-1
-          print '(I5,"o",I2,"->",10(F5.0,X))',my_task,k,(solution(i,k),i=0,size(solution,1)-1)
+       do k=size(solution,2)-1,0,-1
+          print '(I5,"o",I2,"->",100(F5.0,X))',my_task,k,(solution(i,k),i=0,size(solution,1)-1)
        end do
        call parallel_stop
     end if
@@ -812,3 +820,4 @@ contains
   !************************************************************************
 
 end module para
+

@@ -1142,7 +1142,7 @@ contains
    endif
 
    call MPI_FILE_OPEN(MPI_COMM_WORLD, './SAVE_data', & 
-        MPI_MODE_RDONLY, & 
+        MPI_MODE_RDWR +MPI_MODE_CREATE , & 
         MPI_INFO_NULL, thefile, ierror) 
 
    call save_or_retrieve('VTU0',VTU0,1,1,100+thefile,p_save); call save_or_retrieve('VTV0',VTV0,1,1,thefile,p_save); 
@@ -1278,7 +1278,7 @@ contains
 !!$
 
     call MPI_FILE_OPEN(MPI_COMM_WORLD, './SAVE_data', & 
-         MPI_MODE_WRONLY + MPI_MODE_CREATE , & 
+         MPI_MODE_RDONLY, & 
          MPI_INFO_NULL, thefile, ierror) 
 
 
