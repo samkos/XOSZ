@@ -656,8 +656,8 @@ contains
     integer :: ierror
     integer :: sizes(2), subsizes(2), starts(2) 
 
-    debug_save=.true.
-    check_save = .false.
+    debug_save=.false.
+    check_save = .true.
 
     if (debug_save) then
        print *,my_task,' in save_or_retrieve ',nom_solution,size(solution,1),size(solution,2)
@@ -753,12 +753,13 @@ contains
 
 
        else
-          call MPI_FILE_READ_ALL(unit, solution_buf, subsizes(1)*subsizes(2), MPI_DOUBLE_PRECISION, & 
+          call MPI_FILE_READ_ALL(unit, solution_buf(i0:i1,k0:k1), subsizes(1)*subsizes(2), MPI_DOUBLE_PRECISION, & 
                MPI_STATUS_IGNORE, ierror) 
           solution(i0:i1,k0:k1) = solution_buf(i0:i1,k0:k1)
        end if
        
 
+       deallocate(solution_buf)
 
     if (debug_save) then
        print *,my_task,' out of  save_or_retrieve ',nom_solution
