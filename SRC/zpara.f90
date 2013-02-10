@@ -707,68 +707,67 @@ contains
             starts(2) = nm0*k
             subsizes(1) = i1-i0+1
             subsizes(2) = k1-k0+1
-            if (.not.is_task_west)  then
-               starts(1) = lm0*i+1-(nx-i0)
+            if (.not.is_west)  then
+               starts(1) = starts(1)+2
             end if
-            if (.not.is_task_south) then
+            if (.not.is_south) then
                starts(2) = nm0*k+1-(ny-k0)
             end if
-                print *,my_task,sizes(1),sizes(2),subsizes(1),subsizes(2),starts(1),starts(2),&
-                     & size(solution_buf,1),size(solution_buf,2)
-       call flush(6)
+            print '(9(I4,X),4(L,X))',my_task,sizes(1),sizes(2),subsizes(1),subsizes(2),starts(1),starts(2),&
+                 & size(solution_buf,1),size(solution_buf,2),is_north,is_east,is_west,is_south
+            call flush(6)
+         end if
+      enddo
+   enddo
 
-             end if
-          enddo
-       enddo
+   
+   if (unit.gt.90) then
+      unit = unit-100
+      call MPI_TYPE_CREATE_SUBARRAY(2, sizes, subsizes, starts, & 
+           MPI_ORDER_FORTRAN, MPI_DOUBLE_PRECISION,       & 
+           filetype, ierror)
+      call MPI_TYPE_COMMIT(filetype,ierror)
+      k4 = 0_MPI_OFFSET_KIND
+      call MPI_FILE_SET_VIEW(unit, k4, MPI_DOUBLE_PRECISION, & 
+           filetype, 'native',   MPI_INFO_NULL, ierror) 
+      print *,"herrrrrrrre"
+   end if
 
-
-
-       if (unit.gt.90) then
-          unit = unit-100
-          call MPI_TYPE_CREATE_SUBARRAY(2, sizes, subsizes, starts, & 
-               MPI_ORDER_FORTRAN, MPI_DOUBLE_PRECISION,       & 
-               filetype, ierror)
+   if (is_save) then
+      if (check_save) then
+         do k4=0,nm_global+1
+            do i=0,lm_global+1
+               solution(i,k4) = 10000+i+k4*100
+            end  do
+         end do
+         print *,lm_global,nm_global
+         do k4=nm_global+1,0,-1
+            print '(I5,"b",I2,"->",100(F6.0,X))',my_task,k4,(solution(i,k4),i=0,lm_global+1)
+         end do
+      end if
           
-          call MPI_FILE_SET_VIEW(unit, 0, MPI_DOUBLE_PRECISION, & 
-               filetype, 'native',   MPI_INFO_NULL, ierror) 
-          print *,"herrrrrrrre"
-       end if
+      solution_buf(i0:i1,k0:k1) = solution(i0:i1,k0:k1)
+      call MPI_FILE_WRITE_ALL(unit, solution_buf, subsizes(1)*subsizes(2), MPI_DOUBLE_PRECISION, & 
+           MPI_STATUS_IGNORE, ierror) 
 
-       if (is_save) then
-          if (check_save) then
-             do k4=0,nm_global+1
-                do i=0,lm_global+1
-                   solution(i,k4) = i+k4*100
-                end  do
-             end do
-             print *,lm_global,nm_global
-             do k4=nm_global+1,0,-1
-                print '(I5,"b",I2,"->",100(F5.0,X))',my_task,k4,(solution(i,k4),i=0,lm_global+1)
-             end do
-          end if
-          
-          solution_buf(i0:i1,k0:k1) = solution(i0:i1,k0:k1)
-          call MPI_FILE_WRITE_ALL(unit, solution_buf, subsizes(1)*subsizes(2), MPI_DOUBLE_PRECISION, & 
+      
+   else
+      call MPI_FILE_READ_ALL(unit, solution_buf(i0:i1,k0:k1), subsizes(1)*subsizes(2), MPI_DOUBLE_PRECISION, & 
                MPI_STATUS_IGNORE, ierror) 
-
-
-       else
-          call MPI_FILE_READ_ALL(unit, solution_buf(i0:i1,k0:k1), subsizes(1)*subsizes(2), MPI_DOUBLE_PRECISION, & 
-               MPI_STATUS_IGNORE, ierror) 
-          solution(i0:i1,k0:k1) = solution_buf(i0:i1,k0:k1)
-       end if
+      solution(i0:i1,k0:k1) = solution_buf(i0:i1,k0:k1)
+   end if
        
 
-       deallocate(solution_buf)
+   deallocate(solution_buf)
 
-    if (debug_save) then
-       print *,my_task,' out of  save_or_retrieve ',nom_solution
-       call flush(6)
-    endif
+   if (debug_save) then
+      print *,my_task,' out of  save_or_retrieve ',nom_solution
+      call flush(6)
+   endif
 
-    if (check_save) then
-       do k=size(solution,2)-1,0,-1
-          print '(I5,"o",I2,"->",100(F5.0,X))',my_task,k,(solution(i,k),i=0,size(solution,1)-1)
+   if (check_save) then
+      do k=size(solution,2)-1,0,-1
+          print '(I5,"o",I2,"->",100(F6.0,X))',my_task,k,(solution(i,k),i=0,size(solution,1)-1)
        end do
        call parallel_stop
     end if
