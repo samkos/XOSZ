@@ -656,8 +656,8 @@ contains
     integer :: ierror
     integer :: sizes(2), subsizes(2), starts(2) 
 
-    debug_save=.false.
-    check_save = .true.
+!!$    debug_save=.false.
+!!$    check_save = .true.
 
     if (debug_save) then
        print *,my_task,' in save_or_retrieve ',nom_solution,size(solution,1),size(solution,2)
@@ -711,11 +711,13 @@ contains
                starts(1) = starts(1)+2
             end if
             if (.not.is_south) then
-               starts(2) = nm0*k+1-(ny-k0)
+               starts(2) = starts(2)+1
             end if
-            print '(9(I4,X),4(L,X))',my_task,sizes(1),sizes(2),subsizes(1),subsizes(2),starts(1),starts(2),&
-                 & size(solution_buf,1),size(solution_buf,2),is_north,is_east,is_west,is_south
-            call flush(6)
+            if (debug_save) then
+               print '(9(I4,X),4(L,X))',my_task,sizes(1),sizes(2),subsizes(1),subsizes(2),starts(1),starts(2),&
+                    & size(solution_buf,1),size(solution_buf,2),is_north,is_east,is_west,is_south
+               call flush(6)
+            end if
          end if
       enddo
    enddo
