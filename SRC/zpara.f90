@@ -655,9 +655,10 @@ contains
     integer, save :: filetype
     integer :: ierror
     integer :: sizes(2), subsizes(2), starts(2) 
+    integer(kind=MPI_OFFSET_KIND) :: disp
 
     debug_save=.false.
-    check_save = .true.
+    check_save = .false.
 
     if (debug_save) then
        print *,my_task,' in save_or_retrieve ',nom_solution,size(solution,1),size(solution,2)
@@ -711,7 +712,7 @@ contains
                starts(1) = starts(1)+2
             end if
             if (.not.is_south) then
-               starts(2) = starts(2)+1
+               starts(2) = starts(2)+2
             end if
             if (check_save) then
                print '(13(I4,X),4(L,X))',my_task,sizes(1),sizes(2),subsizes(1),subsizes(2),starts(1),starts(2),&
@@ -730,17 +731,17 @@ contains
 
    if (unit.gt.90) then
       unit = unit-100
-      k4 = 0_MPI_OFFSET_KIND
-      call MPI_FILE_SET_VIEW(unit, k4, MPI_DOUBLE_PRECISION, & 
+      disp = 0_MPI_OFFSET_KIND
+      call MPI_FILE_SET_VIEW(unit, disp, MPI_DOUBLE_PRECISION, & 
            filetype, 'native',   MPI_INFO_NULL, ierror) 
-      print *,"herrrrrrrre"
+      if (check_save) print *,"herrrrrrrre"
    end if
 
    if (is_save) then
       if (check_save) then
          do k4=0,nm_global+1
             do i=0,lm_global+1
-               solution(i,k4) = 10000+i+k4*100
+               solution(i,k4) = i+k4*100
             end  do
          end do
          print *,lm_global,nm_global
@@ -757,10 +758,12 @@ contains
    else
       call MPI_FILE_READ_ALL(unit, solution_buf(i0:i1,k0:k1), subsizes(1)*subsizes(2), MPI_DOUBLE_PRECISION, & 
                MPI_STATUS_IGNORE, ierror) 
-      print *,"xxxxxxx",my_task,i0,i1,k0,k1
-      do k=k1,k0,-1
-          print '(I5,"x",I2,"->",100(F6.0,X))',my_task,k,(solution_buf(i,k),i=i0,i1)
-       end do
+      if (check_save) then
+         print *,"xxxxxxx",my_task,i0,i1,k0,k1
+         do k=k1,k0,-1
+            print '(I5,"x",I2,"->",100(F6.0,X))',my_task,k,(solution_buf(i,k),i=i0,i1)
+         end do
+      end if
        solution(i0:i1,k0:k1) = solution_buf(i0:i1,k0:k1)
    end if
        

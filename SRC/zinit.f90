@@ -1116,6 +1116,7 @@ contains
 
    integer :: ok, thefile,ierror
    character (len=200) :: nom_fichier_save
+   character (len=200) :: nom_fichier_save_data
 
    nom_fichier_save = trim(nom_fic_save)
    if (my_task==0) then
@@ -1141,7 +1142,8 @@ contains
       endif
    endif
 
-   call MPI_FILE_OPEN(MPI_COMM_WORLD, './SAVE_data', & 
+   nom_fichier_save_data = './SAVE_data'
+   call MPI_FILE_OPEN(MPI_COMM_WORLD, nom_fichier_save_data, & 
         MPI_MODE_RDWR +MPI_MODE_CREATE , & 
         MPI_INFO_NULL, thefile, ierror) 
 
@@ -1271,13 +1273,15 @@ contains
    include 'mpif.h' 
    real(kind=prec), dimension(96) :: rbuffer=0.
    integer :: i0, ierror, thefile
+   character (len=200) :: nom_fichier_save_data
 
 !!$   call restore_param(rbuffer,i0)         ! out_light   
 !!$   read (69) VTU0,VTU1,VTU2,VTU3,VTUS,VTV0,VTV1,VTV2,VTV3,VTVS
 !!$   if (is_ns) read (69) PRE0,PRE1,PRE2,PRE3,PRES
 !!$
-
-    call MPI_FILE_OPEN(MPI_COMM_WORLD, './SAVE_data', & 
+   
+   nom_fichier_save_data = './SAVE_data'
+    call MPI_FILE_OPEN(MPI_COMM_WORLD, nom_fichier_save_data, & 
          MPI_MODE_RDONLY, & 
          MPI_INFO_NULL, thefile, ierror) 
 
