@@ -656,8 +656,8 @@ contains
     integer :: ierror
     integer :: sizes(2), subsizes(2), starts(2) 
 
-!!$    debug_save=.false.
-!!$    check_save = .true.
+    debug_save=.false.
+    check_save = .true.
 
     if (debug_save) then
        print *,my_task,' in save_or_retrieve ',nom_solution,size(solution,1),size(solution,2)
@@ -713,9 +713,9 @@ contains
             if (.not.is_south) then
                starts(2) = starts(2)+1
             end if
-            if (debug_save) then
-               print '(9(I4,X),4(L,X))',my_task,sizes(1),sizes(2),subsizes(1),subsizes(2),starts(1),starts(2),&
-                    & size(solution_buf,1),size(solution_buf,2),is_north,is_east,is_west,is_south
+            if (check_save) then
+               print '(13(I4,X),4(L,X))',my_task,sizes(1),sizes(2),subsizes(1),subsizes(2),starts(1),starts(2),&
+                    & i0,i1,k0,k1,size(solution_buf,1),size(solution_buf,2),is_north,is_east,is_west,is_south
                call flush(6)
             end if
          end if
@@ -723,12 +723,13 @@ contains
    enddo
 
    
+   call MPI_TYPE_CREATE_SUBARRAY(2, sizes, subsizes, starts, & 
+        MPI_ORDER_FORTRAN, MPI_DOUBLE_PRECISION,       & 
+        filetype, ierror)
+   call MPI_TYPE_COMMIT(filetype,ierror)
+
    if (unit.gt.90) then
       unit = unit-100
-      call MPI_TYPE_CREATE_SUBARRAY(2, sizes, subsizes, starts, & 
-           MPI_ORDER_FORTRAN, MPI_DOUBLE_PRECISION,       & 
-           filetype, ierror)
-      call MPI_TYPE_COMMIT(filetype,ierror)
       k4 = 0_MPI_OFFSET_KIND
       call MPI_FILE_SET_VIEW(unit, k4, MPI_DOUBLE_PRECISION, & 
            filetype, 'native',   MPI_INFO_NULL, ierror) 
@@ -756,7 +757,11 @@ contains
    else
       call MPI_FILE_READ_ALL(unit, solution_buf(i0:i1,k0:k1), subsizes(1)*subsizes(2), MPI_DOUBLE_PRECISION, & 
                MPI_STATUS_IGNORE, ierror) 
-      solution(i0:i1,k0:k1) = solution_buf(i0:i1,k0:k1)
+      print *,"xxxxxxx",my_task,i0,i1,k0,k1
+      do k=k1,k0,-1
+          print '(I5,"x",I2,"->",100(F6.0,X))',my_task,k,(solution_buf(i,k),i=i0,i1)
+       end do
+       solution(i0:i1,k0:k1) = solution_buf(i0:i1,k0:k1)
    end if
        
 
@@ -773,6 +778,8 @@ contains
        end do
        call parallel_stop
     end if
+
+   call MPI_TYPE_FREE(filetype,ierror)
 
     return
   end subroutine save_or_retrieve                                        ! end_out_light
