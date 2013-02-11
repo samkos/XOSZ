@@ -704,15 +704,15 @@ contains
 
          if (task.eq.my_task) then
             ! getting rid of the ghost cells that need not to be saved
-            starts(1) = lm0*i
-            starts(2) = nm0*k
+            starts(1) = (lm0+1)*i
+            starts(2) = (nm0+1)*k
             subsizes(1) = i1-i0+1
             subsizes(2) = k1-k0+1
             if (.not.is_west)  then
-               starts(1) = starts(1)+2
+               starts(1) = starts(1)+1
             end if
             if (.not.is_south) then
-               starts(2) = starts(2)+2
+               starts(2) = starts(2)+1
             end if
             if (check_save) then
                print '(13(I4,X),4(L,X))',my_task,sizes(1),sizes(2),subsizes(1),subsizes(2),starts(1),starts(2),&

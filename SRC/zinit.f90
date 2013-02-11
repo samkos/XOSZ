@@ -1203,7 +1203,7 @@ contains
               & nb_cycle, sor_theta, is_decale, is_restart_save,temps,it,&
               & tchrono(0),tchrono(1),tchrono(2),tchrono(3),tchrono(4),tchrono(5)
 
-         print *,'*** fichier SAVE en cours de lecture',tchrono
+         print *,'*** fichier SAVE en cours de lecture'
          
 !!$      print *,'read', nexample, t_start, t_all, tau, t_print, is_print, is_cv,&
 !!$              & is_kuta, is_richardson, lm_global, nm_global, nu, ncheck,&
@@ -1304,8 +1304,7 @@ contains
 
    call MPI_FILE_CLOSE(thefile, ierror) 
 
-
-   print *,'*** data Restored... at t_start=',t_start,' calculation to ',t_all
+   if (my_task==0) print *,'*** data Restored... at t_start=',t_start,' calculation to ',t_all
 
    return
  end subroutine restore_champs                                     ! end_out_light
