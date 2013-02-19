@@ -112,6 +112,7 @@ contains
 
        temps=temps+tau
        it=it+1
+       
 
        select case(is_kuta)
        case (1)
@@ -316,8 +317,9 @@ contains
              exit
           endif
        endif                                                     ! end_out_light
-       
+
     enddo
+
 
 
 1000 continue
