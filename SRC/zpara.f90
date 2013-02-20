@@ -291,6 +291,7 @@ contains
     integer error, status, nb, tag0
 
     tag0 = 0
+    print *,my_task,'in nonblocking_ddm_stn'
 
     lm0=ideb+1; lm1=ifin-1
     nm0=kdeb+1; nm1=kfin-1
@@ -302,7 +303,7 @@ contains
        allocate(buf_from_east (nb))
        allocate(buf_to_east (nb))       
        call MPI_IRECV (buf_from_east(1),nb,MPI_DOUBLE_PRECISION,p_east,&
-            & tag0+from_e,MPI_COMM_WORLD,req_east(1),error)
+            & tag0+from_w,MPI_COMM_WORLD,req_east(1),error)
        buf_to_east  = reshape(INP(lm1-recx:lm1,:),(/nb/))
        call MPI_ISEND (buf_to_east(1),nb,MPI_DOUBLE_PRECISION,p_east,&
             & tag0+from_w,MPI_COMM_WORLD,req_east(2),error)
@@ -317,34 +318,14 @@ contains
             & tag0+from_e,MPI_COMM_WORLD,req_west(1),error)
        buf_to_west  = reshape(INP(lm0:lm0+recx,:),(/nb/))
        call MPI_ISEND (buf_to_west(1),nb,MPI_DOUBLE_PRECISION,p_west,&
-            & tag0+from_w,MPI_COMM_WORLD,req_west(2),error)
+            & tag0+from_e,MPI_COMM_WORLD,req_west(2),error)
        !call snd_msg(p_west ,from_e,INP(lm0:lm0+recx,:))
     end if
 
 
-    if (.not.is_north) then
-       nb = size(INP(:,nm1-recy:nm1))
-       allocate(buf_from_north (nb))
-       allocate(buf_to_north (nb))       
-       call MPI_IRECV (buf_from_north(1),nb,MPI_DOUBLE_PRECISION,p_north,&
-            & tag0+from_e,MPI_COMM_WORLD,req_north(1),error)
-       buf_to_north  = reshape(INP(:,nm1-recy:nm1),(/nb/))
-       call MPI_ISEND (buf_to_north(1),nb,MPI_DOUBLE_PRECISION,p_north,&
-            & tag0+from_w,MPI_COMM_WORLD,req_north(2),error)
-       !call snd_msg(p_north,from_s,INP(:,nm1-recy:nm1))
-    end if
 
-    if (.not.is_south) then
-       nb = size(INP(:,nm0:nm0+recy))
-       allocate(buf_from_south (nb))
-       allocate(buf_to_south (nb))       
-       call MPI_IRECV (buf_from_south(1),nb,MPI_DOUBLE_PRECISION,p_south,&
-            & tag0+from_e,MPI_COMM_WORLD,req_south(1),error)
-       buf_to_south  = reshape(INP(:,nm0:nm0+recy),(/nb/))
-       call MPI_ISEND (buf_to_south(1),nb,MPI_DOUBLE_PRECISION,p_south,&
-            & tag0+from_w,MPI_COMM_WORLD,req_south(2),error)
-       !call snd_msg(p_south,from_n,INP(:,nm0:nm0+recy))
-    end if
+
+    print *,my_task,'waiting nonblocking_ddm_stn'
 
     if (.not.is_west)  then
        !call rcv_msg(p_west ,from_w,INP(0:recx,:))
@@ -364,6 +345,36 @@ contains
        deallocate(buf_from_east)       
      end if
 
+    print *,my_task,'excanging north/south nonblocking_ddm_stn'
+
+
+    if (.not.is_north) then
+       nb = size(INP(:,nm1-recy:nm1))
+       allocate(buf_from_north (nb))
+       allocate(buf_to_north (nb))       
+       call MPI_IRECV (buf_from_north(1),nb,MPI_DOUBLE_PRECISION,p_north,&
+            & tag0+from_s,MPI_COMM_WORLD,req_north(1),error)
+       buf_to_north  = reshape(INP(:,nm1-recy:nm1),(/nb/))
+       call MPI_ISEND (buf_to_north(1),nb,MPI_DOUBLE_PRECISION,p_north,&
+            & tag0+from_s,MPI_COMM_WORLD,req_north(2),error)
+       !call snd_msg(p_north,from_s,INP(:,nm1-recy:nm1))
+    end if
+
+    if (.not.is_south) then
+       nb = size(INP(:,nm0:nm0+recy))
+       allocate(buf_from_south (nb))
+       allocate(buf_to_south (nb))       
+       call MPI_IRECV (buf_from_south(1),nb,MPI_DOUBLE_PRECISION,p_south,&
+            & tag0+from_n,MPI_COMM_WORLD,req_south(1),error)
+       buf_to_south  = reshape(INP(:,nm0:nm0+recy),(/nb/))
+       call MPI_ISEND (buf_to_south(1),nb,MPI_DOUBLE_PRECISION,p_south,&
+            & tag0+from_n,MPI_COMM_WORLD,req_south(2),error)
+       !call snd_msg(p_south,from_n,INP(:,nm0:nm0+recy))
+    end if
+
+
+    print *,my_task,'waiting nonblocking_ddm_stn'
+
     if (.not.is_south) then
        !call rcv_msg(p_south,from_s,INP(:,0:recy))
        call MPI_WAITALL(2, req_south, statuses, error)
@@ -382,7 +393,10 @@ contains
        deallocate(buf_from_north)       
     end if
 
-    return
+
+    print *,my_task,'out nonblocking_ddm_stn'
+
+   return
   end subroutine nonblocking_rfr_ddm_stn
 
   !************************************************************************
