@@ -5,21 +5,21 @@
 0.999       ! t_all
 0.003125    ! tau 
 0.003125     ! t_print 
-0           ! is_print       
+10           ! is_print       
 2           ! is_conv        >0: cv_global /5 : sauve fichier
 4           ! Schema Temporel d'integration
 2           ! 0--> 1     1--> current  2 -> richardson
-31          ! lm
-31          ! nm
+511          ! lm
+511          ! nm
 .1          ! nu 
 5           ! ncheck           1:VF2  2:DF2 3:VF4 5:DF4 6:DF4e
 2           ! ncheck_precond
 1           ! ntype_solver  1..9:BiCGSTAB(l),  10:GMRES,     11:GMRESR,      12:GMRESR+norec,
             !                 13:MG,           14:Orthodir,  15:Orthomin,    16:lisse
-0           ! ntype_precond 1..9: BiCGSTAB(l), 10:GMRES,     13:MG,          16:lisse
+13           ! ntype_precond 1..9: BiCGSTAB(l), 10:GMRES,     13:MG,          16:lisse
 100         ! npcg
 300         ! nprecond
-3           ! nrecvddm
+5           ! nrecvddm
 1.E-18      ! epsv
 1.E-10      ! epsva
 1.E-18      ! epsvc 
@@ -39,7 +39,7 @@
 1           ! nb_cycle
 1.0         ! sor_theta
 0           ! is_decale  0->non  1-> oui
-1           ! is_restart_save
+0           ! is_restart_save
 ./save ! fichier de sauvegarde globale
 
 ! solution testees
