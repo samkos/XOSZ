@@ -5,7 +5,7 @@
 0.999       ! t_all
 0.003125    ! tau 
 0.003125     ! t_print 
-10           ! is_print       
+0           ! is_print       
 2           ! is_conv        >0: cv_global /5 : sauve fichier
 4           ! Schema Temporel d'integration
 2           ! 0--> 1     1--> current  2 -> richardson
@@ -18,12 +18,12 @@
             !                 13:MG,           14:Orthodir,  15:Orthomin,    16:lisse
 13           ! ntype_precond 1..9: BiCGSTAB(l), 10:GMRES,     13:MG,          16:lisse
 100         ! npcg
-300         ! nprecond
-5           ! nrecvddm
-1.E-18      ! epsv
-1.E-10      ! epsva
-1.E-18      ! epsvc 
-1.E-10      ! epsvac
+10         ! nprecond
+20           ! nrecvddm
+1.E-6      ! epsv
+1.E-6     ! epsva
+1.E-8      ! epsvc 
+1.E-8      ! epsvac
 3           ! ninterne
 4           ! ndirection
 2           ! ns_solver  1-> compress art  2-> couplee  3-> projection 4-> lagrangien augm

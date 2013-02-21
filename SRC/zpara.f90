@@ -277,6 +277,7 @@ contains
 #ifndef SEQ
     use mpi
 #endif
+    use debug
     implicit none
     real(kind=prec), dimension(0:,0:)  :: INP
 
@@ -290,8 +291,11 @@ contains
     integer, dimension(MPI_STATUS_SIZE,2) :: statuses
     integer error, status, nb, tag0
 
+
+    !debug_stn_ddm = .true.
+
     tag0 = 0
-    !print *,my_task,'in nonblocking_ddm_stn'
+    if (debug_stn_ddm) print *,my_task,'in nonblocking_ddm_stn'
 
     lm0=ideb+1; lm1=ifin-1
     nm0=kdeb+1; nm1=kfin-1
@@ -325,7 +329,7 @@ contains
 
 
 
-    !print *,my_task,'waiting nonblocking_ddm_stn'
+    if (debug_stn_ddm) print *,my_task,'waiting nonblocking_ddm_stn'
 
     if (.not.is_west)  then
        !call rcv_msg(p_west ,from_w,INP(0:recx,:))
@@ -345,7 +349,7 @@ contains
        deallocate(buf_from_east)       
      end if
 
-    !print *,my_task,'excanging north/south nonblocking_ddm_stn'
+    if (debug_stn_ddm) print *,my_task,'excanging north/south nonblocking_ddm_stn'
 
 
     if (.not.is_north) then
@@ -373,7 +377,7 @@ contains
     end if
 
 
-    !print *,my_task,'waiting nonblocking_ddm_stn'
+    if (debug_stn_ddm) print *,my_task,'waiting nonblocking_ddm_stn'
 
     if (.not.is_south) then
        !call rcv_msg(p_south,from_s,INP(:,0:recy))
@@ -394,7 +398,7 @@ contains
     end if
 
 
-    !print *,my_task,'out nonblocking_ddm_stn'
+    if (debug_stn_ddm) print *,my_task,'out nonblocking_ddm_stn'
 
    return
   end subroutine nonblocking_rfr_ddm_stn
