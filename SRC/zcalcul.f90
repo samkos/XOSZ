@@ -380,16 +380,15 @@ contains
 
 !    if (niv_solve==1) call outdon(SMU,'SMU',1,1)
 
-    if (is_print>=3*niv_solve-2.and.my_task==0) then
-       if (ncg.eq.ncgmax) then
-          print '(A,1X,I5,A,1X,2E16.7)'&
-               & ,'Sorry! BiCGSTAB n''a pas converge : ncg =',ncg&
-               & ,' err=',err,errdiv
-       else
+    if ((niv_solve.eq.1.or.is_print>=3*niv_solve-2).and.my_task==0.and.ncg.eq.ncgmax) then
+       print '(A,1X,I5,A,1X,2E16.7)'&
+            & ,'Sorry! BiCGSTAB n''a pas converge : ncg =',ncg&
+            & ,' err=',err,errdiv
+    endif
+    if (is_print>=3*niv_solve-2.and.my_task==0.and.ncg.lt.ncgmax) then
           print '(A,1X,I5,A,1X,2E16.7)'&
                & ,'Bingo! BiCGSTAB a converge : ncg =',ncg&
                & ,' err=',err,errdiv
-       endif
     endif
     
     return
@@ -569,17 +568,16 @@ contains
     if (is_v)   VTV=xv(:,:,0); 
     if (is_div) PRE=xp(:,:,0); 
     
-    if (is_print>=3*niv_solve-2.and.my_task==0) then
-       if (ncg.eq.ncgmax) then
-          print '(A,1X,I5,A,1X,2E16.7)'&
-               & ,'Sorry! BiCGSTAB(l) n''a pas converge : ncg =',ncg&
-               & ,' err=',err,errdiv
-       else
-          print '(A,1X,I5,A,1X,2E16.7)'&
-               & ,'Bingo! BiCGSTAB(l) a converge : ncg =',ncg&
-               & ,' err=',err,errdiv
-       endif 
-   endif
+    if ((niv_solve.eq.1.or.is_print>=3*niv_solve-2).and.my_task==0.and.ncg.eq.ncgmax) then
+       print '(A,1X,I5,A,1X,2E16.7)'&
+            & ,'Sorry! BiCGSTAB(l) n''a pas converge : ncg =',ncg&
+            & ,' err=',err,errdiv
+    endif
+    if (is_print>=3*niv_solve-2.and.my_task==0.and.ncg.lt.ncgmax) then
+       print '(A,1X,I5,A,1X,2E16.7)'&
+            & ,'Bingo! BiCGSTAB(l) a converge : ncg =',ncg&
+            & ,' err=',err,errdiv
+    endif
     
     return
 
