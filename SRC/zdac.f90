@@ -398,26 +398,50 @@ contains
           do i=j,j+nb_i_blocks-1
              if (i.ne.my_task) then
                 buffer2d = buffer(:,:,icolumn)
-                !call rcv_msg(i,tag_dacx+i,buffer1d_from(1,i))
-                call MPI_IRECV (buffer1d_from(1,i),nb,MPI_DOUBLE_PRECISION,i,&
-                     & tag_dacx+i,MPI_COMM_WORLD,req(1,i),error)
                 buffer1d = reshape(buffer(:,:,icolumn),(/size(buffer,1)*size(buffer,2)/))
-                buffer1d_to(:,i) = reshape(buffer1d,(/nb/))
-                call MPI_ISEND (buffer1d_to(1,i),nb,MPI_DOUBLE_PRECISION,i,&
-                     & tag_dacx+my_task,MPI_COMM_WORLD,req(2,i),error)
-                !call snd_msg(i,tag_dacx+my_task,buffer1d)
+                call snd_msg(i,tag_dacx+my_task,buffer1d)
              end if
           enddo
           do i=j,j+nb_i_blocks-1
              if (i.ne.my_task) then
-                !call rcv_msg(i,tag_dacx+i,buffer1d_from(1,i))
-                req_1d = req(:,i)
-                call MPI_WAITALL(2, req_1d, statuses, error)
-                 !buffer(:,:,i-j) = buffer2d
-                buffer(:,:,i-j) = reshape(buffer1d_from(:,i),(/size(buffer,1),size(buffer,2)/))
+                call rcv_msg(i,tag_dacx+i,buffer1d)
+                !buffer(:,:,i-j) = buffer2d
+                buffer(:,:,i-j) = reshape(buffer1d,(/size(buffer,1),size(buffer,2)/))
              end if
           enddo
        endif
+
+!!$       if (nb_i_blocks.ne.1) then
+!!$          j=iline*nb_i_blocks
+!!$          do i=j,j+nb_i_blocks-1
+!!$             if (i.ne.my_task) then
+!!$                buffer2d = buffer(:,:,icolumn)
+!!$                !call rcv_msg(i,tag_dacx+i,buffer1d_from(1,i))
+!!$                call MPI_IRECV (buffer1d_from(1,i),nb,MPI_DOUBLE_PRECISION,i,&
+!!$                     & tag_dacx,MPI_COMM_WORLD,req(1,i),error)
+!!$                buffer1d = reshape(buffer(:,:,icolumn),(/size(buffer,1)*size(buffer,2)/))
+!!$                buffer1d_to(:,i) = reshape(buffer1d,(/nb/))
+!!$                call MPI_ISEND (buffer1d_to(1,i),nb,MPI_DOUBLE_PRECISION,i,&
+!!$                     & tag_dacx,MPI_COMM_WORLD,req(2,i),error)
+!!$                !call snd_msg(i,tag_dacx+my_task,buffer1d)
+!!$             end if
+!!$          enddo
+!!$          print *,"heeeeeeeeeere"
+!!$          call flush(6)
+!!$
+!!$          do i=j,j+nb_i_blocks-1
+!!$             if (i.ne.my_task) then
+!!$                !call rcv_msg(i,tag_dacx+i,buffer1d_from(1,i))
+!!$                req_1d = req(:,i)
+!!$                call MPI_WAITALL(2, req_1d, statuses, error)
+!!$                 !buffer(:,:,i-j) = buffer2d
+!!$                buffer(:,:,i-j) = reshape(buffer1d_from(:,i),(/size(buffer,1),size(buffer,2)/))
+!!$             end if
+!!$          enddo
+!!$       endif
+!!$ 
+!!$          print *,"theeeeeeeeeere"
+!!$          call flush(6)
 
        !SK     
        !SK     formation second membre systeme interface
@@ -464,6 +488,10 @@ contains
     endif
 
     tag_dacx=tag_dacx+1
+
+!!$    print *,"out of heeeeeeeeeere"
+!!$    call flush(6)
+
 
     return
   end subroutine tridiacx
