@@ -302,6 +302,7 @@ contains
     !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
 #ifndef SEQ
     use mpi
+    use para
 #endif
     use data, only  : ncheck
     implicit none
@@ -319,15 +320,11 @@ contains
     real(kind=prec), dimension(0:1,0:size(OUTX,2)-1) :: buffer2d
     real(kind=prec), dimension(2*size(OUTX,2)) :: buffer1d,buffer1d_check
     real(kind=prec), dimension(2048*size(OUTX,2)) :: buffer1d_all
-    integer error,nb,mpi_comm_line
+    integer error,nb
 
     real(kind=prec), dimension(-1:nb_i_blocks-1,0:size(OUTX,2)-1)    :: vec,dix
 
     integer :: lm,lmu,nm,i,j,k,i0,i1,k0,k1
-
-
-    call MPI_Comm_split( MPI_COMM_WORLD, iline, my_task, mpi_comm_line, error)
-
 
     nb = 2*size(OUTX,2)
 
@@ -492,6 +489,7 @@ contains
     !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
 #ifndef SEQ
     use mpi
+    use para
 #endif
     use data, only  : ncheck
     implicit none
@@ -510,12 +508,12 @@ contains
 
     real(kind=prec), dimension(2*size(OUTY,1)) :: buffer1d,buffer1d_check
     real(kind=prec), dimension(2048*size(OUTY,1)) :: buffer1d_all
-    integer error,nb, mpi_comm_column
+    integer error,nb
 
 
     integer :: lm,nm,nmv,i,j,k,i0,i1,k0,k1
 
-    call MPI_Comm_split( MPI_COMM_WORLD, icolumn, my_task, mpi_comm_column, error)
+
     nb = 2*size(OUTY,1)
 
     lm =size(INPY,1)-2

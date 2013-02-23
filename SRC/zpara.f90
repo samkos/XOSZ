@@ -8,7 +8,8 @@ module para
 
   integer, save ::  &
         p_north,  p_south,  p_west,  p_east &
-       ,nb_i_blocks, nb_k_blocks,iline,icolumn
+       ,nb_i_blocks, nb_k_blocks,iline,icolumn&
+       ,mpi_comm_line ,mpi_comm_column
 
 
   integer, parameter ::                                  &
@@ -49,7 +50,11 @@ contains
   !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
   subroutine init_para
   !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+#ifndef SEQ
+    use mpi
+#endif
     implicit none
+    integer error
 
       nb_k_blocks=1
       nb_i_blocks=nb_tasks
@@ -89,6 +94,13 @@ contains
       iline=my_task/nb_i_blocks
 
       is_mpp = (nb_tasks>1)
+ 
+#ifndef SEQ
+     call MPI_Comm_split( MPI_COMM_WORLD, iline, my_task, mpi_comm_line, error)
+     call MPI_Comm_split( MPI_COMM_WORLD, icolumn, my_task, mpi_comm_column, error)
+#endif
+
+
 
     return
   end subroutine init_para
