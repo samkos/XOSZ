@@ -390,6 +390,8 @@ contains
        buffer(iu_d,:,icolumn)=DLX(i0,:)   ! iu_d=0
        buffer(id_d,:,icolumn)=DLX(i1,:)   ! id_d=1
 
+       print *,my_task,nb
+       call flush(6)
       if (nb_i_blocks.ne.1) then
           ! clever method first
           buffer1d = reshape(buffer(:,:,icolumn),(/size(buffer,1)*size(buffer,2)/))
@@ -427,55 +429,6 @@ contains
        
 
 
-!!$       if (nb_i_blocks.ne.1) then
-!!$          j=iline*nb_i_blocks
-!!$          do i=j,j+nb_i_blocks-1
-!!$             if (i.ne.my_task) then
-!!$                buffer2d = buffer(:,:,icolumn)
-!!$                buffer1d = reshape(buffer(:,:,icolumn),(/size(buffer,1)*size(buffer,2)/))
-!!$                call snd_msg(i,tag_dacx+my_task,buffer1d)
-!!$             end if
-!!$          enddo
-!!$          do i=j,j+nb_i_blocks-1
-!!$             if (i.ne.my_task) then
-!!$                call rcv_msg(i,tag_dacx+i,buffer1d)
-!!$                !buffer(:,:,i-j) = buffer2d
-!!$                buffer(:,:,i-j) = reshape(buffer1d,(/size(buffer,1),size(buffer,2)/))
-!!$             end if
-!!$          enddo
-!!$       endif
-
-!!$       if (nb_i_blocks.ne.1) then
-!!$          j=iline*nb_i_blocks
-!!$          do i=j,j+nb_i_blocks-1
-!!$             if (i.ne.my_task) then
-!!$                buffer2d = buffer(:,:,icolumn)
-!!$                !call rcv_msg(i,tag_dacx+i,buffer1d_from(1,i))
-!!$                call MPI_IRECV (buffer1d_from(1,i),nb,MPI_DOUBLE_PRECISION,i,&
-!!$                     & tag_dacx,MPI_COMM_WORLD,req(1,i),error)
-!!$                buffer1d = reshape(buffer(:,:,icolumn),(/size(buffer,1)*size(buffer,2)/))
-!!$                buffer1d_to(:,i) = reshape(buffer1d,(/nb/))
-!!$                call MPI_ISEND (buffer1d_to(1,i),nb,MPI_DOUBLE_PRECISION,i,&
-!!$                     & tag_dacx,MPI_COMM_WORLD,req(2,i),error)
-!!$                !call snd_msg(i,tag_dacx+my_task,buffer1d)
-!!$             end if
-!!$          enddo
-!!$          print *,"heeeeeeeeeere"
-!!$          call flush(6)
-!!$
-!!$          do i=j,j+nb_i_blocks-1
-!!$             if (i.ne.my_task) then
-!!$                !call rcv_msg(i,tag_dacx+i,buffer1d_from(1,i))
-!!$                req_1d = req(:,i)
-!!$                call MPI_WAITALL(2, req_1d, statuses, error)
-!!$                 !buffer(:,:,i-j) = buffer2d
-!!$                buffer(:,:,i-j) = reshape(buffer1d_from(:,i),(/size(buffer,1),size(buffer,2)/))
-!!$             end if
-!!$          enddo
-!!$       endif
-!!$ 
-!!$          print *,"theeeeeeeeeere"
-!!$          call flush(6)
 
        !SK     
        !SK     formation second membre systeme interface
@@ -535,6 +488,9 @@ contains
   !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
   subroutine tridiacy(Q,Qi,H,INPY,OUTY)
     !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+#ifndef SEQ
+    use mpi
+#endif
     use data, only  : ncheck
     implicit none
     real(kind=prec), dimension(-6:6,-2:2) :: H
@@ -550,7 +506,13 @@ contains
     real(kind=prec), dimension(0:1,0:size(OUTY,1)-1,0:nb_k_blocks-1) :: buffer
     real(kind=prec), dimension(0:size(OUTY,1)-1,-1:nb_k_blocks-1)   :: vec,diy
 
+    real(kind=prec), dimension(2*size(OUTY,1)) :: buffer1d,buffer1d_check
+    real(kind=prec), dimension(2048*size(OUTY,1)) :: buffer1d_all
+    integer error,nb
+
     integer :: lm,nm,nmv,i,j,k,i0,i1,k0,k1
+
+    nb = 2*size(OUTY,1)
 
     lm =size(INPY,1)-2
     nm =size(INPY,2)-2
@@ -620,7 +582,23 @@ contains
        buffer(iu_d,:,iline)=DLY(:,k0)  ! iu_d=0
        buffer(id_d,:,iline)=DLY(:,k1)  ! id_d=1
 
+       print *,my_task,nb
+       call flush(6)
        if (nb_k_blocks.ne.1) then
+!!$          buffer1d = reshape(buffer(:,:,iline),(/size(buffer,1)*size(buffer,2)/))
+!!$          call MPI_ALLGATHER(buffer1d(1), nb, MPI_DOUBLE_PRECISION, &
+!!$               &             buffer1d_all(1), nb, MPI_DOUBLE_PRECISION, MPI_COMM_WORLD, error) 
+!!$          j=icolumn
+!!$          k=0
+!!$          do i=j,nb_tasks-1,nb_i_blocks
+!!$             if (i.ne.my_task) then
+!!$                buffer(:,:,k) = reshape(buffer1d_all(i*nb+1:i*nb+nb),(/size(buffer,1),size(buffer,2)/))
+!!$             end if
+!!$             k=k+1
+!!$          enddo
+
+
+
           j=icolumn
           do i=j,nb_tasks-1,nb_i_blocks
              if (i.ne.my_task) call snd_msg(i,tag_dacy+my_task,buffer(:,:,iline))
