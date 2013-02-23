@@ -319,11 +319,7 @@ contains
     real(kind=prec), dimension(0:1,0:size(OUTX,2)-1) :: buffer2d
     real(kind=prec), dimension(2*size(OUTX,2)) :: buffer1d,buffer1d_check
     real(kind=prec), dimension(2048*size(OUTX,2)) :: buffer1d_all
-    real(kind=prec), dimension(2*size(OUTX,2),128) :: buffer1d_from,buffer1d_to
-    integer, dimension(2,128) :: req
-    integer, dimension(2) :: req_1d
-    integer, dimension(MPI_STATUS_SIZE,2) :: statuses
-    integer error, status, nb, tag0
+    integer error,nb
 
     real(kind=prec), dimension(-1:nb_i_blocks-1,0:size(OUTX,2)-1)    :: vec,dix
 
@@ -431,23 +427,23 @@ contains
        
 
 
-       if (nb_i_blocks.ne.1) then
-          j=iline*nb_i_blocks
-          do i=j,j+nb_i_blocks-1
-             if (i.ne.my_task) then
-                buffer2d = buffer(:,:,icolumn)
-                buffer1d = reshape(buffer(:,:,icolumn),(/size(buffer,1)*size(buffer,2)/))
-                call snd_msg(i,tag_dacx+my_task,buffer1d)
-             end if
-          enddo
-          do i=j,j+nb_i_blocks-1
-             if (i.ne.my_task) then
-                call rcv_msg(i,tag_dacx+i,buffer1d)
-                !buffer(:,:,i-j) = buffer2d
-                buffer(:,:,i-j) = reshape(buffer1d,(/size(buffer,1),size(buffer,2)/))
-             end if
-          enddo
-       endif
+!!$       if (nb_i_blocks.ne.1) then
+!!$          j=iline*nb_i_blocks
+!!$          do i=j,j+nb_i_blocks-1
+!!$             if (i.ne.my_task) then
+!!$                buffer2d = buffer(:,:,icolumn)
+!!$                buffer1d = reshape(buffer(:,:,icolumn),(/size(buffer,1)*size(buffer,2)/))
+!!$                call snd_msg(i,tag_dacx+my_task,buffer1d)
+!!$             end if
+!!$          enddo
+!!$          do i=j,j+nb_i_blocks-1
+!!$             if (i.ne.my_task) then
+!!$                call rcv_msg(i,tag_dacx+i,buffer1d)
+!!$                !buffer(:,:,i-j) = buffer2d
+!!$                buffer(:,:,i-j) = reshape(buffer1d,(/size(buffer,1),size(buffer,2)/))
+!!$             end if
+!!$          enddo
+!!$       endif
 
 !!$       if (nb_i_blocks.ne.1) then
 !!$          j=iline*nb_i_blocks
