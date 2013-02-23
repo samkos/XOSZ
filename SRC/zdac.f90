@@ -320,12 +320,18 @@ contains
     real(kind=prec), dimension(2*size(OUTX,2)) :: buffer1d,buffer1d_check
     real(kind=prec), dimension(2048*size(OUTX,2)) :: buffer1d_all
     integer error,nb
+    integer, dimension(nb_i_blocks) :: ranks_i
 
     real(kind=prec), dimension(-1:nb_i_blocks-1,0:size(OUTX,2)-1)    :: vec,dix
 
     integer :: lm,lmu,nm,i,j,k,i0,i1,k0,k1
 
     nb = 2*size(OUTX,2)
+    j=iline*nb_i_blocks
+    do i=j,j+nb_i_blocks-1
+       ranks_i(i-j+1)=i
+    enddo
+    print *,'ranks',my_task,ranks_i
 
     lm =size(INPX,1)-2
     nm =size(INPX,2)-2
