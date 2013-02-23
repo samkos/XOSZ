@@ -317,7 +317,8 @@ contains
 
     real(kind=prec), dimension(0:1,0:size(OUTX,2)-1,0:nb_i_blocks-1) :: buffer
     real(kind=prec), dimension(0:1,0:size(OUTX,2)-1) :: buffer2d
-    real(kind=prec), dimension(2*size(OUTX,2)) :: buffer1d
+    real(kind=prec), dimension(2*size(OUTX,2)) :: buffer1d,buffer1d_check
+    real(kind=prec), dimension(2048*size(OUTX,2)) :: buffer1d_all
     real(kind=prec), dimension(2*size(OUTX,2),128) :: buffer1d_from,buffer1d_to
     integer, dimension(2,128) :: req
     integer, dimension(2) :: req_1d
@@ -392,6 +393,43 @@ contains
        !SK     
        buffer(iu_d,:,icolumn)=DLX(i0,:)   ! iu_d=0
        buffer(id_d,:,icolumn)=DLX(i1,:)   ! id_d=1
+
+      if (nb_i_blocks.ne.1) then
+          ! clever method first
+          buffer1d = reshape(buffer(:,:,icolumn),(/size(buffer,1)*size(buffer,2)/))
+          call MPI_ALLGATHER(buffer1d(1), nb, MPI_DOUBLE_PRECISION, &
+               &             buffer1d_all(1), nb, MPI_DOUBLE_PRECISION, MPI_COMM_WORLD, error) 
+          j=iline*nb_i_blocks
+          do i=j,j+nb_i_blocks-1
+             if (i.ne.my_task) then
+                buffer(:,:,i-j) = reshape(buffer1d_all(i*nb+1:i*nb+nb),(/size(buffer,1),size(buffer,2)/))
+             end if
+          enddo
+!!$
+!!$
+!!$          j=iline*nb_i_blocks
+!!$          do i=j,j+nb_i_blocks-1
+!!$             if (i.ne.my_task) then
+!!$                buffer2d = buffer(:,:,icolumn)
+!!$                buffer1d = reshape(buffer(:,:,icolumn),(/size(buffer,1)*size(buffer,2)/))
+!!$                call snd_msg(i,tag_dacx+my_task,buffer1d)
+!!$             end if
+!!$          enddo
+!!$          do i=j,j+nb_i_blocks-1
+!!$             if (i.ne.my_task) then
+!!$                call rcv_msg(i,tag_dacx+i,buffer1d)
+!!$                !buffer(:,:,i-j) = buffer2d
+!!$                buffer(:,:,i-j) = reshape(buffer1d,(/size(buffer,1),size(buffer,2)/))
+!!$                ! checking...
+!!$                buffer1d_check = buffer1d_all(i*nb+1:i*nb+nb)
+!!$                print '(A,X,I4,X,1024(E8.2,X))',"value ",i,sum(buffer1d),sum(buffer1d_check-buffer1d)
+!!$                !print '(A,X,I4,X,1024(F4.2,X))',"checking ",i,buffer1d_check-buffer1d
+!!$             end if
+!!$          enddo
+          !stop
+       endif
+       
+
 
        if (nb_i_blocks.ne.1) then
           j=iline*nb_i_blocks
