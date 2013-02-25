@@ -305,6 +305,7 @@ contains
 
 
     call timer_stop(0)
+    call timer_start(4)
 
     if (it-it_start<=2.or.mod(it,nt_print)==0) then
 
@@ -367,6 +368,7 @@ contains
        !SK      call calcul_div_df(VTU,VTV,maxdivdf,maxdivdf2,lm,nm)
        !SK      call calcul_div_vf(VTU,VTV,maxdivvf,maxdivvf2,lm,nm)   ! end_out_light
 
+       it_last_print = it
        if (my_task==master_task) then
           print *
           print '(A,A,A)','============================='       &
@@ -446,12 +448,15 @@ contains
        call timer_print("one iteration",3)
        call timer_print("reduction",2)
        call timer_print('messages',1)
-       call timer_print('total',0)
+       call timer_print('total     I/O time',4)
+       call timer_print('total solving time',0)
+       call timer_print('total  Elapse time',5)
 
     endif
     
     
 
+    call timer_stop(4)
     call timer_start(0)
 
 

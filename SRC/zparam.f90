@@ -41,7 +41,7 @@ module disc
        ,dx,dy,invdx,invdy,invdx2,invdy2,p5invdx,p5invdy  &
        ,temps,coeft,xudl,xvdl,xpdl,zudl,zvdl,zpdl
 
-  integer, save ::  it,it_start,nt_print &
+  integer, save ::  it,it_start,nt_print,it_last_print &
        ,iudeb, iufin, kudeb, kufin &
        ,iumgdeb, iumgfin, kumgdeb, kumgfin &
        ,ivdeb, ivfin, kvdeb, kvfin &

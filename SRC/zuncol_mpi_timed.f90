@@ -655,6 +655,9 @@ contains
     real(8) s
     real(8) :: second
 
+    if (is_on(n)) return
+
+    !!print *,"timer_start ",n
     is_on(n)=.true.
 !!    call get_time(s)
 !!    call system_clock(ic)
@@ -675,6 +678,7 @@ contains
     real(8) :: second
 
     if (is_on(n)) then
+    !!print *,"timer_stop ",n
        s = second()
 !!       call get_time(s)
        tchrono(n) = tchrono(n) + s - uchrono(n)
@@ -687,14 +691,23 @@ contains
 
   subroutine timer_print(what,n)
     implicit none
+    real(8) s
+    real(8) :: second
 
     integer, intent(in) :: n
     character(len=*) :: what 
-    if (my_task.eq.0) &
-         & print '(A,I3," Timer (",I1,") ",A15,A,F10.2,A,E10.5,A)&
-         &',' task ',my_task&
-         & ,n, what,' Cpu Time : ',tchrono(n),' seconds'
-    
+    if (my_task.eq.0) then
+       if (is_on(n)) then
+          s = second()
+          print '(A,I3," Timer (",I1,") ",A25,A,F10.2,A,E10.5,A)&
+               &',' task ',my_task&
+               & ,n, what,' Cpu Time : ',tchrono(n)+s-uchrono(n),' seconds'
+       else
+          print '(A,I3," Timer (",I1,") ",A25,A,F10.2,A,E10.5,A)&
+               &',' task ',my_task&
+               & ,n, what,' Cpu Time : ',tchrono(n),' seconds'
+       endif
+    endif
 
   end subroutine timer_print
 

@@ -80,12 +80,17 @@ contains
     integer          :: nitca                        ! out_light
     real(kind=prec) :: maxdiv=1.,diff                ! out_light
 
+    !! global elapse time removing I/O time
     call timer_clear(0); call timer_start(0); call timer_stop(0)
 
     !! timer communications send receive
     call timer_clear(1); call timer_start(1); call timer_stop(1)
     !! timer communications globales
     call timer_clear(2); call timer_start(2); call timer_stop(2)
+    !! timer I/O
+    call timer_clear(4); call timer_start(4); call timer_stop(4)
+    !! global elapse timer 
+    call timer_clear(5); call timer_start(5);
 
     call ioinit
     call coinit
@@ -340,7 +345,11 @@ contains
 !!$    call outdon(VTUS-VTU,'diff_u')
 !!$    call outdon(VTVS-VTV,'diff_v')
 
-
+    !print *,'it-it_last_print',it-it_last_print
+    if (it-it_last_print.gt.1) then
+       nt_print = it ! force error printing
+       call erreur(VTU,VTV,PRE,VTUS,VTVS,PRES)
+    endif
 
     call coend
 
