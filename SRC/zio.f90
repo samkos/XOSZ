@@ -490,7 +490,7 @@ contains
 900 continue
 
        !write(*,3012) it,t_start,t_all,tau,1+int((t_all-t_start)/tau),timer_get(3)   ! THEMIS
-       write(ncs2fw,3011) it,1+int((t_all-t_start)/tau),timer_get(3)   ! THEMIS
+       write(ncs2fw,3011) it,1+int((t_all-t_start)/tau),timer_get(5)   ! THEMIS
 
 
        call flush(ncs2fw)
