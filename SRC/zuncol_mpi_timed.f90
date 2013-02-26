@@ -715,6 +715,24 @@ contains
 
   !***********************************************************************
 
+  subroutine timer_save(n)
+    implicit none
+
+    integer n,ic
+    real(8) s
+    real(8) :: second
+
+    if (is_on(n)) then
+    !!print *,"timer_stop ",n
+       s = second()
+!!       call get_time(s)
+       tchrono(n) = tchrono(n) + s - uchrono(n)
+    endif
+
+  end subroutine timer_save
+
+  !***********************************************************************
+
   real(8) function timer_get(n)
     implicit none
 

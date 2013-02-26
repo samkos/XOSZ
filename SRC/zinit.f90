@@ -1114,11 +1114,16 @@ contains
    implicit none
    include 'mpif.h' 
 
-   integer :: ok, thefile,ierror
+   integer :: ok, thefile,ierror, i
    character (len=200) :: nom_fichier_save
    character (len=200) :: nom_fichier_save_data
 
    nom_fichier_save = trim(nom_fic_save)
+
+   do i=1,5
+      call timer_save(i)
+   enddo
+
    if (my_task==0) then
       open(file=nom_fichier_save,unit=69,form='unformatted',iostat=ok)
       if (ok/=0) stop 'pb ouverture fichier sauvegarde'  
