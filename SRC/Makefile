@@ -13,9 +13,10 @@ OBJECTS =  zparam.o zuncol_mpi_timed.o    zpara.o zgarbage.o \
 	   zcalcul.o  znavier.o ztest.o zmainone.o  second.o \
 	   zplot.o
 
-COMPILER  = mpif90.openmpi
-LINKER = mpif90.openmpi 
-FFLAGS    =    -g -fdump-core -fbacktrace 
+COMPILER  = mpif90
+LINKER = mpif90
+FFLAGS    =  
+#FFLAGS    =    -g -fdump-core -fbacktrace 
 LIBS = -pthread -I/home/samy/OMPI/lib -L/home/samy/OMPI/lib -lmpi_f90 -lmpi_f77 -lmpi -ldl -lm -Wl,--export-dynamic -lrt -lnsl -lutil -lm -ldl 
 all: $(TARGET)
 

@@ -14,6 +14,16 @@ double second()
         return ( (double) tp.tv_sec + (double) tp.tv_usec * 1.e-6 );
 }
 
+double second_()
+{
+        struct timeval tp;
+        struct timezone tzp;
+        int i;
+
+        i = gettimeofday(&tp,&tzp);
+        return ( (double) tp.tv_sec + (double) tp.tv_usec * 1.e-6 );
+}
+
 double second_cpu() {
   clock_t ticks;
   ticks = clock();
