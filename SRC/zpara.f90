@@ -794,6 +794,7 @@ contains
     use data
     use debug
     implicit none
+#ifndef SEQ
     include 'mpif.h' 
     real(kind=prec), dimension(0:,0:)            :: solution
     real(kind=prec), dimension(:,:), allocatable :: solution_buf
@@ -938,6 +939,9 @@ contains
     end if
 
    call MPI_TYPE_FREE(filetype,ierror)
+#else
+  write (*,*) "save_or_retrieved not implemented in sequentiel"
+#endif
 
     return
   end subroutine save_or_retrieve                                        ! end_out_light
