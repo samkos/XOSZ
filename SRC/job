@@ -2,9 +2,9 @@
 ## submit from ./bin directory with "llsubmit run.ll"
 
 #@ class            = clallmds
-#@ job_name         = NPB_B
-#@ total_tasks      = 4
-#@ node             = 1
+#@ job_name         = ZEPHYR
+#@ total_tasks      = 64
+#@ node             = 4
 #@ node_usage       = not_shared
 #@ wall_clock_limit = 0:10:00
 #@ output           = $(job_name).$(jobid)
@@ -16,5 +16,13 @@
 module load intel-env/13.0.1 intelmpi/4.0.3
 
 export OMP_NUM_THREADS=4
+RUN=`pwd`
 
-mpirun -np ${LOADL_TOTAL_TASKS} ./bt-mz_B.4
+
+\rm -rf ../RES/${LOADL_TOTAL_TASKS} 
+mkdir -p ../RES/${LOADL_TOTAL_TASKS} 
+cd ../RES/${LOADL_TOTAL_TASKS} 
+cp ${RUN}/input .
+
+mpirun -np ${LOADL_TOTAL_TASKS} ${RUN}/zephyr > output
+
