@@ -12,7 +12,7 @@
 1023        ! lm
 1023       ! nm
 .1          ! nu 
-2           ! ncheck           1:VF2  2:DF2 3:VF4 5:DF4 6:DF4e
+5           ! ncheck           1:VF2  2:DF2 3:VF4 5:DF4 6:DF4e
 2           ! ncheck_precond
 1           ! ntype_solver  1..9:BiCGSTAB(l),  10:GMRES,     11:GMRESR,      12:GMRESR+norec,
             !                 13:MG,           14:Orthodir,  15:Orthomin,    16:lisse

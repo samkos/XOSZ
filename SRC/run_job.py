@@ -14,6 +14,17 @@ nb_tasks = int(sys.argv[1])
 node = math.ceil(nb_tasks/16.)
 
 
+scorep_filter = """
+SCOREP_REGION_NAMES_BEGIN EXCLUDE
+binvcrhs*
+matmul_sub*
+matvec_sub*
+exact_solution*
+binvrhs*
+lhs*init*
+timer_*
+"""
+
 
 job= """
 #!/bin/bash
@@ -33,14 +44,21 @@ job= """
 
 module load intel-env/13.0.1 intelmpi/4.0.3
 
-export OMP_NUM_THREADS=4
+
+
+
+#export OMP_NUM_THREADS=4
 RUN=`pwd`
 
+export DEST=../RES/${LOADL_TOTAL_TASKS} 
 
-\rm -rf ../RES/${LOADL_TOTAL_TASKS} 
-mkdir -p ../RES/${LOADL_TOTAL_TASKS} 
-cd ../RES/${LOADL_TOTAL_TASKS} 
+\\rm -rf ${DEST}
+mkdir -p ${DEST}
+cd ${DEST}
 cp ${RUN}/input .
+
+export SCOREP_EXPERIMENT_DIRECTORY=scorep
+export SCOREP_METRIC_PAPI=PAPI_L2_TCM,PAPI_FP_OPS,PAPI_MEM_SCY,PAPI_MEM_WCY,PAPI_MEM_RCY,PAPI_FP_STAL,PAPI_VEC_SP,PAPI_VEC_DP
 
 mpirun -np ${LOADL_TOTAL_TASKS} ${RUN}/zephyr > output
 """ % (nb_tasks, node)
