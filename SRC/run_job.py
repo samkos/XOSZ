@@ -2,16 +2,116 @@
 import sys
 import math
 import os
+import getopt
 
-if len(sys.argv) < 2:
-    sys.exit('Usage: run_job.py <nb_procs> ' )
-
-
+import exceptions, traceback
 
 
+LOCAL = False
+TEST = False
+nb_tasks = False
+nb_nodes = False
 
-nb_tasks = int(sys.argv[1])
-node = math.ceil(nb_tasks/16.)
+class MyError(Exception):
+    """
+    class reporting own exception message
+    """
+    def __init__(self, value):
+        self.value  =  value
+    def __str__(self):
+        return repr(self.value)
+
+def except_print():
+
+    exc_type, exc_value, exc_traceback = sys.exc_info()
+    
+    print "!!!!!!!!!!!!!!!!!!!!!!!!!"
+    print exc_type
+    print exc_value
+
+    print "!!!!!!!!!!!!!!!!!!!!!!!!!"
+    traceback.print_exception(exc_type, exc_value, exc_traceback,
+                              file=sys.stderr)
+
+
+def print_debug(s,r="nulll"):
+  if debug:
+    if r=="nulll":
+      print s
+    else:
+      print s,":",r
+      
+
+#########################################################################
+# welcome message
+#########################################################################
+
+def welcome_message():
+    """ welcome message"""
+    
+    print """
+                   #################################################
+                   #                                               #
+                   #      Welcome to run_job v 0.1 !               #
+                   #                                               #
+                   #################################################
+
+                   
+     """
+
+#########################################################################
+# usage ...
+#########################################################################
+
+def usage(message = None):
+    """ helping message"""
+    if message:
+        print "  Error : %s \n" % message
+    print "  usage: \n \t python run_job.py \
+             \n\t\t--tasks=<nb_tasks>      # total number of tasks \
+             \n\t\t[ --local]              # launch on the frontend\
+             \n\t\t[ --test]  \
+             \n\t\t[ --debug]  \
+             \n\t\t[ --help]               # print this message \
+           \n"  
+
+    sys.exit(1)
+
+#########################################################################
+# command line parsing...
+#########################################################################
+
+def parse(args=sys.argv[1:]):
+    """ parse the command line and set global _flags according to it """
+
+    global LOCAL, TEST, DEBUG, nb_tasks, nb_nodes
+    
+    #print "parsing vishnu parameter : ",args
+    try:
+        opts, args = getopt.getopt(args, "h", 
+                          ["help","debug", "local", "test", "tasks="])
+    except getopt.GetoptError, err:
+        # print help information and exit:
+        usage(err)
+
+    # first scan opf option to get prioritary one first
+    # those who sets the state of the process
+    # especially those only setting flags are expected here
+    for option, argument in opts:
+        if option in ("-h", "--help"):
+            usage("")
+        elif option in ("--local"):
+            LOCAL = True
+        elif option in ("--test"):
+            TEST = True
+        elif option in ("--debug"):
+            DEBUG = True
+        elif option in ("--tasks"):
+            nb_tasks = int(argument)
+            nb_nodes = math.ceil(nb_tasks/16.)
+
+    if not(nb_tasks):
+        usage()
 
 
 scorep_filter = """
@@ -25,8 +125,9 @@ lhs*init*
 timer_*
 """
 
-
-job= """
+def create_job():
+    global nb_tasks, nb_nodes
+    job= """
 #!/bin/bash
 ## submit from ./bin directory with "llsubmit run.ll"
 
@@ -61,15 +162,27 @@ export SCOREP_EXPERIMENT_DIRECTORY=scorep
 export SCOREP_METRIC_PAPI=PAPI_L2_TCM,PAPI_FP_OPS,PAPI_VEC_SP,PAPI_VEC_DP
 
 mpirun -np ${LOADL_TOTAL_TASKS} ${RUN}/zephyr > output
-""" % (nb_tasks, node)
+""" % (nb_tasks, nb_nodes)
+    return job
 
-print "creating and submitting job for %d tasks running on %d nodes" %(nb_tasks,node)
+
+welcome_message()
+parse()
+job=create_job()
+
+
+print "creating and submitting job for %d tasks running on %d nodes" %(nb_tasks,nb_nodes)
 
 f = open("job2submit","w")
 f.write(job)
 f.close()
 
-os.system("llsubmit job2submit")
+if TEST:
+    print job
+elif LOCAL:
+    os.system("sh job2submit")
+else:
+    os.system("llsubmit job2submit")
 
 
 
