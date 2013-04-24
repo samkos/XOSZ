@@ -9,8 +9,8 @@
 2           ! is_conv        >0: cv_global /5 : sauve fichier
 4           ! Schema Temporel d'integration
 2           ! 0--> 1     1--> current  2 -> richardson
-1023        ! lm
-1023       ! nm
+255        ! lm
+255       ! nm
 .1          ! nu 
 5           ! ncheck           1:VF2  2:DF2 3:VF4 5:DF4 6:DF4e
 2           ! ncheck_precond

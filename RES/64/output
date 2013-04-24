@@ -1,1 +1,0 @@
-WARNING: Unable to read mpd.hosts or list of hosts isn't provided. MPI job will be run on the current machine only.
