@@ -42,7 +42,10 @@ job= """
 #@ job_type         = mpich
 #@ queue
 
+
+module use /gpfslocal/pub/vihps/UNITE/local
 module load intel-env/13.0.1 intelmpi/4.0.3
+module load UNITE scalasca
 
 
 
@@ -52,22 +55,25 @@ RUN=`pwd`
 
 export DEST=../RES/${LOADL_TOTAL_TASKS} 
 
-\\rm -rf ${DEST}
+#\\rm -rf ${DEST}
 mkdir -p ${DEST}
 cd ${DEST}
 cp ${RUN}/input .
 
 
-export SCOREP_EXPERIMENT_DIRECTORY=scorep_trace
-export SCOREP_METRIC_PAPI=PAPI_L2_TCM,PAPI_FP_OPS
-export SCOREP_ENABLE_TRACING=true
-export SCOREP_ENABLE_PROFILING=false
-export SCOREP_TOTAL_MEMORY=500m
+#export SCOREP_EXPERIMENT_DIRECTORY=scorep_trace
+#export SCOREP_METRIC_PAPI=PAPI_L2_TCM,PAPI_FP_OPS
+#export SCOREP_ENABLE_TRACING=true
+#export SCOREP_ENABLE_PROFILING=false
+#export SCOREP_TOTAL_MEMORY=500m
 #export SCOREP_FILTERING_FILE=./config/scorep.filt
 
 
 
-mpirun -np ${LOADL_TOTAL_TASKS} ${RUN}/zephyr > output
+ mpirun -np ${LOADL_TOTAL_TASKS} ${RUN}/zephyr > output
+
+#export SCOREP_EXPERIMENT_DIRECTORY=scorep_trace
+scan -t  mpirun -np ${LOADL_TOTAL_TASKS} ${RUN}/zephyr > output_scan
 """ % (nb_tasks, node)
 
 print "creating and submitting job for %d tasks running on %d nodes" %(nb_tasks,node)
