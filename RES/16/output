@@ -76,13 +76,6 @@ BFD: Dwarf Error: mangled line number section (bad file number).
 BFD: Dwarf Error: mangled line number section (bad file number).
 BFD: Dwarf Error: mangled line number section (bad file number).
 BFD: Dwarf Error: mangled line number section (bad file number).
-BFD: BFD: Dwarf Error: mangled line number section (bad file number).
-BFD: Dwarf Error: mangled line number section (bad file number).
-BFD: Dwarf Error: mangled line number section (bad file number).
-BFD: Dwarf Error: mangled line number section (bad file number).
-BFD: Dwarf Error: mangled line number section (bad file number).
-BFD: Dwarf Error: mangled line number section (bad file number).
-Dwarf Error: mangled line number section (bad file number).
 BFD: Dwarf Error: mangled line number section (bad file number).
 BFD: Dwarf Error: mangled line number section (bad file number).
 BFD: Dwarf Error: mangled line number section (bad file number).
@@ -94,7 +87,194 @@ BFD: Dwarf Error: mangled line number section (bad file number).
 BFD: Dwarf Error: mangled line number section (bad file number).
 BFD: Dwarf Error: mangled line number section (bad file number).
 BFD: Dwarf Error: mangled line number section (bad file number).
-poincare092.22589ipath_userinit: assign_context command failed: Network is down
-poincare092.22589can't open /dev/ipath, network down (err=26)
-[5] MPI startup(): tmi fabric is not available and fallback fabric is not enabled
-APPLICATION TERMINATED WITH THE EXIT STRING: Hangup (signal 1)
+BFD: Dwarf Error: mangled line number section (bad file number).
+BFD: Dwarf Error: mangled line number section (bad file number).
+BFD: Dwarf Error: mangled line number section (bad file number).
+BFD: Dwarf Error: mangled line number section (bad file number).
+BFD: Dwarf Error: mangled line number section (bad file number).
+BFD: Dwarf Error: mangled line number section (bad file number).
+BFD: Dwarf Error: mangled line number section (bad file number).
+  Initialization successfully completed for           16  tasks
+ usage : zephyr <input file>   by default using ./input
+ ***********************************
+ *                                 *
+ *  Zephyr v 0.6 (Janvier 2013)    *
+ *                                 *
+ ***********************************
+ >> 
+ >> Execution sur : PC Linux
+ >> 
+ >> Solution test :   Bipole
+ >>
+ >> Viscosite     :     0.100000000000000     
+ >>
+ >> tau         =   3.125000000000000E-003
+ >> dx          =   9.765625000000000E-004        ou lm =         1023
+ >> dy          =   9.765625000000000E-004        ou nm =         1023
+ >>
+ >> Maillage     --> grille B  
+ >>
+ >> Termes diffusifs  traites implicitement
+ >> Termes convectifs traites implicitement
+ >> Guess Initial --> Richardson
+ >>
+ >> integration temporelle d'ordre  :            4
+ >>
+ >> Solveur                         : BiCGSTAB_1(DF4)
+ >>
+ >> 
+ >> Convergence externe             :   1.000000000000000E-018
+ >> Convergence externe abs         :   1.000000000000000E-010
+ >>
+ >> ===============================================================================
+ >>
+ >> task/nbgrid :     12    13    14    15                1     1     1     1
+ >>                    8     9    10    11                1     1     1     1
+ >>                    4     5     6     7                1     1     1     1
+ >>                    0     1     2     3                1     1     1     1
+ >>
+ >> lmu/lmu_ddm :    256   256   256   255                0     0     0     0
+ >>                  256   256   256   255                0     0     0     0
+ >>                  256   256   256   255                0     0     0     0
+ >>                  256   256   256   255                0     0     0     0
+ >>
+ >> nmu/nmu_ddm :    255   255   255   255                0     0     0     0
+ >>                  256   256   256   256                0     0     0     0
+ >>                  256   256   256   256                0     0     0     0
+ >>                  256   256   256   256                0     0     0     0
+ >>
+ >>
+ >> lmv/lmv_ddm :    256   256   256   255                0     0     0     0
+ >>                  256   256   256   255                0     0     0     0
+ >>                  256   256   256   255                0     0     0     0
+ >>                  256   256   256   255                0     0     0     0
+ >>
+ >> nmv/nmv_ddm :    255   255   255   255                0     0     0     0
+ >>                  256   256   256   256                0     0     0     0
+ >>                  256   256   256   256                0     0     0     0
+ >>                  256   256   256   256                0     0     0     0
+ >>
+ >> ===============================================================================
+ >>
+ 
+===================================================================================
+                 t=  0.000000000000000E+000  (it=           0 ) 
+===================================================================================
+ Erreur Linfini      -->  err    =   0.1388E-16  0.1023E-16  0.4873E-18  0.1098E-17
+                     -->  errvtu =   0.1388E-16  0.1023E-16  0.3446E-18  0.1098E-17
+                     -->  errvtv =   0.1388E-16  0.1023E-16  0.3446E-18  0.1098E-17
+ Reynolds de Maille  -->  Rh     =   0.1324E-01
+                     -->  Rh(x)  =   0.1324E-01
+                     -->  Rh(y)  =   0.1324E-01
+===================================================================================
+ 
+ task   0 Timer (3)             one iteration Cpu Time :       0.00 seconds
+ task   0 Timer (2)                 reduction Cpu Time :       0.11 seconds
+ task   0 Timer (1)                  messages Cpu Time :       0.27 seconds
+ task   0 Timer (4)        total     I/O time Cpu Time :       0.08 seconds
+ task   0 Timer (0)        total solving time Cpu Time :       0.00 seconds
+ task   0 Timer (5)        total  Elapse time Cpu Time :       5.65 seconds
+ 
+===================================================================================
+                 t=  3.125000000000000E-003  (it=           1 ) 
+===================================================================================
+ Erreur Linfini      -->  err    =   0.2061E-07  0.1519E-07  0.3904E-08  0.8731E-08
+                     -->  errvtu =   0.1774E-07  0.1308E-07  0.2795E-08  0.8841E-08
+                     -->  errvtv =   0.2061E-07  0.1519E-07  0.2725E-08  0.8619E-08
+ Reynolds de Maille  -->  Rh     =   0.1324E-01
+                     -->  Rh(x)  =   0.1324E-01
+                     -->  Rh(y)  =   0.1324E-01
+===================================================================================
+ >>                                  CONVERGENCE
+===================================================================================
+ >>         niveau  1   : total / nb_ap =        moy       max       min      last
+ >>         iteration :     429 /     1 =        429       429       429       429
+-----------------------------------------------------------------------------------
+ >>                   :      moy      max      min     last     resf     resl
+ >>         rayon cv  :   0.95E+00 0.95E+00 0.95E+00 0.95E+00 0.13E+01 0.85E-10
+===================================================================================
+ 
+ task   0 Timer (3)             one iteration Cpu Time :      45.71 seconds
+ task   0 Timer (2)                 reduction Cpu Time :       0.26 seconds
+ task   0 Timer (1)                  messages Cpu Time :       0.27 seconds
+ task   0 Timer (4)        total     I/O time Cpu Time :       0.09 seconds
+ task   0 Timer (0)        total solving time Cpu Time :      45.71 seconds
+ task   0 Timer (5)        total  Elapse time Cpu Time :      51.37 seconds
+ 
+===================================================================================
+                 t=  6.250000000000000E-003  (it=           2 ) 
+===================================================================================
+ Erreur Linfini      -->  err    =   0.5734E-07  0.4228E-07  0.1098E-07  0.2436E-07
+                     -->  errvtu =   0.5111E-07  0.3768E-07  0.7991E-08  0.2508E-07
+                     -->  errvtv =   0.5734E-07  0.4228E-07  0.7525E-08  0.2362E-07
+ Reynolds de Maille  -->  Rh     =   0.1324E-01
+                     -->  Rh(x)  =   0.1324E-01
+                     -->  Rh(y)  =   0.1324E-01
+===================================================================================
+ >>                                  CONVERGENCE
+===================================================================================
+ >>         niveau  1   : total / nb_ap =        moy       max       min      last
+ >>         iteration :     857 /     2 =        428       429       428       428
+-----------------------------------------------------------------------------------
+ >>                   :      moy      max      min     last     resf     resl
+ >>         rayon cv  :   0.95E+00 0.95E+00 0.95E+00 0.95E+00 0.13E+01 0.59E-10
+===================================================================================
+ 
+ task   0 Timer (3)             one iteration Cpu Time :      45.56 seconds
+ task   0 Timer (2)                 reduction Cpu Time :       0.41 seconds
+ task   0 Timer (1)                  messages Cpu Time :       0.27 seconds
+ task   0 Timer (4)        total     I/O time Cpu Time :       0.09 seconds
+ task   0 Timer (0)        total solving time Cpu Time :      91.28 seconds
+ task   0 Timer (5)        total  Elapse time Cpu Time :      96.94 seconds
+ 
+===================================================================================
+                 t=  9.375000000000001E-003  (it=           3 ) 
+===================================================================================
+ Erreur Linfini      -->  err    =   0.9558E-07  0.7048E-07  0.1860E-07  0.4097E-07
+                     -->  errvtu =   0.8844E-07  0.6521E-07  0.1376E-07  0.4286E-07
+                     -->  errvtv =   0.9558E-07  0.7048E-07  0.1252E-07  0.3899E-07
+ Reynolds de Maille  -->  Rh     =   0.1324E-01
+                     -->  Rh(x)  =   0.1324E-01
+                     -->  Rh(y)  =   0.1324E-01
+===================================================================================
+ >>                                  CONVERGENCE
+===================================================================================
+ >>         niveau  1   : total / nb_ap =        moy       max       min      last
+ >>         iteration :    1238 /     3 =        412       429       381       381
+-----------------------------------------------------------------------------------
+ >>                   :      moy      max      min     last     resf     resl
+ >>         rayon cv  :   0.94E+00 0.95E+00 0.94E+00 0.94E+00 0.13E+01 0.60E-10
+===================================================================================
+ 
+ task   0 Timer (3)             one iteration Cpu Time :      40.69 seconds
+ task   0 Timer (2)                 reduction Cpu Time :       0.54 seconds
+ task   0 Timer (1)                  messages Cpu Time :       0.27 seconds
+ task   0 Timer (4)        total     I/O time Cpu Time :       0.10 seconds
+ task   0 Timer (0)        total solving time Cpu Time :     131.96 seconds
+ task   0 Timer (5)        total  Elapse time Cpu Time :     137.64 seconds
+ 
+===================================================================================
+                 t=  1.250000000000000E-002  (it=           4 ) 
+===================================================================================
+ Erreur Linfini      -->  err    =   0.1272E-06  0.9379E-07  0.2532E-07  0.5535E-07
+                     -->  errvtu =   0.1223E-06  0.9015E-07  0.1900E-07  0.5875E-07
+                     -->  errvtv =   0.1272E-06  0.9379E-07  0.1673E-07  0.5173E-07
+ Reynolds de Maille  -->  Rh     =   0.1324E-01
+                     -->  Rh(x)  =   0.1324E-01
+                     -->  Rh(y)  =   0.1324E-01
+===================================================================================
+ >>                                  CONVERGENCE
+===================================================================================
+ >>         niveau  1   : total / nb_ap =        moy       max       min      last
+ >>         iteration :    1688 /     4 =        422       450       381       450
+-----------------------------------------------------------------------------------
+ >>                   :      moy      max      min     last     resf     resl
+ >>         rayon cv  :   0.94E+00 0.95E+00 0.94E+00 0.95E+00 0.13E+01 0.48E-10
+===================================================================================
+ 
+ task   0 Timer (3)             one iteration Cpu Time :      47.85 seconds
+ task   0 Timer (2)                 reduction Cpu Time :       0.70 seconds
+ task   0 Timer (1)                  messages Cpu Time :       0.27 seconds
+ task   0 Timer (4)        total     I/O time Cpu Time :       0.11 seconds
+ task   0 Timer (0)        total solving time Cpu Time :     179.81 seconds
+ task   0 Timer (5)        total  Elapse time Cpu Time :     185.50 seconds

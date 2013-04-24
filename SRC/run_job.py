@@ -57,8 +57,15 @@ mkdir -p ${DEST}
 cd ${DEST}
 cp ${RUN}/input .
 
-export SCOREP_EXPERIMENT_DIRECTORY=scorep
-export SCOREP_METRIC_PAPI=PAPI_L2_TCM,PAPI_FP_OPS,PAPI_VEC_SP,PAPI_VEC_DP
+
+export SCOREP_EXPERIMENT_DIRECTORY=scorep_trace
+export SCOREP_METRIC_PAPI=PAPI_L2_TCM,PAPI_FP_OPS
+export SCOREP_ENABLE_TRACING=true
+export SCOREP_ENABLE_PROFILING=false
+export SCOREP_TOTAL_MEMORY=500m
+#export SCOREP_FILTERING_FILE=./config/scorep.filt
+
+
 
 mpirun -np ${LOADL_TOTAL_TASKS} ${RUN}/zephyr > output
 """ % (nb_tasks, node)
