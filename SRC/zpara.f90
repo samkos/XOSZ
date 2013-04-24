@@ -52,6 +52,7 @@ contains
   !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
 #ifndef SEQ
     use mpi
+#else
 #endif
     implicit none
     integer error
@@ -98,6 +99,7 @@ contains
 #ifndef SEQ
      call MPI_Comm_split( MPI_COMM_WORLD, iline, my_task, mpi_comm_line, error)
      call MPI_Comm_split( MPI_COMM_WORLD, icolumn, my_task, mpi_comm_column, error)
+#else
 #endif
 
 
@@ -753,7 +755,10 @@ contains
        write (nom_file,sformat) trim(nom_fic_output)//'output0',my_task
        nunit=10+my_task
        open(file=nom_file,unit=nunit,iostat=ok)
-       if (ok/=0) then; print *,'pb ouverture fichier',nom_file; stop; endif;
+       if (ok/=0) then
+          print *,'pb ouverture fichier',nom_file
+          stop
+       endif
        write (nunit,'(A,i2,A)') 'proc ',my_task &
             ,' ==========================================================='
     else

@@ -125,9 +125,8 @@ lhs*init*
 timer_*
 """
 
-def create_job():
-    global nb_tasks, nb_nodes
-    job= """
+
+job_scalasca =     job= """
 #!/bin/bash
 ## submit from ./bin directory with "llsubmit run.ll"
 
@@ -170,18 +169,65 @@ cp ${RUN}/input .
 
 
 
- mpirun -np ${LOADL_TOTAL_TASKS} ${RUN}/zephyr > output
+scan mpirun -np ${LOADL_TOTAL_TASKS} ${RUN}/zephyr > output
 
 #export SCOREP_EXPERIMENT_DIRECTORY=scorep_trace
 scan -t  mpirun -np ${LOADL_TOTAL_TASKS} ${RUN}/zephyr > output_scan
-""" % (nb_tasks, nb_nodes)
+""" 
+
+job_tau =  """
+#!/bin/bash
+## submit from ./bin directory with "llsubmit run.ll"
+
+#@ class            = clallmds
+#@ job_name         = ZEPHYR
+#@ total_tasks      = %d
+#@ node             = %d
+#@ node_usage       = not_shared
+#@ wall_clock_limit = 0:10:00
+#@ output           = $(job_name).$(jobid)
+#@ error            = $(job_name).$(jobid)
+#@ environment      = COPY_ALL
+#@ job_type         = mpich
+#@ queue
+
+
+module use /gpfslocal/pub/vihps/UNITE/local
+module load UNITE
+module load VI-HPS-TW
+module load intel-env/13.0.1 intelmpi/4.0.3
+module load tau
+
+
+RUN=`pwd`
+
+export DEST=../RES/${LOADL_TOTAL_TASKS} 
+
+\\rm -rf ${DEST}
+mkdir -p ${DEST}
+cd ${DEST}
+cp ${RUN}/input .
+
+
+export TAU_MAKEFILE=$TAU/Makefile.tau-mpi-pdf
+
+export TAU_TRACK_SIGNALS=1
+export TAU_SAMPLING=1
+
+mpirun -np ${LOADL_TOTAL_TASKS} tau_exec ${RUN}/zephyr > output
+
+'""" 
+
+def create_job(job_template):
+    global nb_tasks, nb_nodes
+    job = job_template % (nb_tasks, nb_nodes)
     return job
 
 
 
 welcome_message()
 parse()
-job=create_job()
+job=create_job(job_tau)
 
 print "creating and submitting job for %d tasks running on %d nodes" %(nb_tasks,nb_nodes)
 
