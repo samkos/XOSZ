@@ -197,7 +197,13 @@ module load UNITE
 module load VI-HPS-TW
 module load intel-env/13.0.1 intelmpi/4.0.3
 module load tau
+module load papi
 
+
+
+module list
+
+papi_avail
 
 RUN=`pwd`
 
@@ -209,10 +215,15 @@ cd ${DEST}
 cp ${RUN}/input .
 
 
-export TAU_MAKEFILE=$TAU/Makefile.tau-mpi-pdf
+export TAU_MAKEFILE=$TAU/Makefile.tau-mpi-pdt
+export TAU_MAKEFILE=$TAU/Makefile.tau-icpc-papi-mpi-pdt
+
+wc $TAU_MAKEFILE 
 
 #export TAU_TRACK_SIGNALS=1
 export TAU_SAMPLING=1
+export TAU_COMM_MATRIX=1
+export TAU_METRICS=TIME:PAPI_FP_OPS:PAPI_L2_TCM
 
 mpirun -np ${LOADL_TOTAL_TASKS} tau_exec ${RUN}/zephyr > output
 
