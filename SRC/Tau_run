@@ -1,0 +1,8 @@
+export TAU_MAKEFILE=$TAU/Makefile.tau-papi-mpi-pdt
+export TAU_SAMPLING=1
+export TAU_COMM_MATRIX=1
+export TAU_METRICS=TIME:PAPI_FP_OPS:PAPI_L2_TCM
+
+echo Running on $1 nodes...
+mpirun -np $1 tau_exec ./zephyr
+
