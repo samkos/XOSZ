@@ -1,5 +1,0 @@
-export TAU_MAKEFILE=$TAU/Makefile.tau-papi-mpi-pdt
-export TAU_OPTIONS="-optPreProcess -optVerbose -optKeepFiles"
-make -f Makefile.general CC=~/local/linux/bin/tau_cc.sh CXX=tau_cxx.sh F90=~/local/linux/bin/tau_f90.sh FFLAGS="-g"
-
-

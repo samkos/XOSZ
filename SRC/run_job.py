@@ -201,7 +201,7 @@ module load tau
 
 RUN=`pwd`
 
-export DEST=../RES/${LOADL_TOTAL_TASKS} 
+export DEST=./RES/${LOADL_TOTAL_TASKS} 
 
 \\rm -rf ${DEST}
 mkdir -p ${DEST}
@@ -211,12 +211,12 @@ cp ${RUN}/input .
 
 export TAU_MAKEFILE=$TAU/Makefile.tau-mpi-pdf
 
-export TAU_TRACK_SIGNALS=1
+#export TAU_TRACK_SIGNALS=1
 export TAU_SAMPLING=1
 
 mpirun -np ${LOADL_TOTAL_TASKS} tau_exec ${RUN}/zephyr > output
 
-'""" 
+""" 
 
 def create_job(job_template):
     global nb_tasks, nb_nodes
