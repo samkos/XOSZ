@@ -28,8 +28,8 @@ zplot_control : zplot_control.c
 	$(CC) -c $<
 
 
-zio.o : zixo.f90
-	mpiifort $(MPI_INC) $(FFLAGS) -DMPI -cpp -c $<	
+zio.o : zio.f90
+	mpif90 $(MPI_INC) $(FFLAGS) -DMPI -cpp -c $<	
 
 zparam.o : zparam.f90 
 	$(COMPILER) $(MPI_INC) $(FFLAGS) -DMPI -cpp -c $<
