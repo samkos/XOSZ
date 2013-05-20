@@ -2,7 +2,14 @@ export TAU_MAKEFILE=$TAU/Makefile.tau-papi-mpi-pdt
 export TAU_SAMPLING=1
 export TAU_COMM_MATRIX=1
 export TAU_METRICS=TIME:PAPI_FP_OPS:PAPI_L2_TCM
+#export TAU_METRICS=TIME:PAPI_FP_OPS:PAPI_L2_TCM:PAPI_FPU_IDL:PAPI_TLB_DM:PAPI_L1_DCH:PAPI_L2_DCH:PAPI_FSQ_INS
+#export TAU_METRICS=TIME:PAPI_FP_OPS:PAPI_L2_TCM:PAPI_FPU_IDL:PAPI_TLB_DM:PAPI_TLB_TL:PAPI_STL_ICY:PAPI_HW_INT:PAPI_BR_MSP:PAPI_RES_STL:PAPI_L1_DCH:PAPI_L2_DCH:PAPI_FSQ_INS
 
 echo Running on $1 nodes...
 mpirun -np $1 tau_exec ./zephyr
+
+echo "Saving data for .... $2"
+
+perfdmf_loadtrial -a ZEPHYR -x initial-g-O2 -n $1_proc_$2
+
 
