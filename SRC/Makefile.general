@@ -22,14 +22,14 @@ $(TARGET) : $(OBJECTS)
 	$(LINKER) $(FFLAGS) $(OBJECTS) -o zephyr
 
 zplot_control : zplot_control.c
-	$(CC) -o zplot_control zplot_control.c
+	cc -o zplot_control zplot_control.c
 
 %.o : %.c
-	$(CC) -c $<
+	cc -c $<
 
 
 zio.o : zio.f90
-	mpiifort $(MPI_INC) $(FFLAGS) -DMPI -cpp -c $<	
+	mpif90 $(MPI_INC) $(FFLAGS) -DMPI -cpp -c $<	
 
 zparam.o : zparam.f90 
 	$(COMPILER) $(MPI_INC) $(FFLAGS) -DMPI -cpp -c $<

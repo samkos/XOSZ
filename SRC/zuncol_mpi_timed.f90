@@ -122,7 +122,6 @@ contains
     integer error
 
     call MPI_finalize(error)
-    call exit(1)
 
     return
 

@@ -6,3 +6,5 @@ export TAU_METRICS=TIME:PAPI_FP_OPS:PAPI_L2_TCM
 echo Running on $1 nodes...
 mpirun -np $1 tau_exec ./zephyr
 
+#mpirun -np 1 tau_exec ./zephyr
+

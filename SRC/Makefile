@@ -13,8 +13,8 @@ OBJECTS =  zparam.o zuncol_mpi_timed.o    zpara.o zgarbage.o \
 	   zcalcul.o  znavier.o ztest.o zmainone.o  second.o \
 	   zplot.o
 
-COMPILER  = mpiifort
-LINKER = mpiifort
+COMPILER  = mpif90
+LINKER = mpif90
 FFLAGS    =  -g
 #FFLAGS    =    -g -fdump-core -fbacktrace 
 LIBS = -pthread -I/home/samy/OMPI/lib -L/home/samy/OMPI/lib -lmpi_f90 -lmpi_f77 -lmpi -ldl -lm -Wl,--export-dynamic -lrt -lnsl -lutil -lm -ldl 
@@ -24,10 +24,10 @@ $(TARGET) : $(OBJECTS)
 	$(LINKER) $(FFLAGS) $(OBJECTS) -o zephyr
 
 zplot_control : zplot_control.c
-	mpicc -o zplot_control zplot_control.c
+	cc -o zplot_control zplot_control.c
 
 %.o : %.c
-	mpiicc -c $<
+	cc -c $<
 
 zparam.o : zparam.f90 
 	$(COMPILER) $(MPI_INC) $(FFLAGS) -DMPI -cpp -c $<
@@ -36,5 +36,5 @@ zparam.o : zparam.f90
 	$(COMPILER) $(MPI_INC) $(FFLAGS) -DMPI -cpp -c $<
 
 clean: 
-	rm -f z*.o second.o zephyr *.mod  *.lst
+	rm -f z*.o second.o zephyr *.mod  *.lst *.pp.* *.tau.*
 # end
