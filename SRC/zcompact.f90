@@ -1029,29 +1029,19 @@ contains
     if (is_mpp) then
        if (ncheck==df4e) then
           call tridiacx(p_df4x(lmu)%Q(:,:),p_df4x(lmu)%Qi(:,:),Hcdf4x,INP,OUTX)
-       else
-          call tridiacx(p_df4x(lmu)%Q(:,:),p_df4x(lmu)%Qi(:,:),Hdf4,INP,OUTX)
-       endif
-    else
-       lm=size(INP,1)-2
-       if (ncheck==df4e) then
-          call tridiagx(df4x(lm)%Q(:,:),Hcdf4x,INP,OUTX)
-       else
-          call tridiagx(df4x(lm)%Q(:,:),Hdf4,INP,OUTX)
-       endif
-    endif
-    
-    if (is_mpp) then
-       if (ncheck==df4e) then
           call tridiacy(p_df4y(nmu)%Q(:,:),p_df4y(nmu)%Qi(:,:),Hcdf4y,INP,OUTY)
        else
+          call tridiacx(p_df4x(lmu)%Q(:,:),p_df4x(lmu)%Qi(:,:),Hdf4,INP,OUTX)
           call tridiacy(p_df4y(nmu)%Q(:,:),p_df4y(nmu)%Qi(:,:),Hdf4,INP,OUTY)
        endif
     else
+       lm=size(INP,1)-2
        nm=size(INP,2)-2
        if (ncheck==df4e) then
+          call tridiagx(df4x(lm)%Q(:,:),Hcdf4x,INP,OUTX)
           call tridiagy(df4y(nm)%Q(:,:),Hcdf4y,INP,OUTY)
        else
+          call tridiagx(df4x(lm)%Q(:,:),Hdf4,INP,OUTX)
           call tridiagy(df4y(nm)%Q(:,:),Hdf4,INP,OUTY)
        endif
     endif
@@ -1077,35 +1067,22 @@ contains
     if (is_mpp) then
        if (ncheck==df4e) then
           call tridiacx(p_df4x(lmu)%P(:,:),p_df4x(lmu)%Pi(:,:),Gcdf4x,INP,OUTX)
-       else
-          call tridiacx(p_df4x(lmu)%P(:,:),p_df4x(lmu)%Pi(:,:),Gdf4,INP,OUTX)
-       endif
-    else
-       lm=size(INP,1)-2
-       if (ncheck==df4e) then
-          call tridiagx(df4x(lm)%P(:,:),Gcdf4x,INP,OUTX)
-       else
-          call tridiagx(df4x(lm)%P(:,:),Gdf4,INP,OUTX)
-       endif
-    endif
-
-
-    if (is_mpp) then
-       if (ncheck==df4e) then
           call tridiacy(p_df4y(nmu)%P(:,:),p_df4y(nmu)%Pi(:,:),Gcdf4y,INP,OUTY)
        else
+          call tridiacx(p_df4x(lmu)%P(:,:),p_df4x(lmu)%Pi(:,:),Gdf4,INP,OUTX)
           call tridiacy(p_df4y(nmu)%P(:,:),p_df4y(nmu)%Pi(:,:),Gdf4,INP,OUTY)
        endif
     else
+       lm=size(INP,1)-2
        nm=size(INP,2)-2
        if (ncheck==df4e) then
+          call tridiagx(df4x(lm)%P(:,:),Gcdf4x,INP,OUTX)
           call tridiagy(df4y(nm)%P(:,:),Gcdf4y,INP,OUTY)
        else
+          call tridiagx(df4x(lm)%P(:,:),Gdf4,INP,OUTX)
           call tridiagy(df4y(nm)%P(:,:),Gdf4,INP,OUTY)
        endif
     endif
-
-
 
     return
   end subroutine der2

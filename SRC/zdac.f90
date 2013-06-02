@@ -326,6 +326,12 @@ contains
 
     integer :: lm,lmu,nm,i,j,k,i0,i1,k0,k1
 
+    integer, save :: tagplus=0,tag0
+
+    tag0 = tagplus*1000
+    tagplus = tagplus+1
+
+
     nb = 2*size(OUTX,2)
 
     lm =size(INPX,1)-2
@@ -344,7 +350,10 @@ contains
     glx => Q(:,3)      ! on doit rajouter 1 a tous les indices 
                        ! car un pointeur commence forcement a 1!!!!!!!!!!
 
-    call rfr_stn(INPX2,stn_ew,3,1)
+    call nonblocking_rfr_stn_isend_and_irecv(INPX2,stn_ew,3,1,tag0)
+    call nonblocking_rfr_stn_waitall_and_place(INPX2,stn_ew,3,1,tag0)
+    !!call rfr_stn(INPX2,stn_ew,3,1)
+
     i0=1; i1=lm; k0=1; k1=nm; if (is_south) k0=0;  if (is_north) k1=nm+1
 
     if (is_west) then
@@ -513,6 +522,10 @@ contains
 
     integer :: lm,nm,nmv,i,j,k,i0,i1,k0,k1
 
+    integer, save :: tagplus=0,tag0
+
+    tag0 = tagplus*1000
+    tagplus = tagplus+1
 
     nb = 2*size(OUTY,1)
 
@@ -531,7 +544,9 @@ contains
     gly => Q(:,3)      ! on doit rajouter 1 a tous les indices 
                        ! car un pointeur commence forcement a 1!!!!!!!!!!
 
-    call rfr_stn(INPY2,stn_ns,1,3)
+    call nonblocking_rfr_stn_isend_and_irecv(INPY2,stn_ns,1,3,tag0)
+    call nonblocking_rfr_stn_waitall_and_place(INPY2,stn_ns,1,3,tag0)
+    !!call rfr_stn(INPY2,stn_ns,1,3)
     i0=1; i1=lm; k0=1; k1=nm; if (is_west) i0=0; if (is_east) i1=lm+1
 
     if (is_south) then
