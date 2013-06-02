@@ -29,6 +29,22 @@ module para
 
   integer, parameter :: p_save=1, p_retrieve=2, p_save_txt=3
 
+
+  !! working array in order to overlap cross-direction stencils
+
+  real(kind=prec), dimension(:), allocatable, save ::&
+       & buf_to_north,buf_to_east,buf_to_west,buf_to_south,&
+       & buf_from_north,buf_from_east,buf_from_west,buf_from_south
+  integer, dimension(2), save :: req_north,req_east,req_west,req_south
+
+
+
+
+
+
+
+
+
   interface outdon
      module procedure outdon_bord, outdon_nobord 
   end interface
@@ -161,6 +177,27 @@ contains
   !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
   subroutine nonblocking_rfr_stn(INP,direction,nx0,ny0)
     !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+
+    implicit none
+    real(kind=prec), dimension(0:,0:)  :: INP
+    integer          :: direction,nx,ny,nx0,ny0
+#ifndef SEQ
+    integer :: lm,nm
+    integer, save :: tagplus=0,tag0
+
+    tag0 = tagplus*1000
+    tagplus = tagplus+1
+
+
+    call nonblocking_rfr_stn_isend_and_irecv(INP,direction,nx0,ny0,tag0)
+    call nonblocking_rfr_stn_waitall_and_place(INP,direction,nx0,ny0,tag0)
+#endif
+    return
+  end subroutine nonblocking_rfr_stn
+
+  !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+  subroutine nonblocking_rfr_stn_isend_and_irecv(INP,direction,nx0,ny0,tag0)
+    !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
 #ifndef SEQ
     use mpi
 #endif
@@ -169,15 +206,10 @@ contains
     integer          :: direction,nx,ny,nx0,ny0
 #ifndef SEQ
     integer :: lm,nm
-    real(kind=prec), dimension(:), allocatable ::&
-         & buf_to_north,buf_to_east,buf_to_west,buf_to_south,&
-         & buf_from_north,buf_from_east,buf_from_west,buf_from_south
-    integer, dimension(2) :: req_north,req_east,req_west,req_south
+    integer :: tag0
+
     integer, dimension(MPI_STATUS_SIZE,2) :: statuses
     integer error, status, nb
-    integer, save :: tagplus=0,tag0
-    tag0 = tagplus*1000
-    tagplus = tagplus+1
 
 
     lm=size(INP,1)-2*nx0; nm=size(INP,2)-2*ny0
@@ -240,7 +272,34 @@ contains
             & tag0+from_n,MPI_COMM_WORLD,req_south(2),error)
        !call snd_msg(p_south,from_n,INP(:,ny+1:2*ny+1))
     end if
+#endif
 
+    return
+  end subroutine nonblocking_rfr_stn_isend_and_irecv
+
+
+
+  !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+  subroutine nonblocking_rfr_stn_waitall_and_place(INP,direction,nx0,ny0,tag0)
+    !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+#ifndef SEQ
+    use mpi
+#endif
+    implicit none
+    real(kind=prec), dimension(0:,0:)  :: INP
+    integer          :: direction,nx,ny,nx0,ny0
+#ifndef SEQ
+    integer :: lm,nm
+    integer :: tag0
+
+    integer, dimension(MPI_STATUS_SIZE,2) :: statuses
+    integer error, status, nb
+
+
+    lm=size(INP,1)-2*nx0; nm=size(INP,2)-2*ny0
+
+    nx=nx0-1
+    ny=ny0-1
 
     if (iand(direction,stn_n)/=0.and.(.not.is_north)) then
        call MPI_WAITALL(2, req_north, statuses, error)
@@ -276,7 +335,7 @@ contains
 
 #endif
     return
-  end subroutine nonblocking_rfr_stn
+  end subroutine nonblocking_rfr_stn_waitall_and_place
 
 
   !************************************************************************

@@ -242,6 +242,9 @@ contains
              OUTU_c,  OUTV_c, TMPP_C, TMPdiv_c, TMPu_c, TMPv_c&
           & ,TMPP_u,TMPP_v
 
+    real(kind=prec), dimension(size(INPU,1),size(INPU,2)) :: OUTX_u,OUTY_u
+    real(kind=prec), dimension(size(INPV,1),size(INPV,2)) :: OUTX_v,OUTY_v
+
     lmu=size(INPU,1)-2;  nmu=size(INPU,2)-2
     lmv=size(INPV,1)-2;  nmv=size(INPV,2)-2
 
@@ -263,7 +266,12 @@ contains
     if (is_u) then    
        if (is_t) then;     OUTU=coeft*INPU; else; OUTU=0._prec; endif;
 
-       if (is_diff) OUTU = OUTU - nu*(der2x(INPU,lmu_global)+der2y(INPU,nmu_global))
+
+       if (is_diff) then
+          call der2(INPU,lmu_global,nmu_global,OUTX_u,OUTY_u)
+          OUTU = OUTU - nu*(OUTX_u+OUTY_u)
+          !!OUTU = OUTU - nu*(der2x(INPU,lmu_global)+der2y(INPU,nmu_global))
+       end if
 
        if (is_conv) OUTU = OUTU + U_EN_U*der1x(INPU,lmu_global) + V_EN_U*der1y(INPU,nmu_global)
     endif
@@ -271,7 +279,11 @@ contains
     if (is_v) then    
        if (is_t) then;     OUTV=coeft*INPV; else; OUTV=0._prec; endif
 
-       if (is_diff) OUTV = OUTV - nu*(der2x(INPV,lmv_global)+der2y(INPV,nmv_global))
+          if (is_diff) then
+             call der2(INPV,lmv_global,nmv_global,OUTX_v,OUTY_v)
+             OUTV = OUTV - nu*(OUTX_v+OUTY_v)
+             !! OUTV = OUTV - nu*(der2x(INPV,lmv_global)+der2y(INPV,nmv_global))
+          endif
 
        if (is_conv) OUTV = OUTV + U_EN_V*der1x(INPV,lmv_global) + V_EN_V*der1y(INPV,nmv_global)
     endif

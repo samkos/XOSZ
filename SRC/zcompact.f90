@@ -1018,6 +1018,57 @@ contains
   !************************************************************************
 
   !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+  subroutine der2(INP,lmu,nmu,OUTX,OUTY)
+    !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+    !     OUTX = der2x(INP),   OUTY = der2y(INP)
+    !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+    use data, only  : ncheck
+    implicit none
+    real(kind=prec), dimension(:,:) :: INP,OUTX,OUTY
+    integer :: lm,lmu,nm,nmu
+
+
+    if (is_mpp) then
+       if (ncheck==df4e) then
+          call tridiacx(p_df4x(lmu)%P(:,:),p_df4x(lmu)%Pi(:,:),Gcdf4x,INP,OUTX)
+       else
+          call tridiacx(p_df4x(lmu)%P(:,:),p_df4x(lmu)%Pi(:,:),Gdf4,INP,OUTX)
+       endif
+    else
+       lm=size(INP,1)-2
+       if (ncheck==df4e) then
+          call tridiagx(df4x(lm)%P(:,:),Gcdf4x,INP,OUTX)
+       else
+          call tridiagx(df4x(lm)%P(:,:),Gdf4,INP,OUTX)
+       endif
+    endif
+
+
+    if (is_mpp) then
+       if (ncheck==df4e) then
+          call tridiacy(p_df4y(nmu)%P(:,:),p_df4y(nmu)%Pi(:,:),Gcdf4y,INP,OUTY)
+       else
+          call tridiacy(p_df4y(nmu)%P(:,:),p_df4y(nmu)%Pi(:,:),Gdf4,INP,OUTY)
+       endif
+    else
+       nm=size(INP,2)-2
+       if (ncheck==df4e) then
+          call tridiagy(df4y(nm)%P(:,:),Gcdf4y,INP,OUTY)
+       else
+          call tridiagy(df4y(nm)%P(:,:),Gdf4,INP,OUTY)
+       endif
+    endif
+
+
+
+    return
+  end subroutine der2
+
+
+
+  !************************************************************************
+
+  !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
   function derm0x(INPX,lmu) result(OUTX)
     !SKssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
     use data, only  : ncheck
