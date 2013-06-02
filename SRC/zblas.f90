@@ -273,7 +273,11 @@ contains
           !!OUTU = OUTU - nu*(der2x(INPU,lmu_global)+der2y(INPU,nmu_global))
        end if
 
-       if (is_conv) OUTU = OUTU + U_EN_U*der1x(INPU,lmu_global) + V_EN_U*der1y(INPU,nmu_global)
+       if (is_conv) then
+          call der1(INPU,lmu_global,nmu_global,OUTX_u,OUTY_u)
+          OUTU = OUTU + U_EN_U*OUTX_u + V_EN_U*OUTY_u
+          !!OUTU = OUTU + U_EN_U*der1x(INPU,lmu_global) + V_EN_U*der1y(INPU,nmu_global)
+       end if
     endif
 
     if (is_v) then    
@@ -285,7 +289,11 @@ contains
              !! OUTV = OUTV - nu*(der2x(INPV,lmv_global)+der2y(INPV,nmv_global))
           endif
 
-       if (is_conv) OUTV = OUTV + U_EN_V*der1x(INPV,lmv_global) + V_EN_V*der1y(INPV,nmv_global)
+       if (is_conv) then
+          call der1(INPV,lmv_global,nmv_global,OUTX_v,OUTY_v)
+          OUTV = OUTV + U_EN_V*OUTX_v + V_EN_V*OUTY_v
+          !!OUTV = OUTV + U_EN_V*der1x(INPV,lmv_global) + V_EN_V*der1y(INPV,nmv_global)
+       end if
     endif
 
     if (is_decal) then                                                     
